@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "308620194845",
+    "project_id": "fir-zakatapp",
+    "storage_bucket": "fir-zakatapp.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:308620194845:android:9744d924c1d580102082f4",
+        "android_client_info": {
+          "package_name": "com.example.flutter_application_1"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAp6FuFHLTJdrUcafyecPwwQw2WpMQ48kI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

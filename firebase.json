@@ -1,0 +1,42 @@
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "fir-zakatapp",
+          "appId": "1:308620194845:android:9744d924c1d580102082f4",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "fir-zakatapp",
+          "configurations": {
+            "android": "1:308620194845:android:9744d924c1d580102082f4",
+            "ios": "1:308620194845:ios:b1a30c495f706b232082f4",
+            "macos": "1:308620194845:ios:b1a30c495f706b232082f4",
+            "web": "1:308620194845:web:3feceee4add598072082f4",
+            "windows": "1:308620194845:web:caa3a51a1339a69e2082f4"
+          }
+        }
+      }
+    }
+  },
+  "functions": [
+    {
+      "codebase": "default",
+      "disallowLegacyRuntimeConfig": true,
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        "*.local"
+      ],
+      "predeploy": [
+        "npm --prefix \"$RESOURCE_DIR\" run lint"
+      ],
+      "source": "functions"
+    }
+  ]
+}
