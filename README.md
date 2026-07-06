@@ -1,16 +1,2 @@
-# flutter_application_1
-
-A new Flutter project.
-
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+/* نبذة عن التطبيق: تطبيق "الزكاة" هو تطبيق محمول متكامل، يهدف إلى تقديم حل رقمي شامل لمساعدة المسلم في حساب وإدارة فريضة الزكاة وفق الأحكام الفقهية المعتمدة. يوفر التطبيق حاسبة ذكية متعددة الأنواع تغطي زكاة النقود والذهب والفضة والزروع والتجارة والأنعام، مع تحديث تلقائي لأسعار الذهب وأنصبة الزكاة الشرعية. كما يتضمن نظام مصادقة آمن لإدارة الحسابات الشخصية وحفظ سجلات واحصائيات المستخدم في قاعدة بيانات، ولوحة إحصائيات تفاعلية تعرض سجل الزكاة المدفوعة ونسبتها من إجمالي الثروة عبر الزمن. ويضم التطبيق محتوى معرفياً موثقاً يشمل الأحاديث النبوية الصحيحة، الفتاوى الشرعية عن الزكاة، ومقارنة المذاهب الفقهية الأربعة، إضافة إلى ميزات مساندة كاختبار "هل تجب عليك الزكاة؟" ومساعد AI، وثيمات، وعملات لعدة دول، والتقويم الزكوي ووضع رمضان الخاص، بتصميم عربي وانجليزي كامل (LTR-RTL) بهوية بصرية إسلامية أنيقة.
+*/
