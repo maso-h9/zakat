@@ -28,4 +28,5 @@ jobs:
           FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
           GOLDAPI_KEY: ${{ secrets.GOLDAPI_KEY }}
           METALS_API_KEY: ${{ secrets.METALS_API_KEY }}
-        run: node update_prices.js
+        run: node update_prices.js  
+         # لان
