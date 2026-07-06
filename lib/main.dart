@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:zakat_app/services/gold_price_service.dart';
 import 'models/zakat_provider.dart';
 import 'utils/theme.dart';
 import 'screens/home_screen.dart';
@@ -27,6 +28,8 @@ void main() async {
   );
 
   await NotificationService().init();
+  await GoldPriceService().init();
+
   runApp(const ZakatApp());
 }
 
