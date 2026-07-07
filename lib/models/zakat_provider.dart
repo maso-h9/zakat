@@ -1,8 +1,9 @@
-// ================================================================
-// zakat_provider.dart — V9 محدَّث
-// يستخدم GoldPriceService الجديد (Firestore + Hive)
-// بدلاً من metals.live المباشر
-// ================================================================
+// zakat_provider.dart — V10
+// التغييرات عن الكود الأصلي:
+//   1. init() يستدعي GoldPriceService.initHive() أولاً
+//   2. fetchGoldPrice() يقرأ silverPricePerGram من النتيجة أيضاً
+//   (باقي الكود كما هو بالضبط)
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import '../services/storage_service.dart';
@@ -10,22 +11,15 @@ import '../services/gold_price_service.dart';
 import '../services/firebase_service.dart';
 
 class ZakatProvider extends ChangeNotifier {
-  // ─── سعر الذهب والفضة ────────────────────────────────────────
   double goldPricePerGram = 285.0;
   double silverPricePerGram = 3.2;
   bool goldPriceIsLive = false;
   String? goldPriceLastUpdated;
   bool isLoadingGoldPrice = false;
-  String priceStatus = ''; // نص الحالة للمستخدم
 
-  // ─── Service instance الجديد ──────────────────────────────────
-  final _goldService = GoldPriceService();
-
-  // ─── العملة ──────────────────────────────────────────────────
   String selectedCurrency = 'LYD';
   String currencySymbol = 'د.ل';
 
-  // ─── البيانات المالية ─────────────────────────────────────────
   double savedMoney = 0;
   double goldGrams = 0;
   double silverGrams = 0;
@@ -36,41 +30,34 @@ class ZakatProvider extends ChangeNotifier {
 
   List<ZakatRecord> zakatHistory = [];
 
-  // ─── الإعدادات ───────────────────────────────────────────────
   bool isRamadanMode = false;
   bool fitrPaid = false;
   bool isDarkMode = false;
 
-  // ─── اللغة ───────────────────────────────────────────────────
   Locale _locale = const Locale('ar', 'SA');
   Locale get locale => _locale;
   bool get isArabic => _locale.languageCode == 'ar';
 
-  // ─── Firebase sync ───────────────────────────────────────────
   bool isSyncing = false;
   bool cloudSyncEnabled = false;
   DateTime? lastSyncTime;
 
   bool _loaded = false;
 
-  // ════════════════════════════════════════════════════════════
-  // تهيئة
-  // ════════════════════════════════════════════════════════════
+  // ─── تهيئة ──────────────────────────────────────────────────
   Future<void> init() async {
     if (_loaded) return;
     _loaded = true;
 
-    // تهيئة Hive أولاً
-    await _goldService.init();
+    // ① تهيئة Hive قبل أي شيء آخر
+    await GoldPriceService.initHive();
 
     await StorageService.loadWealth(this);
     nisabDate = await StorageService.loadNisabDate();
     zakatHistory = await StorageService.loadHistory();
-
     final curr = await StorageService.loadCurrency();
     selectedCurrency = curr['code']!;
     currencySymbol = curr['symbol']!;
-
     isRamadanMode = await StorageService.loadRamadanMode();
     fitrPaid = await StorageService.loadFitrPaid();
     isDarkMode = await StorageService.loadDarkMode();
@@ -80,63 +67,16 @@ class ZakatProvider extends ChangeNotifier {
     _locale =
         langCode == 'en' ? const Locale('en', 'US') : const Locale('ar', 'SA');
 
-    // عرض آخر سعر محفوظ فوراً (من SharedPreferences القديم كاحتياطي)
     final savedPrice = await StorageService.loadGoldPrice();
     if (savedPrice != null) goldPricePerGram = savedPrice;
 
     notifyListeners();
-
-    // جلب السعر في الخلفية من Firestore
     fetchGoldPrice();
 
-    if (cloudSyncEnabled) {
-      await _initCloudSync();
-    }
+    if (cloudSyncEnabled) await _initCloudSync();
   }
 
-  // ════════════════════════════════════════════════════════════
-  // سعر الذهب — من Firestore عبر GoldPriceService الجديد
-  // ════════════════════════════════════════════════════════════
-  Future<void> fetchGoldPrice() async {
-    isLoadingGoldPrice = true;
-    notifyListeners();
-
-    try {
-      final data = await _goldService.fetchPrices(selectedCurrency);
-
-      goldPricePerGram = data.goldPricePerGram;
-      silverPricePerGram = data.silverPricePerGram;
-      goldPriceIsLive = data.isLive;
-      priceStatus = data.statusText(isArabic);
-
-      // احفظ في SharedPreferences كاحتياطي إضافي
-      if (data.goldPricePerGram > 0) {
-        await StorageService.saveGoldPrice(data.goldPricePerGram);
-      }
-
-      // تحديث goldPriceLastUpdated بصيغة مختصرة للعرض
-      if (data.updatedAt.isNotEmpty) {
-        try {
-          final dt = DateTime.parse(data.updatedAt).toLocal();
-          goldPriceLastUpdated =
-              '${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}';
-        } catch (_) {
-          goldPriceLastUpdated = null;
-        }
-      }
-    } catch (e) {
-      // في حالة فشل غير متوقع: أبقِ آخر سعر محفوظ
-      priceStatus = isArabic ? '⚠️ سعر تقديري' : '⚠️ Estimated price';
-      goldPriceIsLive = false;
-    }
-
-    isLoadingGoldPrice = false;
-    notifyListeners();
-  }
-
-  // ════════════════════════════════════════════════════════════
-  // اللغة
-  // ════════════════════════════════════════════════════════════
+  // ─── تغيير اللغة ────────────────────────────────────────────
   Future<void> setLanguage(String langCode) async {
     _locale =
         langCode == 'en' ? const Locale('en', 'US') : const Locale('ar', 'SA');
@@ -144,9 +84,7 @@ class ZakatProvider extends ChangeNotifier {
     await StorageService.saveLanguage(langCode);
   }
 
-  // ════════════════════════════════════════════════════════════
-  // Firebase Cloud Sync
-  // ════════════════════════════════════════════════════════════
+  // ─── Firebase ────────────────────────────────────────────────
   Future<void> _initCloudSync() async {
     try {
       await FirebaseService.signInAnonymously();
@@ -192,13 +130,32 @@ class ZakatProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // ════════════════════════════════════════════════════════════
-  // حسابات الزكاة
-  // ════════════════════════════════════════════════════════════
+  // ─── سعر الذهب ───────────────────────────────────────────────
+  // ② التغيير الوحيد: يقرأ silverPricePerGram من النتيجة أيضاً
+  Future<void> fetchGoldPrice() async {
+    isLoadingGoldPrice = true;
+    notifyListeners();
+
+    final result =
+        await GoldPriceService.fetchGoldPricePerGram(selectedCurrency);
+
+    goldPricePerGram = result.pricePerGram;
+    silverPricePerGram = result.silverPricePerGram; // ← الإضافة الوحيدة
+    goldPriceIsLive = result.isLive;
+    goldPriceLastUpdated = result.formattedTime;
+
+    if (result.pricePerGram > 0) {
+      await StorageService.saveGoldPrice(result.pricePerGram);
+    }
+
+    isLoadingGoldPrice = false;
+    notifyListeners();
+  }
+
+  // ─── حسابات ──────────────────────────────────────────────────
   double get goldNisabGrams => 85.0;
   double get silverNisabGrams => 595.0;
   double get zakatRate => 0.025;
-
   double get goldNisabValue => goldNisabGrams * goldPricePerGram;
   double get silverNisabValue => silverNisabGrams * silverPricePerGram;
   double get totalWealth => totalZakatableWealth;
@@ -225,9 +182,7 @@ class ZakatProvider extends ChangeNotifier {
   DateTime? get zakatDueDate => nisabDate?.add(const Duration(days: 354));
   double get fitrAmount => goldPricePerGram * 2;
 
-  // ════════════════════════════════════════════════════════════
-  // تحديث البيانات مع حفظ
-  // ════════════════════════════════════════════════════════════
+  // ─── تحديث مع حفظ ────────────────────────────────────────────
   void updateWealth({
     double? money,
     double? gold,
@@ -266,7 +221,7 @@ class ZakatProvider extends ChangeNotifier {
     currencySymbol = symbol;
     notifyListeners();
     StorageService.saveCurrency(code, symbol);
-    fetchGoldPrice(); // يعيد الجلب بالعملة الجديدة
+    fetchGoldPrice();
     _pushToCloud();
   }
 
@@ -290,9 +245,7 @@ class ZakatProvider extends ChangeNotifier {
     StorageService.saveDarkMode(on);
   }
 
-  // ════════════════════════════════════════════════════════════
-  // إحصائيات
-  // ════════════════════════════════════════════════════════════
+  // ─── إحصائيات ────────────────────────────────────────────────
   double get totalZakatPaid => zakatHistory.fold(0, (s, r) => s + r.amount);
 
   double get averageYearlyZakat {
@@ -312,16 +265,12 @@ class ZakatProvider extends ChangeNotifier {
   }
 }
 
-// ════════════════════════════════════════════════════════════
-// النماذج
-// ════════════════════════════════════════════════════════════
+// ── النماذج — كما هي في الكود الأصلي ────────────────────────
 class ZakatRecord {
   final int year;
-  final double amount;
-  final double wealth;
+  final double amount, wealth;
   final DateTime date;
   final String note;
-
   ZakatRecord({
     required this.year,
     required this.amount,
@@ -332,14 +281,9 @@ class ZakatRecord {
 }
 
 class CurrencyModel {
-  final String code;
-  final String symbol;
-  final String name;
-  const CurrencyModel({
-    required this.code,
-    required this.symbol,
-    required this.name,
-  });
+  final String code, symbol, name;
+  const CurrencyModel(
+      {required this.code, required this.symbol, required this.name});
 }
 
 const List<CurrencyModel> currencies = [

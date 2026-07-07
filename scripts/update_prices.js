@@ -1,6 +1,12 @@
 // ================================================================
 // update_prices.js — GitHub Actions (مجاني 100%)
-// ترتيب المزودين: metals.live أولاً → GOLDAPI_KEY → METALS_API_KEY → Firestore cache
+// ترتيب المزودين:
+//   ① gold-api.com   — مجاني، بلا مفتاح، بلا rate limit (الأول دائماً)
+//   ② GOLDAPI_KEY    — إن وُجد في GitHub Secrets
+//   ③ METALS_API_KEY — إن وُجد في GitHub Secrets
+//   ④ آخر سعر Firestore — إذا فشل الجميع
+//
+// يجلب الذهب والفضة معاً من المزود الأول
 // ================================================================
 const admin = require("firebase-admin");
 const https  = require("https");
@@ -19,7 +25,7 @@ const FALLBACK_FX = {
   DZD: 134.5, MYR: 4.7,   IDR: 15800, PKR: 278.0,
 };
 
-// ── HTTP helper ────────────────────────────────────────────────
+// ── HTTP helper ───────────────────────────────────────────────
 function fetchJSON(url, headers = {}) {
   return new Promise((resolve, reject) => {
     const req = https.get(url, { headers, timeout: 9000 }, (res) => {
@@ -31,68 +37,66 @@ function fetchJSON(url, headers = {}) {
       });
     });
     req.on("error", reject);
-    req.on("timeout", () => { req.destroy(); reject(new Error("timeout")); });
+    req.on("timeout", () => { req.destroy(); reject(new Error("timeout: " + url)); });
   });
 }
 
-// ── جلب سعر الذهب بالترتيب الصحيح ────────────────────────────
-async function fetchGoldUSD() {
+// ── جلب الذهب والفضة ─────────────────────────────────────────
+async function fetchMetals() {
 
-  // ① metals.live — مجاني، بلا مفتاح، الأول دائماً
+  // ① gold-api.com — مجاني بلا مفتاح (الأول دائماً)
   try {
-    const { status, body } = await fetchJSON("https://metals.live/api/v1/spot/gold");
-    const price = Array.isArray(body) ? body[0]?.gold : body?.gold;
-    if (status === 200 && price) {
-      console.log("✅ [1] metals.live:", price);
-      return { priceUSD: price, source: "metals.live" };
+    const [goldRes, silverRes] = await Promise.all([
+      fetchJSON("https://api.gold-api.com/price/XAU"),
+      fetchJSON("https://api.gold-api.com/price/XAG"),
+    ]);
+    const goldUSD   = goldRes.body?.price;
+    const silverUSD = silverRes.body?.price;
+    if (goldRes.status === 200 && goldUSD) {
+      console.log(`✅ [1] gold-api.com — ذهب: $${goldUSD} | فضة: $${silverUSD ?? "N/A"}`);
+      return { goldUSD, silverUSD: silverUSD ?? null, source: "gold-api.com" };
     }
-    console.warn("⚠️ [1] metals.live: بيانات غير صالحة");
-  } catch (e) { console.warn("⚠️ [1] metals.live فشل:", e.message); }
+    console.warn("⚠️ [1] gold-api.com: بيانات غير صالحة");
+  } catch (e) { console.warn("⚠️ [1] gold-api.com فشل:", e.message); }
 
-  // ② GoldAPI — يحتاج GOLDAPI_KEY في GitHub Secrets
+  // ② GoldAPI.io — يحتاج GOLDAPI_KEY
   if (process.env.GOLDAPI_KEY) {
     try {
-      const { status, body } = await fetchJSON(
-        "https://www.goldapi.io/api/XAU/USD",
-        { "x-access-token": process.env.GOLDAPI_KEY }
-      );
-      if (status === 200 && body?.price) {
-        console.log("✅ [2] GoldAPI:", body.price);
-        return { priceUSD: body.price, source: "goldapi" };
+      const [gRes, sRes] = await Promise.all([
+        fetchJSON("https://www.goldapi.io/api/XAU/USD", { "x-access-token": process.env.GOLDAPI_KEY }),
+        fetchJSON("https://www.goldapi.io/api/XAG/USD", { "x-access-token": process.env.GOLDAPI_KEY }),
+      ]);
+      if (gRes.status === 200 && gRes.body?.price) {
+        console.log(`✅ [2] GoldAPI — ذهب: $${gRes.body.price} | فضة: $${sRes.body?.price ?? "N/A"}`);
+        return { goldUSD: gRes.body.price, silverUSD: sRes.body?.price ?? null, source: "goldapi" };
       }
-      console.warn("⚠️ [2] GoldAPI: status", status, body?.error ?? "");
+      console.warn("⚠️ [2] GoldAPI:", gRes.status, gRes.body?.error ?? "");
     } catch (e) { console.warn("⚠️ [2] GoldAPI فشل:", e.message); }
   } else {
     console.log("ℹ️ [2] GOLDAPI_KEY غير موجود — تخطّي");
   }
 
-  // ③ Metals-API — يحتاج METALS_API_KEY في GitHub Secrets
+  // ③ Metals-API — يحتاج METALS_API_KEY
   if (process.env.METALS_API_KEY) {
     try {
-      const url = `https://metals-api.com/api/latest?access_key=${process.env.METALS_API_KEY}&base=USD&symbols=XAU`;
+      const url = `https://metals-api.com/api/latest?access_key=${process.env.METALS_API_KEY}&base=USD&symbols=XAU,XAG`;
       const { status, body } = await fetchJSON(url);
-      const raw   = body?.rates?.XAU ?? body?.rates?.USDXAU;
-      const price = raw ? (raw < 1 ? 1 / raw : raw) : null;
-      if (status === 200 && price && price > 100) {
-        console.log("✅ [3] Metals-API:", price);
-        return { priceUSD: price, source: "metals-api" };
+      const xau = body?.rates?.XAU;
+      const xag = body?.rates?.XAG;
+      const goldUSD   = xau ? (xau < 1 ? 1 / xau : xau) : null;
+      const silverUSD = xag ? (xag < 1 ? 1 / xag : xag) : null;
+      if (status === 200 && goldUSD && goldUSD > 100) {
+        console.log(`✅ [3] Metals-API — ذهب: $${goldUSD} | فضة: $${silverUSD ?? "N/A"}`);
+        return { goldUSD, silverUSD, source: "metals-api" };
       }
       console.warn("⚠️ [3] Metals-API: بيانات غير صالحة");
     } catch (e) { console.warn("⚠️ [3] Metals-API فشل:", e.message); }
   } else {
     console.log("ℹ️ [3] METALS_API_KEY غير موجود — تخطّي");
   }
-     
-const silverUSD = silverResp.body?.price ?? lastSilverUSD;
-  console.warn("❌ كل المزودين فشلوا — سيُستخدم آخر سعر Firestore");
+
+  console.warn("❌ كل المزودين فشلوا");
   return null;
-
-
-  // في fetchGoldUSD — أضف هذا لو عندك GOLDAPI_KEY
-       const silverResp = await fetchJSON(
-             "https://www.goldapi.io/api/XAG/USD",
-           { "x-access-token": process.env.GOLDAPI_KEY }
-              );
 }
 
 // ── أسعار الصرف ───────────────────────────────────────────────
@@ -104,7 +108,6 @@ async function fetchFxRates() {
       return body.rates;
     }
   } catch (e) { console.warn("⚠️ FX rates فشلت:", e.message); }
-  console.warn("⚠️ FX: استخدام القيم الاحتياطية");
   return FALLBACK_FX;
 }
 
@@ -125,7 +128,7 @@ function computeNisab(goldUsdPerOz, silverUsdPerOz, fxRates) {
   return result;
 }
 
-// ── main ───────────────────────────────────────────────────────
+// ── main ──────────────────────────────────────────────────────
 async function main() {
   console.log("🚀 بدء تحديث الأسعار —", new Date().toISOString());
 
@@ -134,24 +137,24 @@ async function main() {
   const lastGoldUSD   = existing.data()?.goldUsdPerOz   ?? 2350;
   const lastSilverUSD = existing.data()?.silverUsdPerOz ?? 27.5;
 
-  const [goldResult, fxRates] = await Promise.all([
-    fetchGoldUSD(),
+  const [metals, fxRates] = await Promise.all([
+    fetchMetals(),
     fetchFxRates(),
   ]);
 
-  const goldUSD   = goldResult?.priceUSD ?? lastGoldUSD;
-  const silverUSD = lastSilverUSD;
+  const goldUSD   = metals?.goldUSD   ?? lastGoldUSD;
+  const silverUSD = metals?.silverUSD ?? lastSilverUSD; // الآن حقيقي إن أمكن
   const nisab     = computeNisab(goldUSD, silverUSD, fxRates);
 
   await docRef.set({
     goldUsdPerOz:   goldUSD,
     silverUsdPerOz: silverUSD,
     nisab,
-    source:    goldResult?.source ?? "cached",
+    source:    metals?.source ?? "cached",
     updatedAt: new Date().toISOString(),
   });
 
-  console.log(`✅ تم الحفظ. الذهب: $${goldUSD}/oz — المصدر: ${goldResult?.source ?? "cached"}`);
+  console.log(`✅ تم الحفظ — ذهب: $${goldUSD}/oz | فضة: $${silverUSD}/oz | مصدر: ${metals?.source ?? "cached"}`);
   process.exit(0);
 }
 
