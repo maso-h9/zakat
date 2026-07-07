@@ -1,240 +1,233 @@
 // ================================================================
 // gold_price_service.dart — يقرأ من Firestore (تملأها GitHub Actions)
-// Offline First: Hive كاش محلي — يعمل بدون إنترنت
-// لا يتصل بأي Gold API مباشرة من التطبيق
+// واجهة متطابقة مع zakat_provider.dart الحالي — لا تعديل مطلوب فيه
+// ترتيب GitHub Actions: metals.live → GOLDAPI → METALS_API → cache
 // ================================================================
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 class GoldPriceService {
-  // ──────────────────────────────────────────────
-  // مسار Firestore (نفس المسار الذي تكتب فيه GitHub Actions)
-  // ──────────────────────────────────────────────
-  static const String _collection = 'prices';
-  static const String _document = 'latest';
+  static const String _col = 'prices';
+  static const String _doc = 'latest';
 
-  // ──────────────────────────────────────────────
-  // مفاتيح Hive للكاش المحلي
-  // ──────────────────────────────────────────────
-  static const String _boxName = 'gold_price_cache';
-  static const String _keyGoldPerGram = 'gold_per_gram';
-  static const String _keySilverPerGram = 'silver_per_gram';
-  static const String _keyGoldNisab = 'gold_nisab';
-  static const String _keySilverNisab = 'silver_nisab';
-  static const String _keyUpdatedAt = 'updated_at';
-  static const String _keySource = 'source';
+  static const String _boxName = 'gold_cache_v2';
+  static const String _kGold = 'gpg';
+  static const String _kSilver = 'spg';
+  static const String _kGoldN = 'gn';
+  static const String _kSilN = 'sn';
+  static const String _kTs = 'ts';
+  static const String _kSrc = 'src';
 
-  // ──────────────────────────────────────────────
-  // الكاش صالح 6 ساعات (نفس جدول GitHub Actions)
-  // ──────────────────────────────────────────────
-  static const Duration _cacheDuration = Duration(hours: 6);
+  static const Duration _ttl = Duration(hours: 6);
 
-  late Box _box;
-  bool _initialized = false;
+  static Box? _box;
+  static bool _ready = false;
 
-  // ──────────────────────────────────────────────
-  // تهيئة Hive (استدعِ مرة واحدة في main.dart)
-  // ──────────────────────────────────────────────
-  Future<void> init() async {
-    if (_initialized) return;
+  // ── تهيئة Hive ────────────────────────────────────────────────
+  static Future<void> initHive() async {
+    if (_ready) return;
     await Hive.initFlutter();
     _box = await Hive.openBox(_boxName);
-    _initialized = true;
+    _ready = true;
   }
 
-  // ──────────────────────────────────────────────
-  // هل الكاش لا يزال صالحاً؟
-  // ──────────────────────────────────────────────
-  bool get _isCacheValid {
-    final String? updatedAt = _box.get(_keyUpdatedAt);
-    if (updatedAt == null) return false;
+  static bool get _cacheValid {
+    final ts = _box?.get(_kTs) as String?;
+    if (ts == null) return false;
     try {
-      final cached = DateTime.parse(updatedAt);
-      return DateTime.now().difference(cached) < _cacheDuration;
+      return DateTime.now().difference(DateTime.parse(ts)) < _ttl;
     } catch (_) {
       return false;
     }
   }
 
-  // ──────────────────────────────────────────────
-  // الدالة الرئيسية: أعِد بيانات السعر والنصاب
-  // ──────────────────────────────────────────────
-  Future<PriceData> fetchPrices(String currency) async {
-    // 1. إذا الكاش صالح → أعِد منه مباشرة (لا اتصال بالإنترنت)
-    if (_isCacheValid) {
-      return _fromCache(currency);
+  // ══════════════════════════════════════════════════════════════
+  // نفس التوقيع الذي يستدعيه zakat_provider.dart الحالي
+  // ══════════════════════════════════════════════════════════════
+  static Future<GoldPriceResult> fetchGoldPricePerGram(
+    String currencyCode, {
+    bool forceRefresh = false,
+  }) async {
+    if (!forceRefresh && _cacheValid) {
+      return _fromHive(currencyCode);
     }
 
-    // 2. حاول جلب بيانات جديدة من Firestore
     try {
-      final doc = await FirebaseFirestore.instance
-          .collection(_collection)
-          .doc(_document)
+      final snap = await FirebaseFirestore.instance
+          .collection(_col)
+          .doc(_doc)
           .get()
           .timeout(const Duration(seconds: 8));
 
-      if (doc.exists && doc.data() != null) {
-        final data = doc.data()!;
-        await _saveToCache(data, currency);
-        return _fromFirestoreData(data, currency);
+      if (snap.exists && snap.data() != null) {
+        _saveToHive(snap.data()!, currencyCode);
+        return _fromFirestore(snap.data()!, currencyCode);
       }
     } catch (e) {
-      // فشل الاتصال بـ Firestore — استخدم الكاش القديم
-      debugLog('Firestore fetch failed: $e — using cached data');
+      _log('Firestore فشل: $e');
     }
 
-    // 3. كل شيء فشل → أعِد آخر كاش محفوظ (حتى لو قديم)
-    if (_box.containsKey(_keyGoldPerGram)) {
-      return _fromCache(currency);
+    if (_box != null && ((_box!.get(_kGold) ?? 0) as num).toDouble() > 0) {
+      return _fromHive(currencyCode);
     }
 
-    // 4. لا يوجد أي بيانات على الإطلاق → قيم احتياطية ثابتة
-    return _fallbackData(currency);
+    return _fallback(currencyCode);
   }
 
-  // ──────────────────────────────────────────────
-  // بناء PriceData من Firestore document
-  // ──────────────────────────────────────────────
-  PriceData _fromFirestoreData(Map<String, dynamic> data, String currency) {
-    final nisab = (data['nisab'] as Map<String, dynamic>?)?[currency];
-    return PriceData(
-      goldPricePerGram: (nisab?['goldPricePerGram'] as num?)?.toDouble() ??
-          _estimateGoldPerGram(data),
+  static GoldPriceResult _fromFirestore(Map<String, dynamic> data, String cur) {
+    final nisab = (data['nisab'] as Map<String, dynamic>?)?[cur];
+    final gPG = (nisab?['goldPricePerGram'] as num?)?.toDouble() ??
+        _estimateFromOz(data['goldUsdPerOz'], cur);
+    return GoldPriceResult(
+      pricePerGram: gPG,
       silverPricePerGram:
           (nisab?['silverPricePerGram'] as num?)?.toDouble() ?? 0.85,
-      goldNisab: (nisab?['goldNisab'] as num?)?.toDouble() ?? 0.0,
+      goldNisab: (nisab?['goldNisab'] as num?)?.toDouble() ?? gPG * 85,
       silverNisab: (nisab?['silverNisab'] as num?)?.toDouble() ?? 0.0,
-      updatedAt:
-          data['updatedAt'] as String? ?? DateTime.now().toIso8601String(),
-      source: data['source'] as String? ?? 'firestore',
       isLive: true,
+      source: data['source'] as String? ?? 'firestore',
+      lastUpdated: _parseDate(data['updatedAt']),
     );
   }
 
-  // ──────────────────────────────────────────────
-  // تخزين في Hive
-  // ──────────────────────────────────────────────
-  Future<void> _saveToCache(Map<String, dynamic> data, String currency) async {
-    final nisab = (data['nisab'] as Map<String, dynamic>?)?[currency];
-    await _box.putAll({
-      _keyGoldPerGram: (nisab?['goldPricePerGram'] as num?)?.toDouble() ??
-          _estimateGoldPerGram(data),
-      _keySilverPerGram:
-          (nisab?['silverPricePerGram'] as num?)?.toDouble() ?? 0.85,
-      _keyGoldNisab: (nisab?['goldNisab'] as num?)?.toDouble() ?? 0.0,
-      _keySilverNisab: (nisab?['silverNisab'] as num?)?.toDouble() ?? 0.0,
-      _keyUpdatedAt:
-          data['updatedAt'] as String? ?? DateTime.now().toIso8601String(),
-      _keySource: data['source'] as String? ?? 'firestore',
+  static void _saveToHive(Map<String, dynamic> data, String cur) {
+    final nisab = (data['nisab'] as Map<String, dynamic>?)?[cur];
+    final gPG = (nisab?['goldPricePerGram'] as num?)?.toDouble() ??
+        _estimateFromOz(data['goldUsdPerOz'], cur);
+    _box?.putAll({
+      _kGold: gPG,
+      _kSilver: (nisab?['silverPricePerGram'] as num?)?.toDouble() ?? 0.85,
+      _kGoldN: (nisab?['goldNisab'] as num?)?.toDouble() ?? gPG * 85,
+      _kSilN: (nisab?['silverNisab'] as num?)?.toDouble() ?? 0.0,
+      _kTs: data['updatedAt'] as String? ?? DateTime.now().toIso8601String(),
+      _kSrc: data['source'] as String? ?? 'firestore',
     });
   }
 
-  // ──────────────────────────────────────────────
-  // قراءة من Hive
-  // ──────────────────────────────────────────────
-  PriceData _fromCache(String currency) {
-    return PriceData(
-      goldPricePerGram:
-          (_box.get(_keyGoldPerGram, defaultValue: 0.0) as num).toDouble(),
+  static GoldPriceResult _fromHive(String cur) {
+    return GoldPriceResult(
+      pricePerGram: ((_box?.get(_kGold, defaultValue: 0.0)) as num).toDouble(),
       silverPricePerGram:
-          (_box.get(_keySilverPerGram, defaultValue: 0.0) as num).toDouble(),
-      goldNisab: (_box.get(_keyGoldNisab, defaultValue: 0.0) as num).toDouble(),
-      silverNisab:
-          (_box.get(_keySilverNisab, defaultValue: 0.0) as num).toDouble(),
-      updatedAt: _box.get(_keyUpdatedAt, defaultValue: '') as String,
-      source: _box.get(_keySource, defaultValue: 'cache') as String,
+          ((_box?.get(_kSilver, defaultValue: 0.0)) as num).toDouble(),
+      goldNisab: ((_box?.get(_kGoldN, defaultValue: 0.0)) as num).toDouble(),
+      silverNisab: ((_box?.get(_kSilN, defaultValue: 0.0)) as num).toDouble(),
       isLive: false,
+      source: _box?.get(_kSrc, defaultValue: 'cache') as String? ?? 'cache',
+      lastUpdated: _parseDate(_box?.get(_kTs)),
     );
   }
 
-  // ──────────────────────────────────────────────
-  // قيم احتياطية (أول تشغيل بدون إنترنت نهائياً)
-  // ──────────────────────────────────────────────
-  PriceData _fallbackData(String currency) {
-    // تقدير تقريبي ثابت لكل عملة عند غياب كامل للاتصال
-    const Map<String, double> approxGoldPerGram = {
-      'LYD': 11400.0,
-      'SAR': 8800.0,
-      'AED': 8600.0,
-      'USD': 2400.0,
-      'EUR': 2200.0,
-      'EGP': 74000.0,
-      'GBP': 1900.0,
-      'KWD': 735.0,
+  static GoldPriceResult _fallback(String cur) {
+    const approx = <String, double>{
+      'LYD': 11400,
+      'SAR': 8800,
+      'AED': 8600,
+      'USD': 2400,
+      'EUR': 2200,
+      'EGP': 74000,
+      'GBP': 1900,
+      'KWD': 735,
+      'QAR': 8740,
+      'JOD': 1700,
+      'MAD': 24000,
+      'TND': 7500,
     };
-    final gold = approxGoldPerGram[currency] ?? 2400.0;
-    final silver = gold * 0.000354; // نسبة تقريبية ذهب/فضة
-    return PriceData(
-      goldPricePerGram: gold,
-      silverPricePerGram: silver,
-      goldNisab: gold * 85,
-      silverNisab: silver * 595,
-      updatedAt: '',
-      source: 'offline_fallback',
+    final g = approx[cur] ?? 2400.0;
+    final s = g * 0.000355;
+    return GoldPriceResult(
+      pricePerGram: g,
+      silverPricePerGram: s,
+      goldNisab: g * 85,
+      silverNisab: s * 595,
       isLive: false,
+      source: 'offline_fallback',
+      lastUpdated: null,
     );
   }
 
-  // ──────────────────────────────────────────────
-  // مساعد: احسب سعر الجرام من أوقية USD (للبيانات القديمة)
-  // ──────────────────────────────────────────────
-  double _estimateGoldPerGram(Map<String, dynamic> data) {
-    final oz = (data['goldUsdPerOz'] as num?)?.toDouble() ?? 2350.0;
-    return oz / 31.1035;
+  static double _estimateFromOz(dynamic oz, String cur) {
+    const fx = <String, double>{
+      'LYD': 4.85,
+      'SAR': 3.75,
+      'AED': 3.67,
+      'EGP': 30.9,
+      'USD': 1.0,
+      'EUR': 0.92,
+      'GBP': 0.79,
+      'KWD': 0.31,
+      'QAR': 3.64,
+      'JOD': 0.71,
+      'MAD': 10.1,
+      'TND': 3.12,
+    };
+    return ((oz as num?)?.toDouble() ?? 2350.0) / 31.1035 * (fx[cur] ?? 1.0);
   }
 
-  // ──────────────────────────────────────────────
-  // مسح الكاش يدوياً (من شاشة الإعدادات)
-  // ──────────────────────────────────────────────
-  Future<void> clearCache() async {
-    await _box.clear();
+  static DateTime? _parseDate(dynamic v) {
+    if (v == null) return null;
+    try {
+      return DateTime.parse(v as String);
+    } catch (_) {
+      return null;
+    }
   }
 
-  void debugLog(String msg) {
-    // ignore: avoid_print
-    print('[GoldPriceService] $msg');
+  static void _log(String m) =>
+      print('[GoldPriceService] $m'); // ignore: avoid_print
+
+  static Future<void> clearCache() async => _box?.clear();
+
+  static double convert(double amount, String from, String to) {
+    const fx = <String, double>{
+      'USD': 1.0,
+      'LYD': 4.85,
+      'SAR': 3.75,
+      'AED': 3.67,
+      'EGP': 30.9,
+      'EUR': 0.92,
+      'GBP': 0.79,
+      'KWD': 0.31,
+      'QAR': 3.64,
+      'JOD': 0.71,
+      'MAD': 10.1,
+      'TND': 3.12,
+    };
+    return amount / (fx[from] ?? 1.0) * (fx[to] ?? 1.0);
   }
 }
 
-// ──────────────────────────────────────────────
-// نموذج البيانات
-// ──────────────────────────────────────────────
-class PriceData {
-  final double goldPricePerGram;
+// ══════════════════════════════════════════════════════════════
+// GoldPriceResult — نفس الواجهة + حقول إضافية
+// pricePerGram + isLive + lastUpdated + formattedTime + statusText
+// كلها موجودة في الكود الأصلي — لا تغيير في zakat_provider.dart
+// ══════════════════════════════════════════════════════════════
+class GoldPriceResult {
+  final double pricePerGram;
   final double silverPricePerGram;
   final double goldNisab;
   final double silverNisab;
-  final String updatedAt;
-  final String source;
   final bool isLive;
+  final String source;
+  final DateTime? lastUpdated;
 
-  const PriceData({
-    required this.goldPricePerGram,
+  const GoldPriceResult({
+    required this.pricePerGram,
     required this.silverPricePerGram,
     required this.goldNisab,
     required this.silverNisab,
-    required this.updatedAt,
-    required this.source,
     required this.isLive,
+    required this.source,
+    required this.lastUpdated,
   });
 
-  /// نص يُعرض للمستخدم: "سعر مباشر" أو "آخر تحديث: ..."
-  String statusText(bool isArabic) {
-    if (source == 'offline_fallback') {
-      return isArabic
-          ? '⚠️ سعر تقديري — لا يوجد اتصال'
-          : '⚠️ Estimated — no connection';
-    }
-    if (!isLive && updatedAt.isNotEmpty) {
-      try {
-        final dt = DateTime.parse(updatedAt).toLocal();
-        final formatted =
-            '${dt.day}/${dt.month}/${dt.year} ${dt.hour}:${dt.minute.toString().padLeft(2, '0')}';
-        return isArabic
-            ? '🕐 آخر تحديث: $formatted'
-            : '🕐 Last updated: $formatted';
-      } catch (_) {}
-    }
-    return isArabic ? '✅ سعر مباشر' : '✅ Live price';
+  String get statusText {
+    if (source == 'offline_fallback') return '⚠️ سعر تقديري';
+    return isLive ? '✅ سعر محدَّث' : '🕐 كاش محلي';
+  }
+
+  String get formattedTime {
+    if (lastUpdated == null) return '';
+    final t = lastUpdated!.toLocal();
+    return '${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}';
   }
 }
