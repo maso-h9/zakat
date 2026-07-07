@@ -1,3 +1,6 @@
+// storage_service.dart — V11
+// إضافة: حفظ/تحميل طريقة النصاب (nisab_method, official_nisab, custom_nisab)
+
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/zakat_provider.dart';
@@ -13,8 +16,13 @@ class StorageService {
   static const _keyFitrPaid = 'fitr_paid';
   static const _keyDarkMode = 'dark_mode';
   static const _keyCloudSync = 'cloud_sync';
-  static const _keyLanguage = 'language'; // جديد
+  static const _keyLanguage = 'language';
+  // ── جديد V11 ─────────────────────────────────────────────────
+  static const _keyNisabMethod = 'nisab_method'; // 0=global,1=official,2=custom
+  static const _keyOfficialNisab = 'official_nisab';
+  static const _keyCustomNisab = 'custom_nisab';
 
+  // ── الثروة ───────────────────────────────────────────────────
   static Future<void> saveWealth(ZakatProvider p) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(
@@ -44,17 +52,17 @@ class StorageService {
     );
   }
 
-  static Future<void> saveNisabDate(DateTime date) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_keyNisabDate, date.toIso8601String());
-  }
-
+  // ── تاريخ النصاب ─────────────────────────────────────────────
+  static Future<void> saveNisabDate(DateTime date) async =>
+      (await SharedPreferences.getInstance())
+          .setString(_keyNisabDate, date.toIso8601String());
   static Future<DateTime?> loadNisabDate() async {
-    final prefs = await SharedPreferences.getInstance();
-    final raw = prefs.getString(_keyNisabDate);
+    final raw =
+        (await SharedPreferences.getInstance()).getString(_keyNisabDate);
     return raw == null ? null : DateTime.tryParse(raw);
   }
 
+  // ── السجل ────────────────────────────────────────────────────
   static Future<void> saveHistory(List<ZakatRecord> history) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setStringList(
@@ -84,30 +92,47 @@ class StorageService {
     }).toList();
   }
 
+  // ── العملة ───────────────────────────────────────────────────
   static Future<void> saveCurrency(String code, String symbol) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_keyCurrency, code);
-    await prefs.setString(_keyCurrencySymbol, symbol);
+    final p = await SharedPreferences.getInstance();
+    await p.setString(_keyCurrency, code);
+    await p.setString(_keyCurrencySymbol, symbol);
   }
 
   static Future<Map<String, String>> loadCurrency() async {
-    final prefs = await SharedPreferences.getInstance();
+    final p = await SharedPreferences.getInstance();
     return {
-      'code': prefs.getString(_keyCurrency) ?? 'LYD',
-      'symbol': prefs.getString(_keyCurrencySymbol) ?? 'د.ل',
+      'code': p.getString(_keyCurrency) ?? 'LYD',
+      'symbol': p.getString(_keyCurrencySymbol) ?? 'د.ل'
     };
   }
 
-  static Future<void> saveGoldPrice(double price) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setDouble(_keyGoldPrice, price);
+  // ── سعر الذهب ────────────────────────────────────────────────
+  static Future<void> saveGoldPrice(double price) async =>
+      (await SharedPreferences.getInstance()).setDouble(_keyGoldPrice, price);
+  static Future<double?> loadGoldPrice() async =>
+      (await SharedPreferences.getInstance()).getDouble(_keyGoldPrice);
+
+  // ── طريقة النصاب (جديد V11) ──────────────────────────────────
+  static Future<void> saveNisabMethod(
+      NisabMethod method, double official, double custom) async {
+    final p = await SharedPreferences.getInstance();
+    await p.setInt(_keyNisabMethod, method.index);
+    await p.setDouble(_keyOfficialNisab, official);
+    await p.setDouble(_keyCustomNisab, custom);
   }
 
-  static Future<double?> loadGoldPrice() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getDouble(_keyGoldPrice);
+  static Future<Map<String, dynamic>> loadNisabMethod() async {
+    final p = await SharedPreferences.getInstance();
+    final idx = p.getInt(_keyNisabMethod) ?? 0;
+    return {
+      'method': NisabMethod.values[idx.clamp(0, 2)],
+      'official': p.getDouble(_keyOfficialNisab) ?? 0.0,
+      'custom': p.getDouble(_keyCustomNisab) ?? 0.0,
+    };
   }
 
+  // ── بقية الإعدادات (بدون تغيير) ─────────────────────────────
   static Future<void> saveRamadanMode(bool on) async =>
       (await SharedPreferences.getInstance()).setBool(_keyRamadanMode, on);
   static Future<bool> loadRamadanMode() async =>

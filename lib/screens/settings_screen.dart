@@ -265,6 +265,76 @@ class SettingsScreen extends StatelessWidget {
             ]),
             const SizedBox(height: 16),
 
+            // ══════════════════════════════════════════════════
+            // ── طريقة حساب النصاب (جديد V11) ─────────────────
+            // ══════════════════════════════════════════════════
+            _sectionHeader(
+              p.isArabic ? 'طريقة حساب النصاب' : 'Nisab Calculation Method',
+              isDark,
+              info: p.isArabic
+                  ? '🌍 الحساب العالمي\nيعتمد على سعر الذهب العالمي وسعر الصرف.\n\n🏛️ النصاب الرسمي\nيعتمد على القيمة التي تعلنها الجهة الرسمية في بلدك.\n\n✍️ الحساب المخصص\nيتيح إدخال قيمة النصاب أو أسعار الذهب يدوياً.\n\nقد تختلف النتائج بين الطرق بسبب اختلاف مصدر الأسعار.'
+                  : '🌍 Global Calculation\nBased on world gold price and exchange rate.\n\n🏛️ Official Nisab\nBased on the value announced by your country\'s official body.\n\n✍️ Custom Calculation\nEnter your own Nisab value or gold prices.\n\nResults may differ between methods due to different price sources.',
+            ),
+            _card(cardColor: cardColor, isDark: isDark, children: [
+              // الخيار 1: الحساب العالمي
+              _nisabMethodTile(
+                context: context,
+                p: p,
+                isDark: isDark,
+                textColor: textColor,
+                subColor: subColor,
+                method: NisabMethod.global,
+                icon: '🌍',
+                title: p.isArabic ? 'الحساب العالمي' : 'Global Calculation',
+                subtitle: p.isArabic
+                    ? 'سعر الذهب العالمي × سعر الصرف (موصى به)'
+                    : 'World gold price × exchange rate (recommended)',
+              ),
+              Divider(height: 1, color: divColor),
+              // الخيار 2: النصاب الرسمي
+              _nisabMethodTile(
+                context: context,
+                p: p,
+                isDark: isDark,
+                textColor: textColor,
+                subColor: subColor,
+                method: NisabMethod.official,
+                icon: '🏛️',
+                title: p.isArabic
+                    ? 'النصاب الرسمي للدولة'
+                    : 'Official Country Nisab',
+                subtitle: p.isArabic
+                    ? 'القيمة المُعلنة من الجهة الرسمية في بلدك'
+                    : 'Value announced by your country\'s official body',
+              ),
+              if (p.nisabMethod == NisabMethod.official) ...[
+                Divider(height: 1, color: divColor),
+                _officialNisabPanel(
+                    context, p, isDark, textColor, subColor, cardColor),
+              ],
+              Divider(height: 1, color: divColor),
+              // الخيار 3: الحساب المخصص
+              _nisabMethodTile(
+                context: context,
+                p: p,
+                isDark: isDark,
+                textColor: textColor,
+                subColor: subColor,
+                method: NisabMethod.custom,
+                icon: '✍️',
+                title: p.isArabic ? 'حساب مخصص' : 'Custom Calculation',
+                subtitle: p.isArabic
+                    ? 'أدخل قيمة النصاب أو أسعار الذهب يدوياً'
+                    : 'Enter Nisab value or gold prices manually',
+              ),
+              if (p.nisabMethod == NisabMethod.custom) ...[
+                Divider(height: 1, color: divColor),
+                _customNisabPanel(
+                    context, p, isDark, textColor, subColor, cardColor),
+              ],
+            ]),
+            const SizedBox(height: 16),
+
             // ── عن التطبيق ────────────────────────────────────
             _sectionHeader(p.isArabic ? 'عن التطبيق' : 'About', isDark),
             _card(cardColor: cardColor, isDark: isDark, children: [
@@ -311,26 +381,7 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 
-  Widget _sectionHeader(String title, bool isDark) => Padding(
-        padding: const EdgeInsets.only(bottom: 8, right: 4, left: 4),
-        child: Row(children: [
-          Container(
-              width: 4,
-              height: 18,
-              decoration: BoxDecoration(
-                  color: ZakatTheme.gold,
-                  borderRadius: BorderRadius.circular(2))),
-          const SizedBox(width: 8),
-          Text(title,
-              style: TextStyle(
-                  fontFamily: 'Scheherazade',
-                  fontSize: 15,
-                  fontWeight: FontWeight.bold,
-                  color: isDark
-                      ? ZakatTheme.darkTextSecondary
-                      : ZakatTheme.medText)),
-        ]),
-      );
+  // _sectionHeader المُوحَّد موجود في الأسفل (مع دعم info)
 
   Widget _card({
     required List<Widget> children,
@@ -457,5 +508,497 @@ class SettingsScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  // ── مساعد: _sectionHeader مع زر معلومات ─────────────────────
+  Widget _sectionHeader(String title, bool isDark, {String? info}) {
+    final isDarkFinal = isDark;
+    return Builder(
+        builder: (context) => Padding(
+              padding: const EdgeInsets.only(bottom: 8, right: 4, left: 4),
+              child: Row(children: [
+                Container(
+                    width: 4,
+                    height: 18,
+                    decoration: BoxDecoration(
+                        color: ZakatTheme.gold,
+                        borderRadius: BorderRadius.circular(2))),
+                const SizedBox(width: 8),
+                Expanded(
+                    child: Text(title,
+                        style: TextStyle(
+                            fontFamily: 'Scheherazade',
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                            color: isDarkFinal
+                                ? ZakatTheme.darkTextSecondary
+                                : ZakatTheme.medText))),
+                if (info != null)
+                  GestureDetector(
+                    onTap: () => showDialog(
+                      context: context,
+                      builder: (_) => AlertDialog(
+                        backgroundColor:
+                            isDarkFinal ? ZakatTheme.darkCard : Colors.white,
+                        title: Text(title,
+                            style: const TextStyle(
+                                fontFamily: 'Scheherazade', fontSize: 16)),
+                        content: Text(info,
+                            style: const TextStyle(
+                                fontFamily: 'Scheherazade',
+                                height: 1.8,
+                                fontSize: 14)),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            child: const Text('حسناً',
+                                style: TextStyle(fontFamily: 'Scheherazade')),
+                          )
+                        ],
+                      ),
+                    ),
+                    child: Container(
+                      padding: const EdgeInsets.all(4),
+                      child: Icon(Icons.info_outline,
+                          size: 18,
+                          color: isDarkFinal
+                              ? ZakatTheme.darkTextSecondary
+                              : ZakatTheme.medText),
+                    ),
+                  ),
+              ]),
+            ));
+  }
+
+  // ── tile اختيار طريقة النصاب ─────────────────────────────────
+  Widget _nisabMethodTile({
+    required BuildContext context,
+    required ZakatProvider p,
+    required bool isDark,
+    required Color textColor,
+    required Color subColor,
+    required NisabMethod method,
+    required String icon,
+    required String title,
+    required String subtitle,
+  }) {
+    final selected = p.nisabMethod == method;
+    return ListTile(
+      leading: Text(icon, style: const TextStyle(fontSize: 24)),
+      title: Text(title,
+          style: TextStyle(
+              fontFamily: 'Scheherazade',
+              fontSize: 15,
+              fontWeight: FontWeight.w600,
+              color: textColor)),
+      subtitle: Text(subtitle,
+          style: TextStyle(
+              fontFamily: 'Scheherazade', fontSize: 12, color: subColor)),
+      trailing: selected
+          ? const Icon(Icons.radio_button_checked, color: ZakatTheme.deepGreen)
+          : const Icon(Icons.radio_button_unchecked, color: Colors.grey),
+      onTap: () => p.setNisabMethod(method),
+    );
+  }
+
+  // ── لوحة النصاب الرسمي ───────────────────────────────────────
+  Widget _officialNisabPanel(BuildContext context, ZakatProvider p, bool isDark,
+      Color textColor, Color subColor, Color cardColor) {
+    final source = officialSources
+        .where((s) => s.currency == p.selectedCurrency)
+        .firstOrNull;
+    final ctrl = TextEditingController(
+        text: p.officialNisabValue > 0
+            ? p.officialNisabValue.toStringAsFixed(0)
+            : '');
+
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        if (source != null) ...[
+          // مصدر رسمي موجود
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: ZakatTheme.deepGreen.withOpacity(isDark ? 0.12 : 0.07),
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: ZakatTheme.deepGreen.withOpacity(0.3)),
+            ),
+            child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Row(children: [
+                const Icon(Icons.verified,
+                    color: ZakatTheme.deepGreen, size: 18),
+                const SizedBox(width: 6),
+                Expanded(
+                    child: Text(
+                  p.isArabic ? source.nameAr : source.nameEn,
+                  style: TextStyle(
+                      fontFamily: 'Scheherazade',
+                      fontWeight: FontWeight.bold,
+                      color: textColor,
+                      fontSize: 14),
+                )),
+              ]),
+              const SizedBox(height: 8),
+              ElevatedButton.icon(
+                onPressed: () {
+                  // فتح الرابط
+                  // يمكن استخدام url_launcher لاحقاً
+                  // launch(source.url);
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text(source.url,
+                        style: const TextStyle(fontFamily: 'Scheherazade')),
+                    action: SnackBarAction(label: 'نسخ', onPressed: () {}),
+                  ));
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: ZakatTheme.deepGreen.withOpacity(0.85),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                ),
+                icon: const Icon(Icons.open_in_new,
+                    size: 16, color: Colors.white),
+                label: Text(
+                    p.isArabic ? 'فتح المصدر الرسمي' : 'Open Official Source',
+                    style: const TextStyle(
+                        fontFamily: 'Scheherazade',
+                        fontSize: 13,
+                        color: Colors.white)),
+              ),
+            ]),
+          ),
+          const SizedBox(height: 12),
+        ] else ...[
+          // لا يوجد مصدر رسمي لهذه الدولة
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: ZakatTheme.gold.withOpacity(0.08),
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: ZakatTheme.gold.withOpacity(0.3)),
+            ),
+            child: Row(children: [
+              const Icon(Icons.info_outline, color: ZakatTheme.gold, size: 18),
+              const SizedBox(width: 8),
+              Expanded(
+                  child: Text(
+                p.isArabic
+                    ? 'لا يتوفر مصدر رسمي معروف لهذه الدولة — سيُستخدم الحساب العالمي إذا لم تدخل قيمة.'
+                    : 'No known official source for this country — global calculation will be used if no value entered.',
+                style: TextStyle(
+                    fontFamily: 'Scheherazade',
+                    fontSize: 13,
+                    color: subColor,
+                    height: 1.6),
+              )),
+            ]),
+          ),
+          const SizedBox(height: 12),
+        ],
+        // حقل إدخال القيمة
+        Text(
+            p.isArabic
+                ? 'أدخل قيمة النصاب الرسمية:'
+                : 'Enter official Nisab value:',
+            style: TextStyle(
+                fontFamily: 'Scheherazade', fontSize: 14, color: subColor)),
+        const SizedBox(height: 8),
+        Row(children: [
+          Expanded(
+            child: TextField(
+              controller: ctrl,
+              keyboardType:
+                  const TextInputType.numberWithOptions(decimal: true),
+              textDirection: TextDirection.rtl,
+              style: TextStyle(fontFamily: 'Scheherazade', color: textColor),
+              decoration: InputDecoration(
+                hintText: p.isArabic ? 'مثال: 97495' : 'Example: 97495',
+                suffixText: p.currencySymbol,
+                filled: true,
+                fillColor: cardColor,
+                border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide.none),
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+              ),
+            ),
+          ),
+          const SizedBox(width: 10),
+          ElevatedButton(
+            onPressed: () {
+              final val = double.tryParse(ctrl.text.replaceAll(',', ''));
+              if (val != null && val > 0) {
+                p.setOfficialNisab(val);
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  content: Text(
+                    p.isArabic
+                        ? 'تم حفظ النصاب: ${val.toStringAsFixed(0)} ${p.currencySymbol}'
+                        : 'Saved: ${val.toStringAsFixed(0)} ${p.currencySymbol}',
+                    style: const TextStyle(fontFamily: 'Scheherazade'),
+                  ),
+                ));
+              }
+            },
+            style: ElevatedButton.styleFrom(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12)),
+            child: Text(p.isArabic ? 'حفظ' : 'Save',
+                style: const TextStyle(fontFamily: 'Scheherazade')),
+          ),
+        ]),
+        if (p.officialNisabValue > 0)
+          Padding(
+            padding: const EdgeInsets.only(top: 8),
+            child: Text(
+              '${p.isArabic ? "النصاب المحفوظ" : "Saved Nisab"}: ${p.officialNisabValue.toStringAsFixed(0)} ${p.currencySymbol}',
+              style: const TextStyle(
+                  color: ZakatTheme.deepGreen,
+                  fontFamily: 'Scheherazade',
+                  fontSize: 13),
+            ),
+          ),
+      ]),
+    );
+  }
+
+  // ── لوحة الحساب المخصص ───────────────────────────────────────
+  Widget _customNisabPanel(BuildContext context, ZakatProvider p, bool isDark,
+      Color textColor, Color subColor, Color cardColor) {
+    final directCtrl = TextEditingController(
+        text: p.customNisabValue > 0
+            ? p.customNisabValue.toStringAsFixed(0)
+            : '');
+    final gramCtrl = TextEditingController();
+    final ozCtrl = TextEditingController();
+    final fxCtrl = TextEditingController();
+
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        // ── الخيار 1: إدخال مباشر ──────────────────────────────
+        _customSubHeader(
+            p.isArabic
+                ? 'الخيار 1 — إدخال القيمة مباشرة'
+                : 'Option 1 — Enter value directly',
+            subColor),
+        const SizedBox(height: 8),
+        Row(children: [
+          Expanded(
+            child: TextField(
+              controller: directCtrl,
+              keyboardType:
+                  const TextInputType.numberWithOptions(decimal: true),
+              textDirection: TextDirection.rtl,
+              style: TextStyle(fontFamily: 'Scheherazade', color: textColor),
+              decoration: InputDecoration(
+                hintText: p.isArabic ? 'مثال: 97495' : 'Example: 97495',
+                suffixText: p.currencySymbol,
+                filled: true,
+                fillColor: cardColor,
+                border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide.none),
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+              ),
+            ),
+          ),
+          const SizedBox(width: 10),
+          ElevatedButton(
+            onPressed: () {
+              final val = double.tryParse(directCtrl.text.replaceAll(',', ''));
+              if (val != null && val > 0) {
+                p.setCustomNisab(val);
+                _showSaved(context, p, val);
+              }
+            },
+            style: ElevatedButton.styleFrom(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12)),
+            child: Text(p.isArabic ? 'حفظ' : 'Save',
+                style: const TextStyle(fontFamily: 'Scheherazade')),
+          ),
+        ]),
+        const SizedBox(height: 16),
+
+        // ── الخيار 2: من سعر الجرام ────────────────────────────
+        _customSubHeader(
+            p.isArabic
+                ? 'الخيار 2 — من سعر جرام الذهب'
+                : 'Option 2 — From gold gram price',
+            subColor),
+        const SizedBox(height: 8),
+        Row(children: [
+          Expanded(
+            child: TextField(
+              controller: gramCtrl,
+              keyboardType:
+                  const TextInputType.numberWithOptions(decimal: true),
+              textDirection: TextDirection.rtl,
+              style: TextStyle(fontFamily: 'Scheherazade', color: textColor),
+              decoration: InputDecoration(
+                hintText: p.isArabic ? 'سعر الجرام' : 'Price per gram',
+                suffixText: p.currencySymbol,
+                filled: true,
+                fillColor: cardColor,
+                border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide.none),
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+              ),
+            ),
+          ),
+          const SizedBox(width: 10),
+          ElevatedButton(
+            onPressed: () {
+              final gPrice = double.tryParse(gramCtrl.text.replaceAll(',', ''));
+              if (gPrice != null && gPrice > 0) {
+                final nisab = p.calcNisabFromGramPrice(gPrice);
+                p.setCustomNisab(nisab);
+                _showCalcResult(context, p, gPrice, nisab);
+              }
+            },
+            style: ElevatedButton.styleFrom(
+                backgroundColor: ZakatTheme.gold,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 12)),
+            child: Text(p.isArabic ? 'احسب' : 'Calc',
+                style: const TextStyle(
+                    fontFamily: 'Scheherazade', color: Colors.black)),
+          ),
+        ]),
+        const SizedBox(height: 16),
+
+        // ── الخيار 3: من الأوقية + الصرف ──────────────────────
+        _customSubHeader(
+          p.isArabic
+              ? 'الخيار 3 — من سعر الأوقية وسعر الصرف'
+              : 'Option 3 — From oz price + exchange rate',
+          subColor,
+        ),
+        const SizedBox(height: 8),
+        Row(children: [
+          Expanded(
+            child: TextField(
+              controller: ozCtrl,
+              keyboardType:
+                  const TextInputType.numberWithOptions(decimal: true),
+              textDirection: TextDirection.rtl,
+              style: TextStyle(fontFamily: 'Scheherazade', color: textColor),
+              decoration: InputDecoration(
+                hintText: p.isArabic ? 'سعر الأوقية (USD)' : 'Oz price (USD)',
+                filled: true,
+                fillColor: cardColor,
+                border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide.none),
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+              ),
+            ),
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: TextField(
+              controller: fxCtrl,
+              keyboardType:
+                  const TextInputType.numberWithOptions(decimal: true),
+              textDirection: TextDirection.rtl,
+              style: TextStyle(fontFamily: 'Scheherazade', color: textColor),
+              decoration: InputDecoration(
+                hintText: p.isArabic ? 'سعر صرف الدولار' : 'USD exchange rate',
+                filled: true,
+                fillColor: cardColor,
+                border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide.none),
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+              ),
+            ),
+          ),
+        ]),
+        const SizedBox(height: 8),
+        SizedBox(
+          width: double.infinity,
+          child: ElevatedButton.icon(
+            onPressed: () {
+              final oz = double.tryParse(ozCtrl.text.replaceAll(',', ''));
+              final fx = double.tryParse(fxCtrl.text.replaceAll(',', ''));
+              if (oz != null && fx != null && oz > 0 && fx > 0) {
+                final nisab = p.calcNisabFromOz(oz, fx);
+                p.setCustomNisab(nisab);
+                _showCalcResult(context, p, oz / 31.1035 * fx, nisab);
+              }
+            },
+            style: ElevatedButton.styleFrom(
+                backgroundColor: ZakatTheme.gold,
+                padding: const EdgeInsets.symmetric(vertical: 12)),
+            icon: const Icon(Icons.calculate_outlined,
+                color: Colors.black, size: 20),
+            label: Text(p.isArabic ? 'احسب واحفظ' : 'Calculate & Save',
+                style: const TextStyle(
+                    fontFamily: 'Scheherazade', color: Colors.black)),
+          ),
+        ),
+
+        // النتيجة المحفوظة
+        if (p.customNisabValue > 0)
+          Padding(
+            padding: const EdgeInsets.only(top: 14),
+            child: Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: ZakatTheme.deepGreen.withOpacity(isDark ? 0.15 : 0.07),
+                borderRadius: BorderRadius.circular(10),
+                border:
+                    Border.all(color: ZakatTheme.deepGreen.withOpacity(0.3)),
+              ),
+              child: Row(children: [
+                const Icon(Icons.check_circle,
+                    color: ZakatTheme.deepGreen, size: 20),
+                const SizedBox(width: 8),
+                Text(
+                  '${p.isArabic ? "النصاب المخصص" : "Custom Nisab"}: ${p.customNisabValue.toStringAsFixed(0)} ${p.currencySymbol}',
+                  style: const TextStyle(
+                      color: ZakatTheme.deepGreen,
+                      fontFamily: 'Scheherazade',
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold),
+                ),
+              ]),
+            ),
+          ),
+      ]),
+    );
+  }
+
+  Widget _customSubHeader(String title, Color color) => Text(title,
+      style: TextStyle(
+          fontFamily: 'Scheherazade',
+          fontSize: 13,
+          color: color,
+          fontWeight: FontWeight.w600));
+
+  void _showSaved(BuildContext context, ZakatProvider p, double val) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(
+          '${p.isArabic ? "تم حفظ النصاب" : "Saved Nisab"}: ${val.toStringAsFixed(0)} ${p.currencySymbol}',
+          style: const TextStyle(fontFamily: 'Scheherazade')),
+    ));
+  }
+
+  void _showCalcResult(
+      BuildContext context, ZakatProvider p, double gramPrice, double nisab) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(
+        '${p.isArabic ? "النصاب المحسوب" : "Calculated Nisab"}: ${nisab.toStringAsFixed(0)} ${p.currencySymbol}',
+        style: const TextStyle(fontFamily: 'Scheherazade'),
+      ),
+      duration: const Duration(seconds: 3),
+    ));
   }
 }
