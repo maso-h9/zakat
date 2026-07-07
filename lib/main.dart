@@ -28,7 +28,6 @@ void main() async {
   );
 
   await NotificationService().init();
-  await GoldPriceService().init();
 
   runApp(const ZakatApp());
 }
