@@ -1,10 +1,19 @@
 // ================================================================
-// settings_screen.dart — الإعدادات النهائية
+// settings_screen.dart — V12
+// تغييرات عن V11:
+//   - _officialNisabPanel يقرأ من p.currentCountrySource (Firestore ديناميكي)
+//   - دعم أكثر من رابط للمصدر (links list)
+//   - عرض مستوى الثقة ونوع المصدر
+//   - بطاقة مقارنة النصاب (بند 7)
+//   - فتح الرابط الحقيقي عبر url_launcher
 // ================================================================
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../models/zakat_provider.dart';
 import '../services/storage_service.dart';
+import '../services/nisab_service.dart';
 import '../utils/theme.dart';
 import 'profile_screen.dart';
 
@@ -44,27 +53,26 @@ class SettingsScreen extends StatelessWidget {
                   width: 40,
                   height: 40,
                   decoration: BoxDecoration(
-                    gradient: ZakatTheme.mainGradient,
-                    shape: BoxShape.circle,
-                  ),
-                  child:
-                      const Icon(Icons.person, color: Colors.white, size: 20),
+                      gradient: ZakatTheme.mainGradient,
+                      shape: BoxShape.circle),
+                  child: const Icon(Icons.person, color: Colors.white),
                 ),
-                title: Text(p.isArabic ? 'إدارة حسابي' : 'Manage My Account',
+                title: Text(p.isArabic ? 'حسابي' : 'My Account',
                     style: TextStyle(
                         fontFamily: 'Scheherazade',
-                        fontSize: 16,
-                        color: textColor,
-                        fontWeight: FontWeight.w600)),
+                        fontWeight: FontWeight.w600,
+                        color: textColor)),
                 subtitle: Text(
                     p.isArabic
-                        ? 'تسجيل الدخول · المزامنة · الحذف'
-                        : 'Sign in · Sync · Delete',
+                        ? 'عرض وتعديل معلوماتك'
+                        : 'View and edit your info',
                     style: TextStyle(
                         fontFamily: 'Scheherazade',
-                        fontSize: 13,
-                        color: subColor)),
-                trailing: const Icon(Icons.arrow_forward_ios, size: 14),
+                        color: subColor,
+                        fontSize: 12)),
+                trailing: Icon(
+                    p.isArabic ? Icons.chevron_left : Icons.chevron_right,
+                    color: subColor),
                 onTap: () => Navigator.push(context,
                     MaterialPageRoute(builder: (_) => const ProfileScreen())),
               ),
@@ -74,22 +82,15 @@ class SettingsScreen extends StatelessWidget {
             // ── المظهر ────────────────────────────────────────
             _sectionHeader(p.isArabic ? 'المظهر' : 'Appearance', isDark),
             _card(cardColor: cardColor, isDark: isDark, children: [
-              SwitchListTile.adaptive(
-                secondary: Icon(
-                  isDark ? Icons.dark_mode : Icons.light_mode,
-                  color: isDark ? ZakatTheme.gold : ZakatTheme.deepGreen,
-                ),
-                title: Text(
-                    isDark
-                        ? (p.isArabic ? 'الوضع الداكن' : 'Dark Mode')
-                        : (p.isArabic ? 'الوضع الفاتح' : 'Light Mode'),
-                    style: TextStyle(
-                        fontFamily: 'Scheherazade',
-                        fontSize: 16,
-                        color: textColor)),
-                value: isDark,
-                activeColor: ZakatTheme.gold,
+              SwitchListTile(
+                value: p.isDarkMode,
                 onChanged: p.toggleDarkMode,
+                title: Text(p.isArabic ? 'الوضع الداكن' : 'Dark Mode',
+                    style: TextStyle(
+                        fontFamily: 'Scheherazade', color: textColor)),
+                secondary: Icon(
+                    p.isDarkMode ? Icons.dark_mode : Icons.light_mode,
+                    color: ZakatTheme.deepGreen),
               ),
             ]),
             const SizedBox(height: 16),
@@ -97,146 +98,84 @@ class SettingsScreen extends StatelessWidget {
             // ── اللغة ─────────────────────────────────────────
             _sectionHeader(p.isArabic ? 'اللغة' : 'Language', isDark),
             _card(cardColor: cardColor, isDark: isDark, children: [
-              _langTile(
-                flag: '🇸🇦',
-                label: p.isArabic ? 'العربية' : 'Arabic',
-                selected: p.isArabic,
-                isDark: isDark,
-                textColor: textColor,
-                onTap: () => p.setLanguage('ar'),
-              ),
+              _langTile(context, p, isDark, textColor, subColor, 'ar',
+                  'العربية', '🇸🇦'),
               Divider(height: 1, color: divColor),
-              _langTile(
-                flag: '🇺🇸',
-                label: p.isArabic ? 'الإنجليزية' : 'English',
-                selected: !p.isArabic,
-                isDark: isDark,
-                textColor: textColor,
-                onTap: () => p.setLanguage('en'),
-              ),
+              _langTile(context, p, isDark, textColor, subColor, 'en',
+                  'English', '🇬🇧'),
             ]),
             const SizedBox(height: 16),
 
-            // ── العملة والأسعار ───────────────────────────────
-            _sectionHeader(
-                p.isArabic ? 'العملة والأسعار' : 'Currency & Prices', isDark),
+            // ── العملة ────────────────────────────────────────
+            _sectionHeader(p.isArabic ? 'العملة' : 'Currency', isDark),
             _card(cardColor: cardColor, isDark: isDark, children: [
-              _tileLabel(p.isArabic ? 'العملة الحالية' : 'Current Currency',
-                  '${p.selectedCurrency} — ${p.currencySymbol}', isDark),
-              Divider(height: 1, color: divColor),
+              ...currencies.map((c) => Column(children: [
+                    ListTile(
+                      title: Text('${c.symbol} — ${c.name}',
+                          style: TextStyle(
+                              fontFamily: 'Scheherazade',
+                              color: textColor,
+                              fontSize: 14)),
+                      trailing: p.selectedCurrency == c.code
+                          ? const Icon(Icons.check_circle,
+                              color: ZakatTheme.deepGreen)
+                          : null,
+                      onTap: () => p.setCurrency(c.code, c.symbol),
+                    ),
+                    if (c != currencies.last)
+                      Divider(height: 1, color: divColor),
+                  ])),
+            ]),
+            const SizedBox(height: 16),
+
+            // ── سعر الذهب ─────────────────────────────────────
+            _sectionHeader(p.isArabic ? 'سعر الذهب' : 'Gold Price', isDark),
+            _card(cardColor: cardColor, isDark: isDark, children: [
               ListTile(
-                leading: Icon(Icons.currency_exchange,
-                    color: isDark ? ZakatTheme.gold : ZakatTheme.deepGreen),
-                title: Text(p.isArabic ? 'تغيير العملة' : 'Change Currency',
-                    style: TextStyle(
-                        fontFamily: 'Scheherazade',
-                        fontSize: 16,
-                        color: textColor)),
-                trailing:
-                    Icon(Icons.arrow_forward_ios, size: 14, color: subColor),
-                onTap: () => _showCurrencyPicker(context, p),
-              ),
-              Divider(height: 1, color: divColor),
-              ListTile(
-                leading: Icon(Icons.refresh,
-                    color: isDark ? ZakatTheme.gold : ZakatTheme.deepGreen),
+                leading: const Text('🥇', style: TextStyle(fontSize: 24)),
                 title: Text(
-                    p.isArabic ? 'تحديث سعر الذهب' : 'Update Gold Price',
-                    style: TextStyle(
-                        fontFamily: 'Scheherazade',
-                        fontSize: 16,
-                        color: textColor)),
+                  '${p.goldPricePerGram.toStringAsFixed(2)} ${p.currencySymbol} / ${p.isArabic ? "جرام" : "gram"}',
+                  style: TextStyle(
+                      fontFamily: 'Scheherazade',
+                      fontWeight: FontWeight.bold,
+                      color: textColor),
+                ),
                 subtitle: Text(
-                    p.goldPriceIsLive
-                        ? '${p.isArabic ? "سعر مباشر" : "Live"} — ${p.goldPriceLastUpdated ?? ""}'
-                        : (p.isArabic ? 'سعر تقديري' : 'Estimated price'),
-                    style: TextStyle(
-                        fontFamily: 'Scheherazade',
-                        fontSize: 13,
-                        color: subColor)),
+                  p.goldPriceIsLive
+                      ? (p.isArabic
+                          ? '✅ سعر مباشر — آخر تحديث: ${p.goldPriceLastUpdated ?? ""}'
+                          : '✅ Live — Updated: ${p.goldPriceLastUpdated ?? ""}')
+                      : (p.isArabic ? '🕐 سعر مخزن مؤقتاً' : '🕐 Cached price'),
+                  style: TextStyle(
+                      fontFamily: 'Scheherazade',
+                      color: subColor,
+                      fontSize: 12),
+                ),
                 trailing: p.isLoadingGoldPrice
                     ? const SizedBox(
                         width: 20,
                         height: 20,
                         child: CircularProgressIndicator(strokeWidth: 2))
-                    : Icon(Icons.cloud_download_outlined,
-                        color: isDark ? ZakatTheme.gold : ZakatTheme.deepGreen),
-                onTap: () => p.fetchGoldPrice(),
+                    : IconButton(
+                        icon: const Icon(Icons.refresh,
+                            color: ZakatTheme.deepGreen),
+                        onPressed: () => p.fetchGoldPrice(),
+                      ),
               ),
             ]),
             const SizedBox(height: 16),
 
-            // ── المزامنة السحابية ─────────────────────────────
-            _sectionHeader(
-                p.isArabic ? 'المزامنة السحابية' : 'Cloud Sync', isDark),
-            _card(cardColor: cardColor, isDark: isDark, children: [
-              SwitchListTile.adaptive(
-                secondary: Icon(Icons.cloud_outlined,
-                    color: isDark ? ZakatTheme.gold : ZakatTheme.deepGreen),
-                title: Text(p.isArabic ? 'مزامنة Firebase' : 'Firebase Sync',
-                    style: TextStyle(
-                        fontFamily: 'Scheherazade',
-                        fontSize: 16,
-                        color: textColor)),
-                subtitle: Text(
-                    p.cloudSyncEnabled
-                        ? p.lastSyncTime != null
-                            ? '${p.isArabic ? "آخر مزامنة" : "Last sync"}: ${_fmt(p.lastSyncTime!)}'
-                            : (p.isArabic ? 'جارٍ...' : 'Syncing...')
-                        : (p.isArabic ? 'محفوظ محلياً فقط' : 'Local only'),
-                    style: TextStyle(
-                        fontFamily: 'Scheherazade',
-                        fontSize: 13,
-                        color: subColor)),
-                value: p.cloudSyncEnabled,
-                activeColor: ZakatTheme.gold,
-                onChanged: (v) => p.toggleCloudSync(v),
-              ),
-              if (p.cloudSyncEnabled) ...[
-                Divider(height: 1, color: divColor),
-                ListTile(
-                  leading: p.isSyncing
-                      ? const SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(
-                              strokeWidth: 2, color: ZakatTheme.deepGreen))
-                      : Icon(Icons.sync,
-                          color:
-                              isDark ? ZakatTheme.gold : ZakatTheme.deepGreen),
-                  title: Text(p.isArabic ? 'مزامنة الآن' : 'Sync Now',
-                      style: TextStyle(
-                          fontFamily: 'Scheherazade',
-                          fontSize: 16,
-                          color: textColor)),
-                  onTap: p.isSyncing ? null : () => p.syncNow(),
-                ),
-              ],
-            ]),
-            const SizedBox(height: 16),
-
-            // ── رمضان ─────────────────────────────────────────
+            // ── وضع رمضان ─────────────────────────────────────
             _sectionHeader(p.isArabic ? 'وضع رمضان' : 'Ramadan Mode', isDark),
             _card(cardColor: cardColor, isDark: isDark, children: [
-              SwitchListTile.adaptive(
-                secondary: const Text('🌙', style: TextStyle(fontSize: 22)),
+              SwitchListTile(
+                value: p.isRamadanMode,
+                onChanged: p.toggleRamadanMode,
                 title: Text(
                     p.isArabic ? 'تفعيل وضع رمضان' : 'Enable Ramadan Mode',
                     style: TextStyle(
-                        fontFamily: 'Scheherazade',
-                        fontSize: 16,
-                        color: textColor)),
-                subtitle: Text(
-                    p.isArabic
-                        ? 'ثيم ليلي وزكاة الفطر'
-                        : 'Night theme & Zakat Al-Fitr',
-                    style: TextStyle(
-                        fontFamily: 'Scheherazade',
-                        fontSize: 13,
-                        color: subColor)),
-                value: p.isRamadanMode,
-                activeColor: ZakatTheme.gold,
-                onChanged: p.toggleRamadanMode,
+                        fontFamily: 'Scheherazade', color: textColor)),
+                secondary: const Text('🌙', style: TextStyle(fontSize: 22)),
               ),
             ]),
             const SizedBox(height: 16),
@@ -244,29 +183,27 @@ class SettingsScreen extends StatelessWidget {
             // ── البيانات ──────────────────────────────────────
             _sectionHeader(p.isArabic ? 'البيانات' : 'Data', isDark),
             _card(cardColor: cardColor, isDark: isDark, children: [
+              SwitchListTile(
+                value: p.cloudSyncEnabled,
+                onChanged: p.toggleCloudSync,
+                title: Text(p.isArabic ? 'مزامنة سحابية' : 'Cloud Sync',
+                    style: TextStyle(
+                        fontFamily: 'Scheherazade', color: textColor)),
+                secondary: Icon(Icons.cloud_sync, color: ZakatTheme.deepGreen),
+              ),
+              Divider(height: 1, color: divColor),
               ListTile(
-                leading:
-                    const Icon(Icons.delete_outline, color: ZakatTheme.error),
+                leading: const Icon(Icons.delete_outline, color: Colors.red),
                 title: Text(p.isArabic ? 'مسح جميع البيانات' : 'Clear All Data',
                     style: const TextStyle(
-                        fontFamily: 'Scheherazade',
-                        fontSize: 16,
-                        color: ZakatTheme.error)),
-                subtitle: Text(
-                    p.isArabic
-                        ? 'يحذف الثروة والتاريخ وكل الإعدادات'
-                        : 'Deletes wealth, history and all settings',
-                    style: TextStyle(
-                        fontFamily: 'Scheherazade',
-                        fontSize: 13,
-                        color: subColor)),
+                        fontFamily: 'Scheherazade', color: Colors.red)),
                 onTap: () => _confirmClear(context, p),
               ),
             ]),
             const SizedBox(height: 16),
 
             // ══════════════════════════════════════════════════
-            // ── طريقة حساب النصاب (جديد V11) ─────────────────
+            // طريقة حساب النصاب — V11/V12
             // ══════════════════════════════════════════════════
             _sectionHeader(
               p.isArabic ? 'طريقة حساب النصاب' : 'Nisab Calculation Method',
@@ -276,57 +213,51 @@ class SettingsScreen extends StatelessWidget {
                   : '🌍 Global Calculation\nBased on world gold price and exchange rate.\n\n🏛️ Official Nisab\nBased on the value announced by your country\'s official body.\n\n✍️ Custom Calculation\nEnter your own Nisab value or gold prices.\n\nResults may differ between methods due to different price sources.',
             ),
             _card(cardColor: cardColor, isDark: isDark, children: [
-              // الخيار 1: الحساب العالمي
               _nisabMethodTile(
-                context: context,
-                p: p,
-                isDark: isDark,
-                textColor: textColor,
-                subColor: subColor,
-                method: NisabMethod.global,
-                icon: '🌍',
-                title: p.isArabic ? 'الحساب العالمي' : 'Global Calculation',
-                subtitle: p.isArabic
-                    ? 'سعر الذهب العالمي × سعر الصرف (موصى به)'
-                    : 'World gold price × exchange rate (recommended)',
-              ),
+                  context: context,
+                  p: p,
+                  isDark: isDark,
+                  textColor: textColor,
+                  subColor: subColor,
+                  method: NisabMethod.global,
+                  icon: '🌍',
+                  title: p.isArabic ? 'الحساب العالمي' : 'Global Calculation',
+                  subtitle: p.isArabic
+                      ? 'سعر الذهب العالمي × سعر الصرف (موصى به)'
+                      : 'World gold price × exchange rate (recommended)'),
               Divider(height: 1, color: divColor),
-              // الخيار 2: النصاب الرسمي
               _nisabMethodTile(
-                context: context,
-                p: p,
-                isDark: isDark,
-                textColor: textColor,
-                subColor: subColor,
-                method: NisabMethod.official,
-                icon: '🏛️',
-                title: p.isArabic
-                    ? 'النصاب الرسمي للدولة'
-                    : 'Official Country Nisab',
-                subtitle: p.isArabic
-                    ? 'القيمة المُعلنة من الجهة الرسمية في بلدك'
-                    : 'Value announced by your country\'s official body',
-              ),
+                  context: context,
+                  p: p,
+                  isDark: isDark,
+                  textColor: textColor,
+                  subColor: subColor,
+                  method: NisabMethod.official,
+                  icon: '🏛️',
+                  title: p.isArabic
+                      ? 'النصاب الرسمي للدولة'
+                      : 'Official Country Nisab',
+                  subtitle: p.isArabic
+                      ? 'القيمة المُعلنة من الجهة الرسمية في بلدك'
+                      : 'Value announced by your country\'s official body'),
               if (p.nisabMethod == NisabMethod.official) ...[
                 Divider(height: 1, color: divColor),
                 _officialNisabPanel(
                     context, p, isDark, textColor, subColor, cardColor),
               ],
               Divider(height: 1, color: divColor),
-              // الخيار 3: الحساب المخصص
               _nisabMethodTile(
-                context: context,
-                p: p,
-                isDark: isDark,
-                textColor: textColor,
-                subColor: subColor,
-                method: NisabMethod.custom,
-                icon: '✍️',
-                title: p.isArabic ? 'حساب مخصص' : 'Custom Calculation',
-                subtitle: p.isArabic
-                    ? 'أدخل قيمة النصاب أو أسعار الذهب يدوياً'
-                    : 'Enter Nisab value or gold prices manually',
-              ),
+                  context: context,
+                  p: p,
+                  isDark: isDark,
+                  textColor: textColor,
+                  subColor: subColor,
+                  method: NisabMethod.custom,
+                  icon: '✍️',
+                  title: p.isArabic ? 'حساب مخصص' : 'Custom Calculation',
+                  subtitle: p.isArabic
+                      ? 'أدخل قيمة النصاب أو أسعار الذهب يدوياً'
+                      : 'Enter Nisab value or gold prices manually'),
               if (p.nisabMethod == NisabMethod.custom) ...[
                 Divider(height: 1, color: divColor),
                 _customNisabPanel(
@@ -335,21 +266,28 @@ class SettingsScreen extends StatelessWidget {
             ]),
             const SizedBox(height: 16),
 
+            // ── بطاقة مقارنة النصاب (بند 7) ──────────────────
+            if (p.nisabMethod != NisabMethod.global)
+              _nisabComparisonCard(p, isDark, textColor, subColor, cardColor),
+
+            const SizedBox(height: 16),
+
             // ── عن التطبيق ────────────────────────────────────
             _sectionHeader(p.isArabic ? 'عن التطبيق' : 'About', isDark),
             _card(cardColor: cardColor, isDark: isDark, children: [
-              _tileLabel(p.isArabic ? 'الإصدار' : 'Version', '1.4.0', isDark),
-              Divider(height: 1, color: divColor),
-              _tileLabel(
-                  p.isArabic ? 'المحتوى الديني' : 'Islamic Content',
-                  p.isArabic ? 'الدرر السنية + الشاملة' : 'Dorar + Shamela',
-                  isDark),
-              Divider(height: 1, color: divColor),
-              _tileLabel(p.isArabic ? 'بيانات الذهب' : 'Gold Data',
-                  'metals.live + open.er-api.com', isDark),
-              Divider(height: 1, color: divColor),
-              _tileLabel(p.isArabic ? 'المساعد الذكي' : 'AI Assistant',
-                  'Google Gemini 2.0 Flash', isDark),
+              ListTile(
+                leading:
+                    const Icon(Icons.info_outline, color: ZakatTheme.deepGreen),
+                title: Text(p.isArabic ? 'تطبيق الزكاة' : 'Zakat App',
+                    style: TextStyle(
+                        fontFamily: 'Scheherazade', color: textColor)),
+                subtitle: Text(
+                    'v2.0 — ${p.isArabic ? "نسخة متطورة" : "Advanced Edition"}',
+                    style: TextStyle(
+                        fontFamily: 'Scheherazade',
+                        color: subColor,
+                        fontSize: 12)),
+              ),
             ]),
             const SizedBox(height: 32),
           ],
@@ -358,255 +296,12 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 
-  String _fmt(DateTime t) =>
-      '${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}';
-
-  Widget _langTile({
-    required String flag,
-    required String label,
-    required bool selected,
-    required bool isDark,
-    required Color textColor,
-    required VoidCallback onTap,
-  }) {
-    return ListTile(
-      leading: Text(flag, style: const TextStyle(fontSize: 24)),
-      title: Text(label,
-          style: TextStyle(
-              fontFamily: 'Scheherazade', fontSize: 15, color: textColor)),
-      trailing: selected
-          ? const Icon(Icons.check_circle, color: ZakatTheme.deepGreen)
-          : null,
-      onTap: onTap,
-    );
-  }
-
-  // _sectionHeader المُوحَّد موجود في الأسفل (مع دعم info)
-
-  Widget _card({
-    required List<Widget> children,
-    required bool isDark,
-    required Color cardColor,
-  }) =>
-      Container(
-        decoration: BoxDecoration(
-          color: cardColor,
-          borderRadius: BorderRadius.circular(14),
-          boxShadow: ZakatTheme.cardShadowAdaptive(isDark),
-        ),
-        child: Column(children: children),
-      );
-
-  Widget _tileLabel(String label, String value, bool isDark) => Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(label,
-                style: TextStyle(
-                    fontFamily: 'Scheherazade',
-                    fontSize: 15,
-                    color: isDark
-                        ? ZakatTheme.darkTextPrimary
-                        : ZakatTheme.darkText)),
-            Text(value,
-                style: TextStyle(
-                    fontFamily: 'Scheherazade',
-                    fontSize: 14,
-                    color: isDark
-                        ? ZakatTheme.darkTextSecondary
-                        : ZakatTheme.medText)),
-          ],
-        ),
-      );
-
-  void _showCurrencyPicker(BuildContext context, ZakatProvider p) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: p.isDarkMode ? ZakatTheme.darkCard : Colors.white,
-      shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
-      builder: (_) => Directionality(
-        textDirection: p.isArabic ? TextDirection.rtl : TextDirection.ltr,
-        child: Column(children: [
-          const SizedBox(height: 12),
-          Text(p.isArabic ? 'اختر العملة' : 'Select Currency',
-              style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  fontFamily: 'Scheherazade',
-                  color: p.isDarkMode
-                      ? ZakatTheme.darkTextPrimary
-                      : ZakatTheme.darkText)),
-          const SizedBox(height: 8),
-          Expanded(
-            child: ListView(
-              children: currencies
-                  .map((c) => ListTile(
-                        leading: Text(c.symbol,
-                            style: const TextStyle(
-                                fontSize: 20, fontFamily: 'Scheherazade')),
-                        title: Text(c.name,
-                            style: TextStyle(
-                                fontFamily: 'Scheherazade',
-                                fontSize: 15,
-                                color: p.isDarkMode
-                                    ? ZakatTheme.darkTextPrimary
-                                    : ZakatTheme.darkText)),
-                        subtitle: Text(c.code,
-                            style: const TextStyle(fontFamily: 'Scheherazade')),
-                        trailing: p.selectedCurrency == c.code
-                            ? const Icon(Icons.check_circle,
-                                color: ZakatTheme.deepGreen)
-                            : null,
-                        onTap: () {
-                          p.setCurrency(c.code, c.symbol);
-                          Navigator.pop(context);
-                        },
-                      ))
-                  .toList(),
-            ),
-          ),
-        ]),
-      ),
-    );
-  }
-
-  void _confirmClear(BuildContext context, ZakatProvider p) {
-    showDialog(
-      context: context,
-      builder: (_) => Directionality(
-        textDirection: p.isArabic ? TextDirection.rtl : TextDirection.ltr,
-        child: AlertDialog(
-          backgroundColor: p.isDarkMode ? ZakatTheme.darkCard : Colors.white,
-          title: Text(p.isArabic ? 'مسح البيانات؟' : 'Clear Data?',
-              style: const TextStyle(fontFamily: 'Scheherazade', fontSize: 18)),
-          content: Text(
-              p.isArabic
-                  ? 'سيتم حذف جميع بياناتك. هذا الإجراء لا يمكن التراجع عنه.'
-                  : 'All your data will be deleted. This cannot be undone.',
-              style: const TextStyle(fontFamily: 'Scheherazade', height: 1.7)),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text(p.isArabic ? 'إلغاء' : 'Cancel',
-                  style: const TextStyle(
-                      fontFamily: 'Scheherazade', color: ZakatTheme.deepGreen)),
-            ),
-            ElevatedButton(
-              style:
-                  ElevatedButton.styleFrom(backgroundColor: ZakatTheme.error),
-              onPressed: () async {
-                await StorageService.clearAll();
-                Navigator.pop(context);
-                Navigator.pop(context);
-              },
-              child: Text(p.isArabic ? 'مسح' : 'Clear',
-                  style: const TextStyle(fontFamily: 'Scheherazade')),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  // ── مساعد: _sectionHeader مع زر معلومات ─────────────────────
-  Widget _sectionHeader(String title, bool isDark, {String? info}) {
-    final isDarkFinal = isDark;
-    return Builder(
-        builder: (context) => Padding(
-              padding: const EdgeInsets.only(bottom: 8, right: 4, left: 4),
-              child: Row(children: [
-                Container(
-                    width: 4,
-                    height: 18,
-                    decoration: BoxDecoration(
-                        color: ZakatTheme.gold,
-                        borderRadius: BorderRadius.circular(2))),
-                const SizedBox(width: 8),
-                Expanded(
-                    child: Text(title,
-                        style: TextStyle(
-                            fontFamily: 'Scheherazade',
-                            fontSize: 15,
-                            fontWeight: FontWeight.bold,
-                            color: isDarkFinal
-                                ? ZakatTheme.darkTextSecondary
-                                : ZakatTheme.medText))),
-                if (info != null)
-                  GestureDetector(
-                    onTap: () => showDialog(
-                      context: context,
-                      builder: (_) => AlertDialog(
-                        backgroundColor:
-                            isDarkFinal ? ZakatTheme.darkCard : Colors.white,
-                        title: Text(title,
-                            style: const TextStyle(
-                                fontFamily: 'Scheherazade', fontSize: 16)),
-                        content: Text(info,
-                            style: const TextStyle(
-                                fontFamily: 'Scheherazade',
-                                height: 1.8,
-                                fontSize: 14)),
-                        actions: [
-                          TextButton(
-                            onPressed: () => Navigator.pop(context),
-                            child: const Text('حسناً',
-                                style: TextStyle(fontFamily: 'Scheherazade')),
-                          )
-                        ],
-                      ),
-                    ),
-                    child: Container(
-                      padding: const EdgeInsets.all(4),
-                      child: Icon(Icons.info_outline,
-                          size: 18,
-                          color: isDarkFinal
-                              ? ZakatTheme.darkTextSecondary
-                              : ZakatTheme.medText),
-                    ),
-                  ),
-              ]),
-            ));
-  }
-
-  // ── tile اختيار طريقة النصاب ─────────────────────────────────
-  Widget _nisabMethodTile({
-    required BuildContext context,
-    required ZakatProvider p,
-    required bool isDark,
-    required Color textColor,
-    required Color subColor,
-    required NisabMethod method,
-    required String icon,
-    required String title,
-    required String subtitle,
-  }) {
-    final selected = p.nisabMethod == method;
-    return ListTile(
-      leading: Text(icon, style: const TextStyle(fontSize: 24)),
-      title: Text(title,
-          style: TextStyle(
-              fontFamily: 'Scheherazade',
-              fontSize: 15,
-              fontWeight: FontWeight.w600,
-              color: textColor)),
-      subtitle: Text(subtitle,
-          style: TextStyle(
-              fontFamily: 'Scheherazade', fontSize: 12, color: subColor)),
-      trailing: selected
-          ? const Icon(Icons.radio_button_checked, color: ZakatTheme.deepGreen)
-          : const Icon(Icons.radio_button_unchecked, color: Colors.grey),
-      onTap: () => p.setNisabMethod(method),
-    );
-  }
-
-  // ── لوحة النصاب الرسمي ───────────────────────────────────────
+  // ════════════════════════════════════════════════════════════
+  // لوحة النصاب الرسمي — V12 ديناميكي من Firestore
+  // ════════════════════════════════════════════════════════════
   Widget _officialNisabPanel(BuildContext context, ZakatProvider p, bool isDark,
       Color textColor, Color subColor, Color cardColor) {
-    final source = officialSources
-        .where((s) => s.currency == p.selectedCurrency)
-        .firstOrNull;
+    final source = p.currentCountrySource;
     final ctrl = TextEditingController(
         text: p.officialNisabValue > 0
             ? p.officialNisabValue.toStringAsFixed(0)
@@ -615,62 +310,105 @@ class SettingsScreen extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(16),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        if (source != null) ...[
-          // مصدر رسمي موجود
+        // ── حالة التحميل ──────────────────────────────────────
+        if (p.isLoadingSource)
+          const Padding(
+            padding: EdgeInsets.only(bottom: 12),
+            child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
+          )
+
+        // ── مصدر رسمي موجود ──────────────────────────────────
+        else if (source != null && source.isActive) ...[
           Container(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(
               color: ZakatTheme.deepGreen.withOpacity(isDark ? 0.12 : 0.07),
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: ZakatTheme.deepGreen.withOpacity(0.3)),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: ZakatTheme.deepGreen.withOpacity(0.35)),
             ),
             child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              // اسم الجهة
               Row(children: [
                 const Icon(Icons.verified,
                     color: ZakatTheme.deepGreen, size: 18),
-                const SizedBox(width: 6),
+                const SizedBox(width: 8),
                 Expanded(
-                    child: Text(
-                  p.isArabic ? source.nameAr : source.nameEn,
-                  style: TextStyle(
-                      fontFamily: 'Scheherazade',
-                      fontWeight: FontWeight.bold,
-                      color: textColor,
-                      fontSize: 14),
-                )),
+                    child: Text(source.name,
+                        style: TextStyle(
+                            fontFamily: 'Scheherazade',
+                            fontWeight: FontWeight.bold,
+                            color: textColor,
+                            fontSize: 15))),
               ]),
-              const SizedBox(height: 8),
-              ElevatedButton.icon(
-                onPressed: () {
-                  // فتح الرابط
-                  // يمكن استخدام url_launcher لاحقاً
-                  // launch(source.url);
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    content: Text(source.url,
-                        style: const TextStyle(fontFamily: 'Scheherazade')),
-                    action: SnackBarAction(label: 'نسخ', onPressed: () {}),
-                  ));
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: ZakatTheme.deepGreen.withOpacity(0.85),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                ),
-                icon: const Icon(Icons.open_in_new,
-                    size: 16, color: Colors.white),
-                label: Text(
-                    p.isArabic ? 'فتح المصدر الرسمي' : 'Open Official Source',
-                    style: const TextStyle(
+              // آخر مراجعة + نوع المصدر
+              if (source.lastReviewed.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.only(top: 4),
+                  child: Text(
+                    '${p.isArabic ? "آخر مراجعة" : "Last reviewed"}: ${source.lastReviewed}',
+                    style: TextStyle(
                         fontFamily: 'Scheherazade',
-                        fontSize: 13,
-                        color: Colors.white)),
-              ),
+                        fontSize: 12,
+                        color: subColor),
+                  ),
+                ),
+              if (source.links.isNotEmpty) ...[
+                const SizedBox(height: 12),
+                // روابط المصدر (مرتبة حسب priority)
+                ...(source.links
+                      ..sort((a, b) => a.priority.compareTo(b.priority)))
+                    .map((link) => Padding(
+                          padding: const EdgeInsets.only(bottom: 8),
+                          child: Row(children: [
+                            // مستوى الثقة + نوع المصدر
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 3),
+                              decoration: BoxDecoration(
+                                color: _trustColor(link.trustLevel)
+                                    .withOpacity(0.15),
+                                borderRadius: BorderRadius.circular(20),
+                                border: Border.all(
+                                    color: _trustColor(link.trustLevel)
+                                        .withOpacity(0.4)),
+                              ),
+                              child: Text('${link.typeIcon} ${link.trustLabel}',
+                                  style: TextStyle(
+                                      fontSize: 11,
+                                      fontFamily: 'Scheherazade',
+                                      color: _trustColor(link.trustLevel))),
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: ElevatedButton.icon(
+                                onPressed: () =>
+                                    _openUrl(context, link.url, p.isArabic),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor:
+                                      ZakatTheme.deepGreen.withOpacity(0.85),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 10, vertical: 6),
+                                ),
+                                icon: const Icon(Icons.open_in_new,
+                                    size: 14, color: Colors.white),
+                                label: Text(
+                                    p.isArabic ? 'فتح المصدر' : 'Open Source',
+                                    style: const TextStyle(
+                                        fontFamily: 'Scheherazade',
+                                        fontSize: 12,
+                                        color: Colors.white)),
+                              ),
+                            ),
+                          ]),
+                        )),
+              ],
             ]),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 14),
+
+          // ── لا يوجد مصدر ─────────────────────────────────────
         ] else ...[
-          // لا يوجد مصدر رسمي لهذه الدولة
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
@@ -696,7 +434,8 @@ class SettingsScreen extends StatelessWidget {
           ),
           const SizedBox(height: 12),
         ],
-        // حقل إدخال القيمة
+
+        // ── حقل إدخال القيمة ─────────────────────────────────
         Text(
             p.isArabic
                 ? 'أدخل قيمة النصاب الرسمية:'
@@ -763,7 +502,121 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 
-  // ── لوحة الحساب المخصص ───────────────────────────────────────
+  // ════════════════════════════════════════════════════════════
+  // بطاقة مقارنة النصاب (بند 7) — V12
+  // ════════════════════════════════════════════════════════════
+  Widget _nisabComparisonCard(ZakatProvider p, bool isDark, Color textColor,
+      Color subColor, Color cardColor) {
+    final cmp = p.nisabComparison;
+    if (cmp.isSameAsGlobal) return const SizedBox.shrink();
+
+    return Column(children: [
+      _sectionHeader(p.isArabic ? 'مقارنة النصاب' : 'Nisab Comparison', isDark),
+      Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: cardColor,
+          borderRadius: BorderRadius.circular(14),
+          boxShadow: ZakatTheme.cardShadowAdaptive(isDark),
+          border: Border.all(
+            color: cmp.isHigherThanGlobal
+                ? Colors.orange.withOpacity(0.4)
+                : Colors.green.withOpacity(0.4),
+          ),
+        ),
+        child: Column(children: [
+          Row(children: [
+            Expanded(
+                child: _cmpItem(
+              p.isArabic ? 'النصاب العالمي' : 'Global Nisab',
+              '${cmp.globalValue.toStringAsFixed(0)} ${p.currencySymbol}',
+              ZakatTheme.deepGreen,
+              textColor,
+              subColor,
+            )),
+            Container(
+                width: 1,
+                height: 50,
+                color: isDark ? ZakatTheme.darkBorder : Colors.grey.shade200),
+            Expanded(
+                child: _cmpItem(
+              p.isArabic
+                  ? (p.nisabMethod == NisabMethod.official
+                      ? 'النصاب الرسمي'
+                      : 'النصاب المخصص')
+                  : (p.nisabMethod == NisabMethod.official
+                      ? 'Official Nisab'
+                      : 'Custom Nisab'),
+              '${cmp.activeValue.toStringAsFixed(0)} ${p.currencySymbol}',
+              ZakatTheme.gold,
+              textColor,
+              subColor,
+            )),
+          ]),
+          const SizedBox(height: 12),
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: (cmp.isHigherThanGlobal ? Colors.orange : Colors.green)
+                  .withOpacity(0.1),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+              Icon(
+                cmp.isHigherThanGlobal
+                    ? Icons.arrow_upward
+                    : Icons.arrow_downward,
+                size: 16,
+                color: cmp.isHigherThanGlobal ? Colors.orange : Colors.green,
+              ),
+              const SizedBox(width: 6),
+              Text(
+                '${p.isArabic ? "الفرق" : "Difference"}: ${cmp.difference.abs().toStringAsFixed(0)} ${p.currencySymbol}',
+                style: TextStyle(
+                  fontFamily: 'Scheherazade',
+                  fontSize: 13,
+                  fontWeight: FontWeight.bold,
+                  color: cmp.isHigherThanGlobal ? Colors.orange : Colors.green,
+                ),
+              ),
+            ]),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            p.isArabic
+                ? 'الاختلاف ناتج عن اختلاف مصدر الأسعار أو طريقة الحساب المستخدمة.'
+                : 'The difference is due to different price sources or calculation methods.',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                fontFamily: 'Scheherazade',
+                fontSize: 12,
+                color: subColor,
+                height: 1.6),
+          ),
+        ]),
+      ),
+    ]);
+  }
+
+  Widget _cmpItem(String label, String value, Color accent, Color textColor,
+      Color subColor) {
+    return Column(children: [
+      Text(label,
+          style: TextStyle(
+              fontFamily: 'Scheherazade', fontSize: 12, color: subColor)),
+      const SizedBox(height: 4),
+      Text(value,
+          style: TextStyle(
+              fontFamily: 'Scheherazade',
+              fontSize: 15,
+              fontWeight: FontWeight.bold,
+              color: accent)),
+    ]);
+  }
+
+  // ════════════════════════════════════════════════════════════
+  // لوحة الحساب المخصص — كما هي من V11
+  // ════════════════════════════════════════════════════════════
   Widget _customNisabPanel(BuildContext context, ZakatProvider p, bool isDark,
       Color textColor, Color subColor, Color cardColor) {
     final directCtrl = TextEditingController(
@@ -777,7 +630,6 @@ class SettingsScreen extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(16),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        // ── الخيار 1: إدخال مباشر ──────────────────────────────
         _customSubHeader(
             p.isArabic
                 ? 'الخيار 1 — إدخال القيمة مباشرة'
@@ -786,25 +638,23 @@ class SettingsScreen extends StatelessWidget {
         const SizedBox(height: 8),
         Row(children: [
           Expanded(
-            child: TextField(
-              controller: directCtrl,
-              keyboardType:
-                  const TextInputType.numberWithOptions(decimal: true),
-              textDirection: TextDirection.rtl,
-              style: TextStyle(fontFamily: 'Scheherazade', color: textColor),
-              decoration: InputDecoration(
-                hintText: p.isArabic ? 'مثال: 97495' : 'Example: 97495',
-                suffixText: p.currencySymbol,
-                filled: true,
-                fillColor: cardColor,
-                border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide.none),
-                contentPadding:
-                    const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-              ),
+              child: TextField(
+            controller: directCtrl,
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            textDirection: TextDirection.rtl,
+            style: TextStyle(fontFamily: 'Scheherazade', color: textColor),
+            decoration: InputDecoration(
+              hintText: p.isArabic ? 'مثال: 97495' : 'Example: 97495',
+              suffixText: p.currencySymbol,
+              filled: true,
+              fillColor: cardColor,
+              border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: BorderSide.none),
+              contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
             ),
-          ),
+          )),
           const SizedBox(width: 10),
           ElevatedButton(
             onPressed: () {
@@ -822,8 +672,6 @@ class SettingsScreen extends StatelessWidget {
           ),
         ]),
         const SizedBox(height: 16),
-
-        // ── الخيار 2: من سعر الجرام ────────────────────────────
         _customSubHeader(
             p.isArabic
                 ? 'الخيار 2 — من سعر جرام الذهب'
@@ -832,33 +680,31 @@ class SettingsScreen extends StatelessWidget {
         const SizedBox(height: 8),
         Row(children: [
           Expanded(
-            child: TextField(
-              controller: gramCtrl,
-              keyboardType:
-                  const TextInputType.numberWithOptions(decimal: true),
-              textDirection: TextDirection.rtl,
-              style: TextStyle(fontFamily: 'Scheherazade', color: textColor),
-              decoration: InputDecoration(
-                hintText: p.isArabic ? 'سعر الجرام' : 'Price per gram',
-                suffixText: p.currencySymbol,
-                filled: true,
-                fillColor: cardColor,
-                border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide.none),
-                contentPadding:
-                    const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-              ),
+              child: TextField(
+            controller: gramCtrl,
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            textDirection: TextDirection.rtl,
+            style: TextStyle(fontFamily: 'Scheherazade', color: textColor),
+            decoration: InputDecoration(
+              hintText: p.isArabic ? 'سعر الجرام' : 'Price per gram',
+              suffixText: p.currencySymbol,
+              filled: true,
+              fillColor: cardColor,
+              border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: BorderSide.none),
+              contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
             ),
-          ),
+          )),
           const SizedBox(width: 10),
           ElevatedButton(
             onPressed: () {
-              final gPrice = double.tryParse(gramCtrl.text.replaceAll(',', ''));
-              if (gPrice != null && gPrice > 0) {
-                final nisab = p.calcNisabFromGramPrice(gPrice);
-                p.setCustomNisab(nisab);
-                _showCalcResult(context, p, gPrice, nisab);
+              final g = double.tryParse(gramCtrl.text.replaceAll(',', ''));
+              if (g != null && g > 0) {
+                final n = p.calcNisabFromGramPrice(g);
+                p.setCustomNisab(n);
+                _showCalcResult(context, p, g, n);
               }
             },
             style: ElevatedButton.styleFrom(
@@ -871,55 +717,48 @@ class SettingsScreen extends StatelessWidget {
           ),
         ]),
         const SizedBox(height: 16),
-
-        // ── الخيار 3: من الأوقية + الصرف ──────────────────────
         _customSubHeader(
-          p.isArabic
-              ? 'الخيار 3 — من سعر الأوقية وسعر الصرف'
-              : 'Option 3 — From oz price + exchange rate',
-          subColor,
-        ),
+            p.isArabic
+                ? 'الخيار 3 — من سعر الأوقية وسعر الصرف'
+                : 'Option 3 — From oz price + exchange rate',
+            subColor),
         const SizedBox(height: 8),
         Row(children: [
           Expanded(
-            child: TextField(
-              controller: ozCtrl,
-              keyboardType:
-                  const TextInputType.numberWithOptions(decimal: true),
-              textDirection: TextDirection.rtl,
-              style: TextStyle(fontFamily: 'Scheherazade', color: textColor),
-              decoration: InputDecoration(
-                hintText: p.isArabic ? 'سعر الأوقية (USD)' : 'Oz price (USD)',
-                filled: true,
-                fillColor: cardColor,
-                border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide.none),
-                contentPadding:
-                    const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-              ),
+              child: TextField(
+            controller: ozCtrl,
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            textDirection: TextDirection.rtl,
+            style: TextStyle(fontFamily: 'Scheherazade', color: textColor),
+            decoration: InputDecoration(
+              hintText: p.isArabic ? 'سعر الأوقية (USD)' : 'Oz price (USD)',
+              filled: true,
+              fillColor: cardColor,
+              border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: BorderSide.none),
+              contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
             ),
-          ),
+          )),
           const SizedBox(width: 8),
           Expanded(
-            child: TextField(
-              controller: fxCtrl,
-              keyboardType:
-                  const TextInputType.numberWithOptions(decimal: true),
-              textDirection: TextDirection.rtl,
-              style: TextStyle(fontFamily: 'Scheherazade', color: textColor),
-              decoration: InputDecoration(
-                hintText: p.isArabic ? 'سعر صرف الدولار' : 'USD exchange rate',
-                filled: true,
-                fillColor: cardColor,
-                border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide.none),
-                contentPadding:
-                    const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-              ),
+              child: TextField(
+            controller: fxCtrl,
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            textDirection: TextDirection.rtl,
+            style: TextStyle(fontFamily: 'Scheherazade', color: textColor),
+            decoration: InputDecoration(
+              hintText: p.isArabic ? 'سعر صرف الدولار' : 'USD exchange rate',
+              filled: true,
+              fillColor: cardColor,
+              border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: BorderSide.none),
+              contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
             ),
-          ),
+          )),
         ]),
         const SizedBox(height: 8),
         SizedBox(
@@ -929,9 +768,9 @@ class SettingsScreen extends StatelessWidget {
               final oz = double.tryParse(ozCtrl.text.replaceAll(',', ''));
               final fx = double.tryParse(fxCtrl.text.replaceAll(',', ''));
               if (oz != null && fx != null && oz > 0 && fx > 0) {
-                final nisab = p.calcNisabFromOz(oz, fx);
-                p.setCustomNisab(nisab);
-                _showCalcResult(context, p, oz / 31.1035 * fx, nisab);
+                final n = p.calcNisabFromOz(oz, fx);
+                p.setCustomNisab(n);
+                _showCalcResult(context, p, oz / 31.1035 * fx, n);
               }
             },
             style: ElevatedButton.styleFrom(
@@ -944,8 +783,6 @@ class SettingsScreen extends StatelessWidget {
                     fontFamily: 'Scheherazade', color: Colors.black)),
           ),
         ),
-
-        // النتيجة المحفوظة
         if (p.customNisabValue > 0)
           Padding(
             padding: const EdgeInsets.only(top: 14),
@@ -976,6 +813,158 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 
+  // ════════════════════════════════════════════════════════════
+  // مساعدات
+  // ════════════════════════════════════════════════════════════
+  Future<void> _openUrl(BuildContext context, String url, bool isArabic) async {
+    final uri = Uri.tryParse(url);
+    if (uri == null) return;
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } else {
+      // نسخ الرابط للحافظة إذا تعذّر الفتح
+      await Clipboard.setData(ClipboardData(text: url));
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(isArabic ? 'تم نسخ الرابط' : 'Link copied',
+              style: const TextStyle(fontFamily: 'Scheherazade')),
+        ));
+      }
+    }
+  }
+
+  Color _trustColor(String level) {
+    switch (level) {
+      case 'official':
+        return ZakatTheme.deepGreen;
+      case 'government':
+        return Colors.blue.shade700;
+      case 'verified':
+        return Colors.teal;
+      default:
+        return Colors.grey;
+    }
+  }
+
+  Widget _nisabMethodTile({
+    required BuildContext context,
+    required ZakatProvider p,
+    required bool isDark,
+    required Color textColor,
+    required Color subColor,
+    required NisabMethod method,
+    required String icon,
+    required String title,
+    required String subtitle,
+  }) {
+    final selected = p.nisabMethod == method;
+    return ListTile(
+      leading: Text(icon, style: const TextStyle(fontSize: 24)),
+      title: Text(title,
+          style: TextStyle(
+              fontFamily: 'Scheherazade',
+              fontSize: 15,
+              fontWeight: FontWeight.w600,
+              color: textColor)),
+      subtitle: Text(subtitle,
+          style: TextStyle(
+              fontFamily: 'Scheherazade', fontSize: 12, color: subColor)),
+      trailing: selected
+          ? const Icon(Icons.radio_button_checked, color: ZakatTheme.deepGreen)
+          : const Icon(Icons.radio_button_unchecked, color: Colors.grey),
+      onTap: () => p.setNisabMethod(method),
+    );
+  }
+
+  Widget _sectionHeader(String title, bool isDark, {String? info}) {
+    return Builder(
+        builder: (context) => Padding(
+              padding: const EdgeInsets.only(bottom: 8, right: 4, left: 4),
+              child: Row(children: [
+                Container(
+                    width: 4,
+                    height: 18,
+                    decoration: BoxDecoration(
+                        color: ZakatTheme.gold,
+                        borderRadius: BorderRadius.circular(2))),
+                const SizedBox(width: 8),
+                Expanded(
+                    child: Text(title,
+                        style: TextStyle(
+                            fontFamily: 'Scheherazade',
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                            color: isDark
+                                ? ZakatTheme.darkTextSecondary
+                                : ZakatTheme.medText))),
+                if (info != null)
+                  GestureDetector(
+                    onTap: () => showDialog(
+                        context: context,
+                        builder: (_) => AlertDialog(
+                              backgroundColor:
+                                  isDark ? ZakatTheme.darkCard : Colors.white,
+                              title: Text(title,
+                                  style: const TextStyle(
+                                      fontFamily: 'Scheherazade',
+                                      fontSize: 16)),
+                              content: Text(info,
+                                  style: const TextStyle(
+                                      fontFamily: 'Scheherazade',
+                                      height: 1.8,
+                                      fontSize: 14)),
+                              actions: [
+                                TextButton(
+                                    onPressed: () => Navigator.pop(context),
+                                    child: const Text('حسناً',
+                                        style: TextStyle(
+                                            fontFamily: 'Scheherazade')))
+                              ],
+                            )),
+                    child: Icon(Icons.info_outline,
+                        size: 18,
+                        color: isDark
+                            ? ZakatTheme.darkTextSecondary
+                            : ZakatTheme.medText),
+                  ),
+              ]),
+            ));
+  }
+
+  Widget _card(
+          {required List<Widget> children,
+          required Color cardColor,
+          required bool isDark}) =>
+      Container(
+        margin: const EdgeInsets.only(bottom: 4),
+        decoration: BoxDecoration(
+            color: cardColor,
+            borderRadius: BorderRadius.circular(14),
+            boxShadow: ZakatTheme.cardShadowAdaptive(isDark)),
+        child: ClipRRect(
+            borderRadius: BorderRadius.circular(14),
+            child: Column(children: children)),
+      );
+
+  Widget _langTile(
+          BuildContext context,
+          ZakatProvider p,
+          bool isDark,
+          Color textColor,
+          Color subColor,
+          String code,
+          String label,
+          String flag) =>
+      ListTile(
+        leading: Text(flag, style: const TextStyle(fontSize: 24)),
+        title: Text(label,
+            style: TextStyle(fontFamily: 'Scheherazade', color: textColor)),
+        trailing: p.isArabic == (code == 'ar')
+            ? const Icon(Icons.check_circle, color: ZakatTheme.deepGreen)
+            : null,
+        onTap: () => p.setLanguage(code),
+      );
+
   Widget _customSubHeader(String title, Color color) => Text(title,
       style: TextStyle(
           fontFamily: 'Scheherazade',
@@ -995,10 +984,38 @@ class SettingsScreen extends StatelessWidget {
       BuildContext context, ZakatProvider p, double gramPrice, double nisab) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text(
-        '${p.isArabic ? "النصاب المحسوب" : "Calculated Nisab"}: ${nisab.toStringAsFixed(0)} ${p.currencySymbol}',
-        style: const TextStyle(fontFamily: 'Scheherazade'),
-      ),
+          '${p.isArabic ? "النصاب المحسوب" : "Calculated Nisab"}: ${nisab.toStringAsFixed(0)} ${p.currencySymbol}',
+          style: const TextStyle(fontFamily: 'Scheherazade')),
       duration: const Duration(seconds: 3),
     ));
+  }
+
+  void _confirmClear(BuildContext context, ZakatProvider p) {
+    showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+              title: Text(p.isArabic ? 'تأكيد الحذف' : 'Confirm Delete',
+                  style: const TextStyle(fontFamily: 'Scheherazade')),
+              content: Text(
+                  p.isArabic
+                      ? 'هل تريد مسح جميع البيانات؟ لا يمكن التراجع.'
+                      : 'Clear all data? This cannot be undone.',
+                  style: const TextStyle(fontFamily: 'Scheherazade')),
+              actions: [
+                TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: Text(p.isArabic ? 'إلغاء' : 'Cancel',
+                        style: const TextStyle(fontFamily: 'Scheherazade'))),
+                TextButton(
+                  onPressed: () async {
+                    await StorageService.clearAll();
+                    if (context.mounted) Navigator.pop(context);
+                  },
+                  child: Text(p.isArabic ? 'مسح' : 'Clear',
+                      style: const TextStyle(
+                          color: Colors.red, fontFamily: 'Scheherazade')),
+                ),
+              ],
+            ));
   }
 }

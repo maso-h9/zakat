@@ -1,94 +1,25 @@
-// ================================================================
-// zakat_provider.dart — V11 النهائي
-// يضيف: NisabMethod + officialSources + setNisabMethod/setOfficialNisab/setCustomNisab
-// باقي الكود مطابق لـ V10 بدون تغيير
-// ================================================================
+// zakat_provider.dart — V12
+// يستخدم NisabService + CountrySourcesRepository
+// يسجل تغييرات النصاب تلقائياً
+
 import 'package:flutter/material.dart';
 import '../services/storage_service.dart';
 import '../services/gold_price_service.dart';
 import '../services/firebase_service.dart';
+import '../services/nisab_service.dart';
 
-// ── أنواع طريقة النصاب ───────────────────────────────────────
 enum NisabMethod { global, official, custom }
 
-// ── المصادر الرسمية ──────────────────────────────────────────
-class OfficialSource {
-  final String currency, nameAr, nameEn, url;
-  const OfficialSource({
-    required this.currency,
-    required this.nameAr,
-    required this.nameEn,
-    required this.url,
-  });
-}
-
-const List<OfficialSource> officialSources = [
-  OfficialSource(
-      currency: 'LYD',
-      nameAr: 'صندوق الزكاة الليبي',
-      nameEn: 'Libyan Zakat Fund',
-      url: 'https://www.facebook.com/ZakatFundLibya'),
-  OfficialSource(
-      currency: 'EGP',
-      nameAr: 'دار الإفتاء المصرية',
-      nameEn: 'Egyptian Dar Al-Ifta',
-      url: 'https://www.dar-alifta.org'),
-  OfficialSource(
-      currency: 'SAR',
-      nameAr: 'هيئة الزكاة والضريبة والجمارك',
-      nameEn: 'ZATCA Saudi Arabia',
-      url: 'https://zatca.gov.sa'),
-  OfficialSource(
-      currency: 'AED',
-      nameAr: 'الهيئة العامة للشؤون الإسلامية',
-      nameEn: 'GAIAE UAE',
-      url: 'https://www.gaiae.gov.ae'),
-  OfficialSource(
-      currency: 'KWD',
-      nameAr: 'بيت الزكاة الكويتي',
-      nameEn: 'Kuwait Zakat House',
-      url: 'https://www.zakathouse.org.kw'),
-  OfficialSource(
-      currency: 'QAR',
-      nameAr: 'وزارة الأوقاف القطرية',
-      nameEn: 'Qatar Ministry of Awqaf',
-      url: 'https://www.awqaf.gov.qa'),
-  OfficialSource(
-      currency: 'JOD',
-      nameAr: 'دائرة الإفتاء الأردنية',
-      nameEn: 'Jordan Iftaa Department',
-      url: 'https://www.aliftaa.jo'),
-  OfficialSource(
-      currency: 'MAD',
-      nameAr: 'وزارة الأوقاف المغربية',
-      nameEn: 'Morocco Ministry of Awqaf',
-      url: 'https://www.habous.gov.ma'),
-  OfficialSource(
-      currency: 'TND',
-      nameAr: 'ديوان الإفتاء التونسي',
-      nameEn: 'Tunisia Dar Al-Ifta',
-      url: 'https://www.mam.gov.tn'),
-  OfficialSource(
-      currency: 'DZD',
-      nameAr: 'وزارة الشؤون الدينية الجزائرية',
-      nameEn: 'Algeria Ministry of Religious Affairs',
-      url: 'https://www.marw.dz'),
-];
-
-// ════════════════════════════════════════════════════════════════
 class ZakatProvider extends ChangeNotifier {
-  // ── الأسعار ─────────────────────────────────────────────────
   double goldPricePerGram = 285.0;
   double silverPricePerGram = 3.2;
   bool goldPriceIsLive = false;
   String? goldPriceLastUpdated;
   bool isLoadingGoldPrice = false;
 
-  // ── العملة ──────────────────────────────────────────────────
   String selectedCurrency = 'LYD';
   String currencySymbol = 'د.ل';
 
-  // ── الثروة ──────────────────────────────────────────────────
   double savedMoney = 0;
   double goldGrams = 0;
   double silverGrams = 0;
@@ -99,25 +30,26 @@ class ZakatProvider extends ChangeNotifier {
 
   List<ZakatRecord> zakatHistory = [];
 
-  // ── الإعدادات ────────────────────────────────────────────────
   bool isRamadanMode = false;
   bool fitrPaid = false;
   bool isDarkMode = false;
 
-  // ── اللغة ────────────────────────────────────────────────────
   Locale _locale = const Locale('ar', 'SA');
   Locale get locale => _locale;
   bool get isArabic => _locale.languageCode == 'ar';
 
-  // ── Firebase ────────────────────────────────────────────────
   bool isSyncing = false;
   bool cloudSyncEnabled = false;
   DateTime? lastSyncTime;
 
-  // ── طريقة النصاب (V11) ──────────────────────────────────────
+  // ── طريقة النصاب ────────────────────────────────────────────
   NisabMethod nisabMethod = NisabMethod.global;
   double officialNisabValue = 0.0;
   double customNisabValue = 0.0;
+
+  // ── مصدر الدولة (ديناميكي) ──────────────────────────────────
+  CountrySource? currentCountrySource;
+  bool isLoadingSource = false;
 
   bool _loaded = false;
 
@@ -129,6 +61,7 @@ class ZakatProvider extends ChangeNotifier {
     _loaded = true;
 
     await GoldPriceService.initHive();
+    await CountrySourcesRepository.init();
 
     await StorageService.loadWealth(this);
     nisabDate = await StorageService.loadNisabDate();
@@ -145,7 +78,6 @@ class ZakatProvider extends ChangeNotifier {
     _locale =
         langCode == 'en' ? const Locale('en', 'US') : const Locale('ar', 'SA');
 
-    // تحميل إعدادات النصاب
     final nisabData = await StorageService.loadNisabMethod();
     nisabMethod = nisabData['method'] as NisabMethod;
     officialNisabValue = nisabData['official'] as double;
@@ -156,14 +88,26 @@ class ZakatProvider extends ChangeNotifier {
 
     notifyListeners();
     fetchGoldPrice();
+    _loadCountrySource();
     if (cloudSyncEnabled) await _initCloudSync();
   }
 
   // ════════════════════════════════════════════════════════════
-  // طرق النصاب
+  // المصدر الرسمي الديناميكي
   // ════════════════════════════════════════════════════════════
+  Future<void> _loadCountrySource() async {
+    isLoadingSource = true;
+    notifyListeners();
+    final code =
+        CountrySourcesRepository.countryCodeForCurrency(selectedCurrency);
+    currentCountrySource = await CountrySourcesRepository.getForCountry(code);
+    isLoadingSource = false;
+    notifyListeners();
+  }
 
-  // النصاب الفعلي المستخدم في كل الحسابات
+  // ════════════════════════════════════════════════════════════
+  // النصاب
+  // ════════════════════════════════════════════════════════════
   double get goldNisabValue {
     switch (nisabMethod) {
       case NisabMethod.official:
@@ -175,13 +119,27 @@ class ZakatProvider extends ChangeNotifier {
     }
   }
 
-  double get _globalNisab => goldNisabGrams * goldPricePerGram;
+  double get _globalNisab => NisabService.globalNisab(goldPricePerGram);
+
+  // مقارنة النصاب (بند 7)
+  NisabComparison get nisabComparison => NisabService.compare(
+        globalNisabValue: _globalNisab,
+        activeNisabValue: goldNisabValue,
+        activeMethod: nisabMethod.name,
+        currency: selectedCurrency,
+      );
 
   Future<void> setNisabMethod(NisabMethod method) async {
     nisabMethod = method;
     notifyListeners();
     await StorageService.saveNisabMethod(
         method, officialNisabValue, customNisabValue);
+    // سجّل التغيير (بند 8)
+    await NisabService.recordChange(
+      value: goldNisabValue,
+      method: method.name,
+      currency: selectedCurrency,
+    );
   }
 
   Future<void> setOfficialNisab(double value) async {
@@ -189,6 +147,8 @@ class ZakatProvider extends ChangeNotifier {
     notifyListeners();
     await StorageService.saveNisabMethod(
         nisabMethod, officialNisabValue, customNisabValue);
+    await NisabService.recordChange(
+        value: value, method: 'official', currency: selectedCurrency);
   }
 
   Future<void> setCustomNisab(double value) async {
@@ -196,11 +156,17 @@ class ZakatProvider extends ChangeNotifier {
     notifyListeners();
     await StorageService.saveNisabMethod(
         nisabMethod, officialNisabValue, customNisabValue);
+    await NisabService.recordChange(
+        value: value, method: 'custom', currency: selectedCurrency);
   }
 
-  double calcNisabFromGramPrice(double gramPrice) => gramPrice * 85;
-  double calcNisabFromOz(double ozPrice, double exchangeRate) =>
-      (ozPrice / 31.1035) * 85 * exchangeRate;
+  double calcNisabFromGramPrice(double g) => NisabService.fromGramPrice(g);
+  double calcNisabFromOz(double oz, double fx) =>
+      NisabService.fromOzAndRate(oz, fx);
+
+  // سجل تغير النصاب
+  Future<List<NisabHistoryEntry>> loadNisabHistory() =>
+      NisabService.loadHistory();
 
   // ════════════════════════════════════════════════════════════
   // سعر الذهب
@@ -208,27 +174,24 @@ class ZakatProvider extends ChangeNotifier {
   Future<void> fetchGoldPrice() async {
     isLoadingGoldPrice = true;
     notifyListeners();
-
     final result =
         await GoldPriceService.fetchGoldPricePerGram(selectedCurrency);
     goldPricePerGram = result.pricePerGram;
     silverPricePerGram = result.silverPricePerGram;
     goldPriceIsLive = result.isLive;
     goldPriceLastUpdated = result.formattedTime;
-
     if (result.pricePerGram > 0) {
       await StorageService.saveGoldPrice(result.pricePerGram);
     }
-
     isLoadingGoldPrice = false;
     notifyListeners();
   }
 
   // ════════════════════════════════════════════════════════════
-  // حسابات الزكاة
+  // حسابات
   // ════════════════════════════════════════════════════════════
-  double get goldNisabGrams => 85.0;
-  double get silverNisabGrams => 595.0;
+  double get goldNisabGrams => NisabService.goldNisabGrams;
+  double get silverNisabGrams => NisabService.silverNisabGrams;
   double get zakatRate => 0.025;
   double get silverNisabValue => silverNisabGrams * silverPricePerGram;
   double get totalWealth => totalZakatableWealth;
@@ -237,9 +200,7 @@ class ZakatProvider extends ChangeNotifier {
     double t = savedMoney;
     t += goldGrams * goldPricePerGram;
     t += silverGrams * silverPricePerGram;
-    t += tradeGoods;
-    t += debtsToReceive;
-    t -= debtsOwed;
+    t += tradeGoods + debtsToReceive - debtsOwed;
     return t < 0 ? 0 : t;
   }
 
@@ -256,16 +217,6 @@ class ZakatProvider extends ChangeNotifier {
 
   DateTime? get zakatDueDate => nisabDate?.add(const Duration(days: 354));
   double get fitrAmount => goldPricePerGram * 2;
-
-  // ════════════════════════════════════════════════════════════
-  // اللغة
-  // ════════════════════════════════════════════════════════════
-  Future<void> setLanguage(String langCode) async {
-    _locale =
-        langCode == 'en' ? const Locale('en', 'US') : const Locale('ar', 'SA');
-    notifyListeners();
-    await StorageService.saveLanguage(langCode);
-  }
 
   // ════════════════════════════════════════════════════════════
   // Firebase
@@ -357,6 +308,7 @@ class ZakatProvider extends ChangeNotifier {
     notifyListeners();
     StorageService.saveCurrency(code, symbol);
     fetchGoldPrice();
+    _loadCountrySource(); // يجلب مصدر الدولة الجديدة
     _pushToCloud();
   }
 
@@ -378,6 +330,13 @@ class ZakatProvider extends ChangeNotifier {
     isDarkMode = on;
     notifyListeners();
     StorageService.saveDarkMode(on);
+  }
+
+  Future<void> setLanguage(String langCode) async {
+    _locale =
+        langCode == 'en' ? const Locale('en', 'US') : const Locale('ar', 'SA');
+    notifyListeners();
+    await StorageService.saveLanguage(langCode);
   }
 
   // ════════════════════════════════════════════════════════════
