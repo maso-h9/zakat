@@ -1,7 +1,8 @@
 // ================================================================
-// gold_price_service.dart — يقرأ من Firestore (تملأها GitHub Actions)
-// واجهة متطابقة مع zakat_provider.dart الحالي — لا تعديل مطلوب فيه
-// ترتيب GitHub Actions: metals.live → GOLDAPI → METALS_API → cache
+// gold_price_service.dart — V11 إصلاح مشكلة تغيير العملة
+//
+// المشكلة كانت: _fromHive() يتجاهل currencyCode ويرجع نفس القيمة
+// الإصلاح: الكاش يخزن العملة الحالية، وعند اختلافها يجلب من Firestore
 // ================================================================
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -9,14 +10,16 @@ import 'package:hive_flutter/hive_flutter.dart';
 class GoldPriceService {
   static const String _col = 'prices';
   static const String _doc = 'latest';
-
   static const String _boxName = 'gold_cache_v2';
+
+  // مفاتيح Hive
   static const String _kGold = 'gpg';
   static const String _kSilver = 'spg';
   static const String _kGoldN = 'gn';
   static const String _kSilN = 'sn';
   static const String _kTs = 'ts';
   static const String _kSrc = 'src';
+  static const String _kCur = 'cur'; // ← جديد: العملة المخزنة
 
   static const Duration _ttl = Duration(hours: 6);
 
@@ -31,9 +34,13 @@ class GoldPriceService {
     _ready = true;
   }
 
-  static bool get _cacheValid {
+  // ── هل الكاش صالح للعملة المطلوبة؟ ─────────────────────────
+  // الإصلاح الجوهري: يتحقق من العملة أيضاً
+  static bool _isCacheValidFor(String currency) {
     final ts = _box?.get(_kTs) as String?;
-    if (ts == null) return false;
+    final cur = _box?.get(_kCur) as String?;
+    if (ts == null || cur == null) return false;
+    if (cur != currency) return false; // ← عملة مختلفة → لا تستخدم الكاش
     try {
       return DateTime.now().difference(DateTime.parse(ts)) < _ttl;
     } catch (_) {
@@ -42,16 +49,18 @@ class GoldPriceService {
   }
 
   // ══════════════════════════════════════════════════════════════
-  // نفس التوقيع الذي يستدعيه zakat_provider.dart الحالي
+  // الدالة الرئيسية
   // ══════════════════════════════════════════════════════════════
   static Future<GoldPriceResult> fetchGoldPricePerGram(
     String currencyCode, {
     bool forceRefresh = false,
   }) async {
-    if (!forceRefresh && _cacheValid) {
+    // 1. كاش صالح لنفس العملة ولا طلب تحديث → أعِد فوراً
+    if (!forceRefresh && _isCacheValidFor(currencyCode)) {
       return _fromHive(currencyCode);
     }
 
+    // 2. جلب من Firestore (عملة مختلفة أو كاش منتهي أو تحديث قسري)
     try {
       final snap = await FirebaseFirestore.instance
           .collection(_col)
@@ -67,13 +76,20 @@ class GoldPriceService {
       _log('Firestore فشل: $e');
     }
 
+    // 3. Firestore فشل — هل عندنا كاش لأي عملة؟ استخدمه مع تحويل
     if (_box != null && ((_box!.get(_kGold) ?? 0) as num).toDouble() > 0) {
-      return _fromHive(currencyCode);
+      final cachedCurrency = _box!.get(_kCur) as String? ?? 'LYD';
+      if (cachedCurrency == currencyCode) {
+        return _fromHive(currencyCode);
+      }
+      // عملة مختلفة في الكاش → استخدم fallback للعملة المطلوبة
     }
 
+    // 4. لا شيء → قيم احتياطية للعملة المطلوبة تحديداً
     return _fallback(currencyCode);
   }
 
+  // ── بناء النتيجة من Firestore ─────────────────────────────────
   static GoldPriceResult _fromFirestore(Map<String, dynamic> data, String cur) {
     final nisab = (data['nisab'] as Map<String, dynamic>?)?[cur];
     final gPG = (nisab?['goldPricePerGram'] as num?)?.toDouble() ??
@@ -90,6 +106,7 @@ class GoldPriceService {
     );
   }
 
+  // ── حفظ في Hive مع العملة ─────────────────────────────────────
   static void _saveToHive(Map<String, dynamic> data, String cur) {
     final nisab = (data['nisab'] as Map<String, dynamic>?)?[cur];
     final gPG = (nisab?['goldPricePerGram'] as num?)?.toDouble() ??
@@ -101,9 +118,11 @@ class GoldPriceService {
       _kSilN: (nisab?['silverNisab'] as num?)?.toDouble() ?? 0.0,
       _kTs: data['updatedAt'] as String? ?? DateTime.now().toIso8601String(),
       _kSrc: data['source'] as String? ?? 'firestore',
+      _kCur: cur, // ← يحفظ العملة مع البيانات
     });
   }
 
+  // ── قراءة من Hive ─────────────────────────────────────────────
   static GoldPriceResult _fromHive(String cur) {
     return GoldPriceResult(
       pricePerGram: ((_box?.get(_kGold, defaultValue: 0.0)) as num).toDouble(),
@@ -117,6 +136,7 @@ class GoldPriceService {
     );
   }
 
+  // ── قيم احتياطية حسب العملة المطلوبة تحديداً ─────────────────
   static GoldPriceResult _fallback(String cur) {
     const approx = <String, double>{
       'LYD': 11400,
@@ -145,6 +165,7 @@ class GoldPriceService {
     );
   }
 
+  // ── مساعدات ───────────────────────────────────────────────────
   static double _estimateFromOz(dynamic oz, String cur) {
     const fx = <String, double>{
       'LYD': 4.85,
@@ -196,11 +217,7 @@ class GoldPriceService {
   }
 }
 
-// ══════════════════════════════════════════════════════════════
-// GoldPriceResult — نفس الواجهة + حقول إضافية
-// pricePerGram + isLive + lastUpdated + formattedTime + statusText
-// كلها موجودة في الكود الأصلي — لا تغيير في zakat_provider.dart
-// ══════════════════════════════════════════════════════════════
+// ── GoldPriceResult ───────────────────────────────────────────
 class GoldPriceResult {
   final double pricePerGram;
   final double silverPricePerGram;
