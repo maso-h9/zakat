@@ -109,22 +109,26 @@ class SettingsScreen extends StatelessWidget {
             // ── العملة ────────────────────────────────────────
             _sectionHeader(p.isArabic ? 'العملة' : 'Currency', isDark),
             _card(cardColor: cardColor, isDark: isDark, children: [
-              ...currencies.map((c) => Column(children: [
-                    ListTile(
-                      title: Text('${c.symbol} — ${c.name}',
-                          style: TextStyle(
-                              fontFamily: 'Scheherazade',
-                              color: textColor,
-                              fontSize: 14)),
-                      trailing: p.selectedCurrency == c.code
-                          ? const Icon(Icons.check_circle,
-                              color: ZakatTheme.deepGreen)
-                          : null,
-                      onTap: () => p.setCurrency(c.code, c.symbol),
-                    ),
-                    if (c != currencies.last)
-                      Divider(height: 1, color: divColor),
-                  ])),
+              ListTile(
+                leading: Icon(Icons.currency_exchange,
+                    color: isDark ? ZakatTheme.gold : ZakatTheme.deepGreen),
+                title: Text(p.isArabic ? 'العملة الحالية' : 'Current Currency',
+                    style: TextStyle(
+                        fontFamily: 'Scheherazade',
+                        fontSize: 15,
+                        color: textColor)),
+                subtitle: Text(
+                    '${p.selectedCurrency} — ${p.currencySymbol}',
+                    style: TextStyle(
+                        fontFamily: 'Scheherazade',
+                        fontSize: 13,
+                        color: subColor)),
+                trailing: Icon(
+                    p.isArabic ? Icons.chevron_left : Icons.chevron_right,
+                    color: subColor,
+                    size: 18),
+                onTap: () => _showCurrencyPicker(context, p),
+              ),
             ]),
             const SizedBox(height: 16),
 
@@ -1017,5 +1021,183 @@ class SettingsScreen extends StatelessWidget {
                 ),
               ],
             ));
+  }
+
+  void _showCurrencyPicker(BuildContext context, ZakatProvider p) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => _CurrencyPickerSheet(p: p),
+    );
+  }
+}
+
+// ════════════════════════════════════════════════════════════════
+// _CurrencyPickerSheet — BottomSheet قابل للسحب مع بحث
+// ════════════════════════════════════════════════════════════════
+class _CurrencyPickerSheet extends StatefulWidget {
+  final ZakatProvider p;
+  const _CurrencyPickerSheet({required this.p});
+  @override
+  State<_CurrencyPickerSheet> createState() => _CurrencyPickerSheetState();
+}
+
+class _CurrencyPickerSheetState extends State<_CurrencyPickerSheet> {
+  String _query = '';
+  final _ctrl = TextEditingController();
+
+  List<CurrencyModel> get _filtered => _query.isEmpty
+      ? currencies
+      : currencies.where((c) =>
+          c.name.contains(_query) ||
+          c.code.contains(_query.toUpperCase()) ||
+          c.symbol.contains(_query)).toList();
+
+  @override
+  void dispose() { _ctrl.dispose(); super.dispose(); }
+
+  @override
+  Widget build(BuildContext context) {
+    final p      = widget.p;
+    final isDark = p.isDarkMode;
+    final bg     = isDark ? ZakatTheme.darkCard : Colors.white;
+    final text   = isDark ? ZakatTheme.darkTextPrimary : ZakatTheme.darkText;
+    final sub    = isDark ? ZakatTheme.darkTextSecondary : ZakatTheme.lightText;
+    final fill   = isDark ? const Color(0xFF1E3A2A) : const Color(0xFFF5F0E8);
+
+    return Directionality(
+      textDirection: p.isArabic ? TextDirection.rtl : TextDirection.ltr,
+      child: DraggableScrollableSheet(
+        initialChildSize: 0.6,
+        minChildSize:     0.4,
+        maxChildSize:     0.92,
+        expand: false,
+        builder: (ctx, scrollCtrl) => Container(
+          decoration: BoxDecoration(
+            color: bg,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(22)),
+            boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.15), blurRadius: 20)],
+          ),
+          child: Column(children: [
+            // مقبض السحب
+            Container(
+              margin: const EdgeInsets.symmetric(vertical: 10),
+              width: 40, height: 4,
+              decoration: BoxDecoration(
+                color: isDark ? Colors.white24 : Colors.black12,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            // العنوان + العملة الحالية
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
+              child: Row(children: [
+                Expanded(child: Text(
+                  p.isArabic ? 'اختر العملة' : 'Select Currency',
+                  style: TextStyle(fontFamily: 'Scheherazade',
+                      fontSize: 19, fontWeight: FontWeight.bold, color: text),
+                )),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+                  decoration: BoxDecoration(
+                    color: ZakatTheme.deepGreen.withOpacity(0.12),
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: ZakatTheme.deepGreen.withOpacity(0.3)),
+                  ),
+                  child: Text('${p.selectedCurrency} ${p.currencySymbol}',
+                    style: const TextStyle(fontFamily: 'Scheherazade',
+                        fontSize: 13, color: ZakatTheme.deepGreen, fontWeight: FontWeight.bold)),
+                ),
+              ]),
+            ),
+            // حقل البحث
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+              child: TextField(
+                controller: _ctrl,
+                textDirection: TextDirection.rtl,
+                onChanged: (v) => setState(() => _query = v),
+                style: TextStyle(fontFamily: 'Scheherazade', color: text),
+                decoration: InputDecoration(
+                  hintText: p.isArabic ? 'ابحث عن عملة...' : 'Search currency...',
+                  hintStyle: TextStyle(fontFamily: 'Scheherazade', color: sub),
+                  prefixIcon: Icon(Icons.search,
+                      color: isDark ? ZakatTheme.gold : ZakatTheme.deepGreen),
+                  suffixIcon: _query.isNotEmpty
+                      ? IconButton(icon: const Icon(Icons.clear, size: 18),
+                          onPressed: () { _ctrl.clear(); setState(() => _query = ''); })
+                      : null,
+                  filled: true, fillColor: fill,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none,
+                  ),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                ),
+              ),
+            ),
+            if (_query.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 6, right: 20, left: 20),
+                child: Align(
+                  alignment: p.isArabic ? Alignment.centerRight : Alignment.centerLeft,
+                  child: Text('${_filtered.length} ${p.isArabic ? "نتيجة" : "results"}',
+                    style: TextStyle(fontFamily: 'Scheherazade', fontSize: 12, color: sub)),
+                ),
+              ),
+            Divider(height: 1, color: isDark ? ZakatTheme.darkBorder : const Color(0xFFEEE8D5)),
+            // قائمة العملات
+            Expanded(
+              child: _filtered.isEmpty
+                  ? Center(child: Column(mainAxisSize: MainAxisSize.min, children: [
+                      const Text('🔍', style: TextStyle(fontSize: 36)),
+                      const SizedBox(height: 8),
+                      Text(p.isArabic ? 'لا توجد نتائج' : 'No results found',
+                        style: TextStyle(fontFamily: 'Scheherazade', color: sub, fontSize: 15)),
+                    ]))
+                  : ListView.separated(
+                      controller: scrollCtrl,
+                      itemCount: _filtered.length,
+                      separatorBuilder: (_, __) => Divider(height: 1,
+                          color: isDark ? ZakatTheme.darkBorder : const Color(0xFFEEE8D5)),
+                      itemBuilder: (_, i) {
+                        final c        = _filtered[i];
+                        final selected = p.selectedCurrency == c.code;
+                        return ListTile(
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
+                          leading: Container(
+                            width: 44, height: 44,
+                            decoration: BoxDecoration(
+                              color: selected ? ZakatTheme.deepGreen.withOpacity(0.12) : fill,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Center(child: Text(c.symbol,
+                              style: TextStyle(fontSize: 18, fontFamily: 'Scheherazade',
+                                color: selected ? ZakatTheme.deepGreen : text,
+                                fontWeight: selected ? FontWeight.bold : FontWeight.normal))),
+                          ),
+                          title: Text(c.name, style: TextStyle(fontFamily: 'Scheherazade',
+                            fontSize: 15, color: text,
+                            fontWeight: selected ? FontWeight.bold : FontWeight.normal)),
+                          subtitle: Text(c.code, style: TextStyle(
+                              fontFamily: 'Scheherazade', fontSize: 12, color: sub)),
+                          trailing: selected
+                              ? const Icon(Icons.check_circle, color: ZakatTheme.deepGreen)
+                              : Icon(p.isArabic ? Icons.chevron_left : Icons.chevron_right,
+                                  color: sub, size: 18),
+                          onTap: () {
+                            p.setCurrency(c.code, c.symbol);
+                            Navigator.pop(context);
+                          },
+                        );
+                      },
+                    ),
+            ),
+            const SizedBox(height: 16),
+          ]),
+        ),
+      ),
+    );
   }
 }
