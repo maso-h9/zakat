@@ -278,19 +278,21 @@ class SettingsScreen extends StatelessWidget {
             // ── عن التطبيق ────────────────────────────────────
             _sectionHeader(p.isArabic ? 'عن التطبيق' : 'About', isDark),
             _card(cardColor: cardColor, isDark: isDark, children: [
-              ListTile(
-                leading:
-                    const Icon(Icons.info_outline, color: ZakatTheme.deepGreen),
-                title: Text(p.isArabic ? 'تطبيق الزكاة' : 'Zakat App',
-                    style: TextStyle(
-                        fontFamily: 'Scheherazade', color: textColor)),
-                subtitle: Text(
-                    'v2.0 — ${p.isArabic ? "نسخة متطورة" : "Advanced Edition"}',
-                    style: TextStyle(
-                        fontFamily: 'Scheherazade',
-                        color: subColor,
-                        fontSize: 12)),
-              ),
+              _tileLabel(p.isArabic ? 'الإصدار' : 'Version', '2.0.0', isDark),
+              Divider(height: 1, color: divColor),
+              _tileLabel(
+                  p.isArabic ? 'المحتوى الديني' : 'Islamic Content',
+                  p.isArabic ? 'الدرر السنية + الشاملة' : 'Dorar + Shamela',
+                  isDark),
+              Divider(height: 1, color: divColor),
+              _tileLabel(p.isArabic ? 'بيانات الذهب' : 'Gold Data',
+                  'gold-api.com + open.er-api.com', isDark),
+              Divider(height: 1, color: divColor),
+              _tileLabel(p.isArabic ? 'المساعد الذكي' : 'AI Assistant',
+                  'Google Gemini 2.0 Flash', isDark),
+              Divider(height: 1, color: divColor),
+              _tileLabel(p.isArabic ? 'مصادر النصاب' : 'Nisab Sources',
+                  p.isArabic ? 'Firestore — محدَّثة ديناميكياً' : 'Firestore — Dynamic', isDark),
             ]),
             const SizedBox(height: 32),
           ],
@@ -1022,7 +1024,26 @@ class SettingsScreen extends StatelessWidget {
             ));
   }
 
-  void _showCurrencyPicker(BuildContext context, ZakatProvider p) {
+  Widget _tileLabel(String label, String value, bool isDark) => Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(label,
+                style: TextStyle(
+                    fontFamily: 'Scheherazade',
+                    fontSize: 15,
+                    color: isDark ? ZakatTheme.darkTextPrimary : ZakatTheme.darkText)),
+            Text(value,
+                style: TextStyle(
+                    fontFamily: 'Scheherazade',
+                    fontSize: 14,
+                    color: isDark ? ZakatTheme.darkTextSecondary : ZakatTheme.medText)),
+          ],
+        ),
+      );
+
+    void _showCurrencyPicker(BuildContext context, ZakatProvider p) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
