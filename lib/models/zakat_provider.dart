@@ -89,7 +89,15 @@ class ZakatProvider extends ChangeNotifier {
     notifyListeners();
     fetchGoldPrice();
     _loadCountrySource();
-    if (cloudSyncEnabled) await _initCloudSync();
+
+    // انتظار حالة Auth الحقيقية قبل المزامنة
+    // هذا يحل مشكلة تحميل بيانات مستخدم مجهول بدل المستخدم الحقيقي
+    if (cloudSyncEnabled) {
+      await _initCloudSyncWhenReady();
+    }
+
+    // استمع لتغيرات Auth (تسجيل دخول / خروج) وزامن تلقائياً
+    _listenToAuthChanges();
   }
 
   // ════════════════════════════════════════════════════════════
@@ -221,9 +229,40 @@ class ZakatProvider extends ChangeNotifier {
   // ════════════════════════════════════════════════════════════
   // Firebase
   // ════════════════════════════════════════════════════════════
+  // ── المزامنة مع انتظار Auth الحقيقي ──────────────────────────
+  Future<void> _initCloudSyncWhenReady() async {
+    // إذا المستخدم مسجّل دخوله بالفعل → زامن فوراً
+    if (FirebaseService.isSignedIn) {
+      await _initCloudSync();
+      return;
+    }
+    // انتظر ثانية ونصف لتكتمل حالة Auth ثم زامن
+    await Future.delayed(const Duration(milliseconds: 1500));
+    if (FirebaseService.isSignedIn) {
+      await _initCloudSync();
+    }
+    // إذا لا يزال غير مسجّل → لا نستدعي signInAnonymously تلقائياً
+    // المزامنة ستحدث عند تسجيل الدخول عبر _listenToAuthChanges
+  }
+
+  void _listenToAuthChanges() {
+    FirebaseService.authStateChanges().listen((user) async {
+      if (user != null && cloudSyncEnabled) {
+        // مستخدم سجّل دخوله → حمّل بياناته من Firestore
+        await FirebaseService.loadAll(this);
+        zakatHistory = await FirebaseService.loadHistory();
+        lastSyncTime = DateTime.now();
+        notifyListeners();
+      }
+    });
+  }
+
   Future<void> _initCloudSync() async {
     try {
-      await FirebaseService.signInAnonymously();
+      // لا نستدعي signInAnonymously إذا المستخدم مسجّل بالفعل
+      if (!FirebaseService.isSignedIn) {
+        await FirebaseService.signInAnonymously();
+      }
       await FirebaseService.loadAll(this);
       zakatHistory = await FirebaseService.loadHistory();
       lastSyncTime = DateTime.now();

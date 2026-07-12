@@ -19,6 +19,9 @@ class FirebaseService {
   static DocumentReference? get _userDoc =>
       _uid == null ? null : _db.collection('users').doc(_uid);
 
+  // ─── Stream لحالة Auth ───────────────────────────────────────
+  static Stream<User?> authStateChanges() => _auth.authStateChanges();
+
   // ─── تسجيل دخول مجهول — للاستخدام قبل تسجيل الدخول الحقيقي
   static Future<void> signInAnonymously() async {
     // إذا المستخدم مسجّل دخوله بالفعل (Email/Google/Phone) لا نحتاج Anonymous
