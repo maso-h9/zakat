@@ -5,6 +5,7 @@
 // يستخدم Country Code بدل Currency Code (بند 14)
 // ================================================================
 import 'package:cloud_firestore/cloud_firestore.dart';
+import '../core/utils/app_logger.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 // ── نموذج المصدر الرسمي (ديناميكي من Firestore) ──────────────
@@ -179,7 +180,8 @@ class CountrySourcesRepository {
       }
     } catch (e) {
       // ignore: avoid_print
-      print('[CountrySourcesRepository] فشل جلب $countryCode: $e');
+      AppLogger.error('CountrySourcesRepository: فشل جلب $countryCode',
+          exception: e);
     }
     return null;
   }

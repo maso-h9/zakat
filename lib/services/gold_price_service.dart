@@ -5,6 +5,7 @@
 // الإصلاح: الكاش يخزن العملة الحالية، وعند اختلافها يجلب من Firestore
 // ================================================================
 import 'package:cloud_firestore/cloud_firestore.dart';
+import '../core/utils/app_logger.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 class GoldPriceService {
@@ -73,7 +74,7 @@ class GoldPriceService {
         return _fromFirestore(snap.data()!, currencyCode);
       }
     } catch (e) {
-      _log('Firestore فشل: $e');
+      AppLogger.error('GoldPriceService: Firestore', exception: e);
     }
 
     // 3. Firestore فشل — هل عندنا كاش لأي عملة؟ استخدمه مع تحويل

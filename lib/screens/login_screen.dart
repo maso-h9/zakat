@@ -319,7 +319,7 @@ class _LoginScreenState extends State<LoginScreen>
                     color: textColor),
                 textAlign: TextAlign.center),
             const SizedBox(height: 8),
-            const Text(
+            /* const Text(
               '⚠️ يحتاج إضافة SHA-1 في Firebase Console\nراجع CHANGES_V4.md للتفاصيل',
               style: TextStyle(
                   fontFamily: 'Scheherazade',
@@ -328,7 +328,7 @@ class _LoginScreenState extends State<LoginScreen>
                   height: 1.6),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 24),*/
             SizedBox(
               width: double.infinity,
               child: OutlinedButton.icon(
