@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import '../services/storage_service.dart';
 import '../services/gold_price_service.dart';
 import '../services/firebase_service.dart';
+import '../services/connectivity_service.dart';
 import '../services/nisab_service.dart';
 
 enum NisabMethod { global, official, custom }
@@ -61,6 +62,15 @@ class ZakatProvider extends ChangeNotifier {
     _loaded = true;
 
     await GoldPriceService.initHive();
+    await ConnectivityService().init();
+
+    // عند عودة الإنترنت — زامن وحدّث الأسعار تلقائياً (بند 15)
+    ConnectivityService().statusStream.listen((status) {
+      if (status == ConnectivityStatus.online) {
+        fetchGoldPrice();
+        if (cloudSyncEnabled) _pushToCloud();
+      }
+    });
     await CountrySourcesRepository.init();
 
     await StorageService.loadWealth(this);

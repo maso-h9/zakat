@@ -17,6 +17,9 @@ import 'settings_screen.dart';
 import 'madhabs_screen.dart';
 import 'whatif_screen.dart';
 import '../widgets/zakat_widget.dart';
+import '../widgets/zakat_shimmer.dart';
+import '../widgets/offline_banner.dart';
+import '../core/utils/responsive_helper.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -45,9 +48,15 @@ class _HomeScreenState extends State<HomeScreen> {
           ? const Color(0xFF0D1B3E)
           : ZakatTheme.scaffoldBgAdaptive(isDark),
       drawer: _buildDrawer(context, p, isDark),
-      body: CustomScrollView(slivers: [
-        _buildSliverAppBar(context, p, isDark),
-        SliverToBoxAdapter(child: _buildBody(context, p, isDark)),
+      body: Column(children: [
+        // شريط انقطاع الإنترنت (بند 15) — يظهر تلقائياً عند Offline
+        const OfflineBanner(),
+        Expanded(
+          child: CustomScrollView(slivers: [
+            _buildSliverAppBar(context, p, isDark),
+            SliverToBoxAdapter(child: _buildBody(context, p, isDark)),
+          ]),
+        ),
       ]),
       bottomNavigationBar: _buildBottomNav(p, isDark),
       floatingActionButton: _buildFAB(context, p),
@@ -209,11 +218,15 @@ class _HomeScreenState extends State<HomeScreen> {
   // Body
   // ==============================
   Widget _buildBody(BuildContext context, ZakatProvider p, bool isDark) {
+    final r = ResponsiveHelper(context);
     ZakatWidgetService.updateWidget(p);
     return Padding(
       padding: const EdgeInsets.all(16),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        _buildQuickDashboard(p, isDark),
+        // Shimmer أثناء أول تحميل (بند 11)
+        p.isLoadingGoldPrice && p.savedMoney == 0 && p.goldGrams == 0
+            ? const ShimmerDashboardGrid()
+            : _buildQuickDashboard(p, isDark),
         const SizedBox(height: 20),
         _buildGoldPriceBanner(p, isDark),
         const SizedBox(height: 20),
@@ -297,6 +310,11 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildGoldPriceBanner(ZakatProvider p, bool isDark) {
+    // Shimmer أثناء التحميل الأول (بند 11)
+    if (p.isLoadingGoldPrice && p.goldPricePerGram == 285.0) {
+      return const ShimmerGoldBanner();
+    }
+
     final bg = p.isRamadanMode
         ? const Color(0xFF1A2A5E)
         : (isDark ? const Color(0xFF0A2A1A) : ZakatTheme.deepGreen);

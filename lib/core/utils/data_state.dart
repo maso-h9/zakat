@@ -2,7 +2,7 @@
 // core/utils/data_state.dart — حالات البيانات الموحّدة (بند 4)
 // استخدم هذا بدل bool isLoading في كل الشاشات
 // ================================================================
-import 'app_exception.dart';
+import '../errors/app_exception.dart';
 
 /// حالة البيانات — كل شاشة تعرض إحدى هذه الحالات
 sealed class DataState<T> {

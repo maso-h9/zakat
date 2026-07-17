@@ -4,8 +4,8 @@
 // ================================================================
 import 'dart:convert';
 import 'package:hive_flutter/hive_flutter.dart';
-import '../app_logger.dart';
-import 'app_exception.dart';
+import '../utils/app_logger.dart';
+import '../errors/app_exception.dart';
 
 class CacheEntry<T> {
   final T data;

@@ -7,6 +7,8 @@ import 'models/zakat_provider.dart';
 import 'utils/theme.dart';
 import 'screens/home_screen.dart';
 import 'services/notification_service.dart';
+import 'services/crashlytics_service.dart';
+import 'services/fcm_service.dart';
 import 'l10n/app_localizations.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
@@ -27,6 +29,10 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
+  // ── Crashlytics (بند 12) ────────────────────────────────────
+  await CrashlyticsService.init();
+  await FcmService.init(); // FCM (بند 24)
+
   await NotificationService().init();
 
   runApp(const ZakatApp());
@@ -46,7 +52,6 @@ class ZakatApp extends StatelessWidget {
           theme: ZakatTheme.theme,
           darkTheme: ZakatTheme.darkTheme,
           themeMode: provider.isDarkMode ? ThemeMode.dark : ThemeMode.light,
-          // اللغة من Provider
           locale: provider.locale,
           supportedLocales: const [
             Locale('ar', 'SA'),
@@ -65,6 +70,7 @@ class ZakatApp extends StatelessWidget {
   }
 }
 
+// SplashScreen — بدون تعديل
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
   @override

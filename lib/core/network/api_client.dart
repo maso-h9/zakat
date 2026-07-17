@@ -5,8 +5,8 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
-import 'app_exception.dart';
-import 'app_logger.dart';
+import '../errors/app_exception.dart';
+import '../utils/app_logger.dart';
 
 class ApiClient {
   static const Duration _defaultTimeout = Duration(seconds: 10);
