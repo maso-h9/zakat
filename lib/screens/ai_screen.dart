@@ -24,7 +24,7 @@ class _AIScreenState extends State<AIScreen> {
 
   // ─── ضع مفتاح Gemini هنا ──────────────────────────────────────
   // احصل عليه مجاناً من: https://aistudio.google.com/app/apikey
-  static const String _apiKey = 'YOUR_GEMINI_API_KEY';
+  static const String _apiKey = '';
   // ──────────────────────────────────────────────────────────────
 
   late final AiRepository _repo = AiRepository(apiKey: _apiKey);
