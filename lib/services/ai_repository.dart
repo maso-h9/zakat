@@ -118,7 +118,7 @@ class AiResponseParser {
 // AiRepository — طبقة الوصول لـ Gemini API (بند 23)
 // ══════════════════════════════════════════════════════════════
 class AiRepository {
-  static const String _model = 'gemini-2.0-flash';
+  static const String _model = 'gemini-3.5-flash';
   static const String _baseUrl =
       'https://generativelanguage.googleapis.com/v1beta/models/$_model:generateContent';
   static const int _maxHistory = 20;
@@ -167,6 +167,7 @@ class AiRepository {
           .timeout(const Duration(seconds: 30));
 
       AppLogger.response('Gemini', response.statusCode);
+      AppLogger.info(response.body);
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body) as Map<String, dynamic>;

@@ -43,7 +43,7 @@ analyzer:
     dead_code: warning
     unused_import: warning
     unused_local_variable: warning
-    deprecated_member_use: warning
+    deprecated_member_use: ignore warning
 
   exclude:
     - '**/*.g.dart'

@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:zakat_app/services/gold_price_service.dart';
 import 'models/zakat_provider.dart';
 import 'utils/theme.dart';
 import 'screens/home_screen.dart';
 import 'services/notification_service.dart';
 import 'services/crashlytics_service.dart';
+import 'services/remote_config_service.dart';
 import 'services/fcm_service.dart';
 import 'l10n/app_localizations.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -29,13 +29,31 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  // ── Crashlytics (بند 12) ────────────────────────────────────
+  // ── Crashlytics فقط هنا (لا يحتاج إنترنت) ────────────────
   await CrashlyticsService.init();
-  await FcmService.init(); // FCM (بند 24)
 
-  await NotificationService().init();
+  // ── Remote Config — يجلب مفاتيح API بأمان ──────────────────
+  await RemoteConfigService.init().timeout(
+    const Duration(seconds: 3),
+  );
 
+  // شغّل التطبيق فوراً بدون انتظار
   runApp(const ZakatApp());
+
+  // FCM و Notifications بعد runApp — لا يبلّكان الشاشة
+  _initServicesInBackground();
+}
+
+// تهيئة الخدمات في الخلفية بعد فتح التطبيق
+Future<void> _initServicesInBackground() async {
+  // انتظر ثانية حتى يستقر الـ UI
+  await Future.delayed(const Duration(seconds: 1));
+  try {
+    await FcmService.init();
+  } catch (_) {}
+  try {
+    await NotificationService().init();
+  } catch (_) {}
 }
 
 class ZakatApp extends StatelessWidget {

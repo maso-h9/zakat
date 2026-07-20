@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/zakat_provider.dart';
 import '../services/ai_repository.dart';
+import '../services/remote_config_service.dart';
 import '../utils/theme.dart';
 
 class AIScreen extends StatefulWidget {
@@ -22,12 +23,19 @@ class _AIScreenState extends State<AIScreen> {
   bool _isLoading = false;
   bool _welcomeAdded = false;
 
-  // ─── ضع مفتاح Gemini هنا ──────────────────────────────────────
-  // احصل عليه مجاناً من: https://aistudio.google.com/app/apikey
-  static const String _apiKey = '';
+  // ─── مفتاح Gemini يُجلب بأمان من Firebase Remote Config ────────
+  // لا تضع المفتاح هنا — ضعه في Firebase Console → Remote Config
+  // المفتاح: gemini_api_key
   // ──────────────────────────────────────────────────────────────
 
-  late final AiRepository _repo = AiRepository(apiKey: _apiKey);
+  // يُنشأ عند أول استخدام بعد تحميل Remote Config
+  AiRepository? _repoInstance;
+  AiRepository get _repo {
+    _repoInstance ??= AiRepository(
+      apiKey: RemoteConfigService.geminiApiKey,
+    );
+    return _repoInstance!;
+  }
 
   @override
   void dispose() {
