@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/zakat_provider.dart';
 import '../utils/theme.dart';
+import '../l10n/app_localizations.dart';
 
 class WhatIfScreen extends StatefulWidget {
   const WhatIfScreen({super.key});
@@ -56,7 +57,7 @@ class _WhatIfScreenState extends State<WhatIfScreen>
         backgroundColor: ZakatTheme.scaffoldBgAdaptive(isDark),
         appBar: AppBar(
           backgroundColor: appBarColor,
-          title: const Text('ماذا لو؟ — التخطيط المالي'),
+          title: Text(AppLocalizations.of(context).whatIfTitle),
           bottom: TabBar(
             controller: _tabController,
             indicatorColor: ZakatTheme.gold,
@@ -67,10 +68,10 @@ class _WhatIfScreenState extends State<WhatIfScreen>
                 fontFamily: 'Scheherazade',
                 fontSize: 13,
                 fontWeight: FontWeight.bold),
-            tabs: const [
-              Tab(text: 'حاسبة فورية'),
-              Tab(text: 'توقع سنوي'),
-              Tab(text: 'مقارنة سيناريوهات'),
+            tabs: [
+              Tab(text: AppLocalizations.of(context).instantCalculator),
+              Tab(text: AppLocalizations.of(context).annualForecast),
+              Tab(text: AppLocalizations.of(context).scenarioComparison),
             ],
           ),
         ),
@@ -90,6 +91,7 @@ class _WhatIfScreenState extends State<WhatIfScreen>
   // تبويب 1: حاسبة فورية
   // ==============================
   Widget _buildQuickCalc(ZakatProvider p, bool isDark) {
+    final l10n = AppLocalizations.of(context);
     final cardColor = ZakatTheme.cardBgAdaptive(isDark);
     final textColor = isDark ? ZakatTheme.darkTextPrimary : ZakatTheme.darkText;
     final subColor = isDark ? ZakatTheme.darkTextSecondary : ZakatTheme.medText;
@@ -113,7 +115,7 @@ class _WhatIfScreenState extends State<WhatIfScreen>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('إذا كان مالك...',
+                Text(l10n.ifYouOwn,
                     style: TextStyle(
                         fontFamily: 'Scheherazade',
                         fontSize: 18,
@@ -131,7 +133,7 @@ class _WhatIfScreenState extends State<WhatIfScreen>
                       fontSize: 18,
                       color: textColor),
                   decoration: InputDecoration(
-                    labelText: 'المبلغ (${p.currencySymbol})',
+                    labelText: '${l10n.amount} (${p.currencySymbol})',
                     suffixText: p.currencySymbol,
                     suffixStyle: const TextStyle(
                         fontFamily: 'Scheherazade',
@@ -146,7 +148,7 @@ class _WhatIfScreenState extends State<WhatIfScreen>
                   max: 500000,
                   divisions: 500,
                   activeColor: hasNisab ? ZakatTheme.deepGreen : Colors.grey,
-                  inactiveColor: Colors.grey.withOpacity(0.3),
+                  inactiveColor: Colors.grey.withValues(alpha: 0.3),
                   onChanged: (v) {
                     setState(() {
                       _amount = v.roundToDouble();
@@ -191,7 +193,7 @@ class _WhatIfScreenState extends State<WhatIfScreen>
             child: Column(
               children: [
                 Text(
-                  hasNisab ? '✅ تجب الزكاة' : '❌ لم يبلغ النصاب',
+                  hasNisab ? l10n.zakatObligatoryShort : l10n.belowNisabShort,
                   style: const TextStyle(
                       color: Colors.white,
                       fontSize: 20,
@@ -200,8 +202,8 @@ class _WhatIfScreenState extends State<WhatIfScreen>
                 ),
                 const SizedBox(height: 16),
                 if (hasNisab) ...[
-                  const Text('الزكاة الواجبة (2.5%)',
-                      style: TextStyle(
+                  Text(l10n.zakatDuePercent,
+                      style: const TextStyle(
                           color: Colors.white70, fontFamily: 'Scheherazade')),
                   Text(
                     '${zakat.toStringAsFixed(2)} ${p.currencySymbol}',
@@ -214,14 +216,14 @@ class _WhatIfScreenState extends State<WhatIfScreen>
                   ),
                   const SizedBox(height: 8),
                   Text(
-                      'يبقى بعد الزكاة: ${remaining.toStringAsFixed(0)} ${p.currencySymbol}',
+                      '${l10n.remainingAfterZakat}: ${remaining.toStringAsFixed(0)} ${p.currencySymbol}',
                       style: const TextStyle(
                           color: Colors.white70,
                           fontFamily: 'Scheherazade',
                           fontSize: 13)),
                 ] else
                   Text(
-                    'النصاب: ${p.goldNisabValue.toStringAsFixed(0)} ${p.currencySymbol}\nمتبقٍ للنصاب: ${(p.goldNisabValue - _amount).toStringAsFixed(0)} ${p.currencySymbol}',
+                    '${l10n.nisabInfo}: ${p.goldNisabValue.toStringAsFixed(0)} ${p.currencySymbol}\n${l10n.remainingToNisab}: ${(p.goldNisabValue - _amount).toStringAsFixed(0)} ${p.currencySymbol}',
                     style: const TextStyle(
                         color: Colors.white70,
                         fontFamily: 'Scheherazade',
@@ -244,7 +246,7 @@ class _WhatIfScreenState extends State<WhatIfScreen>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('جدول المقارنة السريع',
+                Text(l10n.quickComparisonTable,
                     style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -262,6 +264,7 @@ class _WhatIfScreenState extends State<WhatIfScreen>
   }
 
   Widget _compactRow(double amount, ZakatProvider p, bool isDark) {
+    final l10n = AppLocalizations.of(context);
     final zakat = amount >= p.goldNisabValue ? amount * 0.025 : 0.0;
     final isHighlighted = (_amount - amount).abs() < 2500;
     final subColor = isDark ? ZakatTheme.darkTextSecondary : ZakatTheme.medText;
@@ -270,10 +273,10 @@ class _WhatIfScreenState extends State<WhatIfScreen>
       padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
       margin: const EdgeInsets.only(bottom: 4),
       decoration: BoxDecoration(
-        color: isHighlighted ? ZakatTheme.deepGreen.withOpacity(0.08) : null,
+        color: isHighlighted ? ZakatTheme.deepGreen.withValues(alpha: 0.08) : null,
         borderRadius: BorderRadius.circular(8),
         border: isHighlighted
-            ? Border.all(color: ZakatTheme.deepGreen.withOpacity(0.2))
+            ? Border.all(color: ZakatTheme.deepGreen.withValues(alpha: 0.2))
             : null,
       ),
       child: Row(
@@ -289,7 +292,7 @@ class _WhatIfScreenState extends State<WhatIfScreen>
           Text(
             zakat > 0
                 ? '${_formatNum(zakat)} ${p.currencySymbol}'
-                : 'دون النصاب',
+                : l10n.below,
             style: TextStyle(
               color: zakat > 0
                   ? (isHighlighted ? ZakatTheme.gold : ZakatTheme.deepGreen)
@@ -308,6 +311,7 @@ class _WhatIfScreenState extends State<WhatIfScreen>
   // تبويب 2: توقع سنوي
   // ==============================
   Widget _buildYearlyProjection(ZakatProvider p, bool isDark) {
+    final l10n = AppLocalizations.of(context);
     final cardColor = ZakatTheme.cardBgAdaptive(isDark);
     final textColor = isDark ? ZakatTheme.darkTextPrimary : ZakatTheme.darkText;
     final subColor = isDark ? ZakatTheme.darkTextSecondary : ZakatTheme.medText;
@@ -341,7 +345,7 @@ class _WhatIfScreenState extends State<WhatIfScreen>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('إعدادات التوقع',
+                Text(l10n.forecastSettings,
                     style: TextStyle(
                         fontFamily: 'Scheherazade',
                         fontSize: 17,
@@ -357,12 +361,12 @@ class _WhatIfScreenState extends State<WhatIfScreen>
                   style:
                       TextStyle(fontFamily: 'Scheherazade', color: textColor),
                   decoration: InputDecoration(
-                    labelText: 'الدخل الشهري (${p.currencySymbol})',
+                    labelText: '${l10n.monthlyIncome} (${p.currencySymbol})',
                   ),
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  'نسبة الادخار الشهري: ${(_monthlySavingsRate * 100).toStringAsFixed(0)}%',
+                  '${l10n.monthlySavingsRate}: ${(_monthlySavingsRate * 100).toStringAsFixed(0)}%',
                   style: TextStyle(
                       fontFamily: 'Scheherazade',
                       fontSize: 14,
@@ -379,7 +383,7 @@ class _WhatIfScreenState extends State<WhatIfScreen>
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'عدد السنوات: $_yearsToProject',
+                  '${l10n.yearsCount}: $_yearsToProject',
                   style: TextStyle(
                       fontFamily: 'Scheherazade',
                       fontSize: 14,
@@ -420,26 +424,26 @@ class _WhatIfScreenState extends State<WhatIfScreen>
                         topRight: Radius.circular(16),
                       ),
                     ),
-                    child: const Row(
+                    child: Row(
                       children: [
                         Expanded(
-                            child: Text('السنة',
+                            child: Text(l10n.yearLabel,
                                 textAlign: TextAlign.center,
-                                style: TextStyle(
+                                style: const TextStyle(
                                     color: Colors.white,
                                     fontFamily: 'Scheherazade',
                                     fontWeight: FontWeight.bold))),
                         Expanded(
-                            child: Text('المدخرات',
+                            child: Text(l10n.savingsLabel,
                                 textAlign: TextAlign.center,
-                                style: TextStyle(
+                                style: const TextStyle(
                                     color: Colors.white,
                                     fontFamily: 'Scheherazade',
                                     fontWeight: FontWeight.bold))),
                         Expanded(
-                            child: Text('الزكاة',
+                            child: Text(l10n.zakatLabel,
                                 textAlign: TextAlign.center,
-                                style: TextStyle(
+                                style: const TextStyle(
                                     color: ZakatTheme.gold,
                                     fontFamily: 'Scheherazade',
                                     fontWeight: FontWeight.bold))),
@@ -463,7 +467,7 @@ class _WhatIfScreenState extends State<WhatIfScreen>
                       child: Row(
                         children: [
                           Expanded(
-                              child: Text('السنة ${row['year']!.toInt()}',
+                              child: Text(l10n.yearLabel2(row['year']!.toInt()),
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                       fontFamily: 'Scheherazade',
@@ -501,10 +505,10 @@ class _WhatIfScreenState extends State<WhatIfScreen>
           ] else
             Container(
               padding: const EdgeInsets.all(32),
-              child: const Text(
-                'أدخل دخلك الشهري لرؤية التوقعات',
+              child: Text(
+                l10n.enterIncomeHint,
                 textAlign: TextAlign.center,
-                style: TextStyle(
+                style: const TextStyle(
                     fontFamily: 'Scheherazade',
                     color: ZakatTheme.lightText,
                     fontSize: 15),
@@ -519,6 +523,7 @@ class _WhatIfScreenState extends State<WhatIfScreen>
   // تبويب 3: مقارنة سيناريوهات
   // ==============================
   Widget _buildScenarioComparison(ZakatProvider p, bool isDark) {
+    final l10n = AppLocalizations.of(context);
     final cardColor = ZakatTheme.cardBgAdaptive(isDark);
     final textColor = isDark ? ZakatTheme.darkTextPrimary : ZakatTheme.darkText;
 
@@ -541,13 +546,13 @@ class _WhatIfScreenState extends State<WhatIfScreen>
                     color: cardColor,
                     borderRadius: BorderRadius.circular(14),
                     border: Border.all(
-                        color: ZakatTheme.deepGreen.withOpacity(0.4)),
+                        color: ZakatTheme.deepGreen.withValues(alpha: 0.4)),
                     boxShadow: ZakatTheme.cardShadowAdaptive(isDark),
                   ),
                   child: Column(
                     children: [
-                      Text('السيناريو الأول',
-                          style: TextStyle(
+                      Text(l10n.scenarioOne,
+                          style: const TextStyle(
                               fontFamily: 'Scheherazade',
                               fontWeight: FontWeight.bold,
                               color: ZakatTheme.deepGreen)),
@@ -560,7 +565,7 @@ class _WhatIfScreenState extends State<WhatIfScreen>
                         style: TextStyle(
                             fontFamily: 'Scheherazade', color: textColor),
                         decoration: InputDecoration(
-                          hintText: 'المبلغ',
+                          hintText: l10n.amount,
                           isDense: true,
                           suffixText: p.currencySymbol,
                         ),
@@ -583,13 +588,13 @@ class _WhatIfScreenState extends State<WhatIfScreen>
                   decoration: BoxDecoration(
                     color: cardColor,
                     borderRadius: BorderRadius.circular(14),
-                    border: Border.all(color: ZakatTheme.gold.withOpacity(0.4)),
+                    border: Border.all(color: ZakatTheme.gold.withValues(alpha: 0.4)),
                     boxShadow: ZakatTheme.cardShadowAdaptive(isDark),
                   ),
                   child: Column(
                     children: [
-                      Text('السيناريو الثاني',
-                          style: TextStyle(
+                      Text(l10n.scenarioTwo,
+                          style: const TextStyle(
                               fontFamily: 'Scheherazade',
                               fontWeight: FontWeight.bold,
                               color: ZakatTheme.gold)),
@@ -602,7 +607,7 @@ class _WhatIfScreenState extends State<WhatIfScreen>
                         style: TextStyle(
                             fontFamily: 'Scheherazade', color: textColor),
                         decoration: InputDecoration(
-                          hintText: 'المبلغ',
+                          hintText: l10n.amount,
                           isDense: true,
                           suffixText: p.currencySymbol,
                         ),
@@ -620,12 +625,12 @@ class _WhatIfScreenState extends State<WhatIfScreen>
             Row(
               children: [
                 Expanded(
-                    child: _scenarioResult(
-                        'الأول', s1, z1, ZakatTheme.deepGreen, p, isDark)),
+                    child: _scenarioResult(context,
+                        l10n.scenarioOne, s1, z1, ZakatTheme.deepGreen, p, isDark)),
                 const SizedBox(width: 12),
                 Expanded(
-                    child: _scenarioResult(
-                        'الثاني', s2, z2, ZakatTheme.gold, p, isDark)),
+                    child: _scenarioResult(context,
+                        l10n.scenarioTwo, s2, z2, ZakatTheme.gold, p, isDark)),
               ],
             ),
             const SizedBox(height: 16),
@@ -641,19 +646,19 @@ class _WhatIfScreenState extends State<WhatIfScreen>
                 ),
                 child: Column(
                   children: [
-                    Text('الفرق بين السيناريوهين',
+                    Text(l10n.differenceSection,
                         style: TextStyle(
                             fontFamily: 'Scheherazade',
                             fontWeight: FontWeight.bold,
                             fontSize: 16,
                             color: textColor)),
                     const SizedBox(height: 12),
-                    _diffRow('فرق المبلغ', (s1 - s2).abs(), p, isDark),
+                    _diffRow(context, l10n.amountDiff, (s1 - s2).abs(), p, isDark),
                     const SizedBox(height: 6),
-                    _diffRow('فرق الزكاة', (z1 - z2).abs(), p, isDark),
+                    _diffRow(context, l10n.zakatDiff, (z1 - z2).abs(), p, isDark),
                     const SizedBox(height: 6),
-                    _diffRow('الباقي بعد الزكاة (1)', (s1 - z1), p, isDark),
-                    _diffRow('الباقي بعد الزكاة (2)', (s2 - z2), p, isDark),
+                    _diffRow(context, l10n.remainingAfterZakat1, (s1 - z1), p, isDark),
+                    _diffRow(context, l10n.remainingAfterZakat2, (s2 - z2), p, isDark),
                   ],
                 ),
               ),
@@ -663,14 +668,15 @@ class _WhatIfScreenState extends State<WhatIfScreen>
     );
   }
 
-  Widget _scenarioResult(String label, double amount, double zakat, Color color,
+  Widget _scenarioResult(BuildContext context, String label, double amount, double zakat, Color color,
       ZakatProvider p, bool isDark) {
+    final l10n = AppLocalizations.of(context);
     final hasNisab = amount >= p.goldNisabValue;
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [color.withOpacity(0.8), color],
+          colors: [color.withValues(alpha: 0.8), color],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -678,7 +684,7 @@ class _WhatIfScreenState extends State<WhatIfScreen>
       ),
       child: Column(
         children: [
-          Text('السيناريو $label',
+          Text(label,
               style: const TextStyle(
                   color: Colors.white70,
                   fontFamily: 'Scheherazade',
@@ -691,7 +697,7 @@ class _WhatIfScreenState extends State<WhatIfScreen>
                   fontWeight: FontWeight.bold,
                   fontSize: 14)),
           const SizedBox(height: 8),
-          Text(hasNisab ? 'زكاة واجبة' : 'دون النصاب',
+          Text(hasNisab ? l10n.obligatoryZakat : l10n.below,
               style: TextStyle(
                   color: hasNisab ? Colors.white70 : Colors.white38,
                   fontFamily: 'Scheherazade',
@@ -708,7 +714,7 @@ class _WhatIfScreenState extends State<WhatIfScreen>
     );
   }
 
-  Widget _diffRow(String label, double value, ZakatProvider p, bool isDark) {
+  Widget _diffRow(BuildContext context, String label, double value, ZakatProvider p, bool isDark) {
     final textColor =
         isDark ? ZakatTheme.darkTextSecondary : ZakatTheme.medText;
     return Padding(

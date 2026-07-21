@@ -2,7 +2,6 @@
 // services/fcm_service.dart — Firebase Cloud Messaging (بند 24)
 // إشعارات Push من السيرفر (GitHub Actions) + محلية
 // ================================================================
-import 'package:flutter/foundation.dart';
 // ignore: depend_on_referenced_packages
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';

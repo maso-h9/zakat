@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import '../services/auth_service.dart';
 import '../models/zakat_provider.dart';
 import '../utils/theme.dart';
+import '../l10n/app_localizations.dart';
 import 'login_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -26,6 +27,7 @@ class ProfileScreen extends StatelessWidget {
 
   // ─── غير مسجّل ───────────────────────────────────────────────
   Widget _buildNotSignedIn(BuildContext context, bool isDark) {
+    final l10n = AppLocalizations.of(context);
     final bg = ZakatTheme.scaffoldBgAdaptive(isDark);
     final cardColor = ZakatTheme.cardBgAdaptive(isDark);
     final textColor = isDark ? ZakatTheme.darkTextPrimary : ZakatTheme.darkText;
@@ -35,8 +37,8 @@ class ProfileScreen extends StatelessWidget {
       child: Scaffold(
         backgroundColor: bg,
         appBar: AppBar(
-          title: const Text('الحساب الشخصي',
-              style: TextStyle(fontFamily: 'Scheherazade')),
+          title: Text(l10n.profileTitle,
+              style: const TextStyle(fontFamily: 'Scheherazade')),
           backgroundColor:
               isDark ? const Color(0xFF0A2A1A) : ZakatTheme.deepGreen,
         ),
@@ -56,7 +58,7 @@ class ProfileScreen extends StatelessWidget {
                   Container(
                     width: 90,
                     height: 90,
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       gradient: ZakatTheme.mainGradient,
                       shape: BoxShape.circle,
                     ),
@@ -65,7 +67,7 @@ class ProfileScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 20),
                   Text(
-                    'سجّل الدخول لحفظ بياناتك',
+                    l10n.loginToSave,
                     style: TextStyle(
                         fontFamily: 'Scheherazade',
                         fontSize: 20,
@@ -75,7 +77,7 @@ class ProfileScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 10),
                   Text(
-                    'احفظ بيانات زكاتك ومدخراتك وتاريخ دفعاتك في السحابة',
+                    l10n.loginToSaveDesc,
                     style: TextStyle(
                         fontFamily: 'Scheherazade',
                         fontSize: 14,
@@ -94,8 +96,8 @@ class ProfileScreen extends StatelessWidget {
                           MaterialPageRoute(
                               builder: (_) => const LoginScreen())),
                       icon: const Icon(Icons.login),
-                      label: const Text('تسجيل الدخول',
-                          style: TextStyle(
+                      label: Text(l10n.loginButton,
+                          style: const TextStyle(
                               fontFamily: 'Scheherazade', fontSize: 17)),
                     ),
                   ),
@@ -111,12 +113,12 @@ class ProfileScreen extends StatelessWidget {
   // ─── مسجّل دخول ──────────────────────────────────────────────
   Widget _buildProfile(
       BuildContext context, ZakatProvider p, bool isDark, dynamic user) {
+    final l10n = AppLocalizations.of(context);
     final bg = ZakatTheme.scaffoldBgAdaptive(isDark);
     final cardColor = ZakatTheme.cardBgAdaptive(isDark);
     final textColor = isDark ? ZakatTheme.darkTextPrimary : ZakatTheme.darkText;
-    final subColor = isDark ? ZakatTheme.darkTextSecondary : ZakatTheme.medText;
 
-    final displayName = user.displayName ?? 'مستخدم';
+    final displayName = user.displayName ?? l10n.userLabel;
     final email = user.email ?? user.phoneNumber ?? '';
     final photoUrl = user.photoURL;
 
@@ -125,8 +127,8 @@ class ProfileScreen extends StatelessWidget {
       child: Scaffold(
         backgroundColor: bg,
         appBar: AppBar(
-          title: const Text('الحساب الشخصي',
-              style: TextStyle(fontFamily: 'Scheherazade')),
+          title: Text(l10n.profileTitle,
+              style: const TextStyle(fontFamily: 'Scheherazade')),
           backgroundColor:
               isDark ? const Color(0xFF0A2A1A) : ZakatTheme.deepGreen,
         ),
@@ -143,7 +145,7 @@ class ProfileScreen extends StatelessWidget {
               child: Row(children: [
                 CircleAvatar(
                   radius: 36,
-                  backgroundColor: ZakatTheme.gold.withOpacity(0.3),
+                  backgroundColor: ZakatTheme.gold.withValues(alpha: 0.3),
                   backgroundImage:
                       photoUrl != null ? NetworkImage(photoUrl) : null,
                   child: photoUrl == null
@@ -191,7 +193,7 @@ class ProfileScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('ملخص حسابك',
+                  Text(l10n.accountSummary,
                       style: TextStyle(
                           fontFamily: 'Scheherazade',
                           fontSize: 17,
@@ -199,16 +201,16 @@ class ProfileScreen extends StatelessWidget {
                           color: textColor)),
                   const SizedBox(height: 14),
                   _statRow(
-                      'إجمالي الزكاة المدفوعة',
+                      l10n.totalZakatPaid,
                       '${p.totalZakatPaid.toStringAsFixed(0)} ${p.currencySymbol}',
                       Icons.volunteer_activism,
                       ZakatTheme.deepGreen,
                       isDark),
-                  _statRow('سنوات الالتزام', '${p.yearsCount} سنة',
+                  _statRow(l10n.yearsOfCompliance, '${p.yearsCount} سنة',
                       Icons.calendar_today, const Color(0xFF1565C0), isDark),
                   _statRow(
-                      'المزامنة السحابية',
-                      p.cloudSyncEnabled ? 'مفعّلة ✓' : 'معطّلة',
+                      l10n.cloudSyncLabel,
+                      p.cloudSyncEnabled ? l10n.cloudSyncEnabled : l10n.cloudSyncDisabled,
                       Icons.cloud_outlined,
                       ZakatTheme.gold,
                       isDark),
@@ -227,10 +229,10 @@ class ProfileScreen extends StatelessWidget {
               child: Column(children: [
                 _optionTile(
                   icon: Icons.sync,
-                  title: 'مزامنة البيانات الآن',
+                  title: l10n.syncDataNow,
                   subtitle: p.lastSyncTime != null
-                      ? 'آخر مزامنة: ${_formatTime(p.lastSyncTime!)}'
-                      : 'لم تتم مزامنة بعد',
+                      ? '${l10n.lastSync}: ${_formatTime(p.lastSyncTime!)}'
+                      : l10n.neverSynced,
                   color: ZakatTheme.deepGreen,
                   isDark: isDark,
                   onTap: () => p.syncNow(),
@@ -242,8 +244,8 @@ class ProfileScreen extends StatelessWidget {
                         : const Color(0xFFEEE8D5)),
                 _optionTile(
                   icon: Icons.logout,
-                  title: 'تسجيل الخروج',
-                  subtitle: 'ستبقى البيانات محفوظة محلياً',
+                  title: l10n.logoutButton,
+                  subtitle: l10n.logoutDesc,
                   color: ZakatTheme.error,
                   isDark: isDark,
                   onTap: () => _confirmSignOut(context),
@@ -255,8 +257,8 @@ class ProfileScreen extends StatelessWidget {
                         : const Color(0xFFEEE8D5)),
                 _optionTile(
                   icon: Icons.delete_forever,
-                  title: 'حذف الحساب',
-                  subtitle: 'يحذف الحساب وجميع بياناته السحابية',
+                  title: l10n.deleteAccount,
+                  subtitle: l10n.deleteAccountDesc,
                   color: ZakatTheme.error,
                   isDark: isDark,
                   onTap: () => _confirmDelete(context),
@@ -325,30 +327,33 @@ class ProfileScreen extends StatelessWidget {
       '${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}';
 
   void _confirmSignOut(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     showDialog(
       context: context,
       builder: (_) => Directionality(
         textDirection: TextDirection.rtl,
         child: AlertDialog(
-          title: const Text('تسجيل الخروج؟',
-              style: TextStyle(fontFamily: 'Scheherazade')),
-          content: const Text('هل تريد تسجيل الخروج من حسابك؟',
-              style: TextStyle(fontFamily: 'Scheherazade')),
+          title: Text(l10n.logoutConfirm,
+              style: const TextStyle(fontFamily: 'Scheherazade')),
+          content: Text(l10n.logoutConfirmMessage,
+              style: const TextStyle(fontFamily: 'Scheherazade')),
           actions: [
             TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: const Text('إلغاء',
-                    style: TextStyle(fontFamily: 'Scheherazade'))),
+                child: Text(l10n.cancel,
+                    style: const TextStyle(fontFamily: 'Scheherazade'))),
             ElevatedButton(
               onPressed: () async {
                 await AuthService.signOut();
-                Navigator.pop(context);
-                Navigator.pop(context);
+                if (context.mounted) {
+                  Navigator.pop(context);
+                  Navigator.pop(context);
+                }
               },
               style:
                   ElevatedButton.styleFrom(backgroundColor: ZakatTheme.error),
-              child: const Text('خروج',
-                  style: TextStyle(fontFamily: 'Scheherazade')),
+              child: Text(l10n.signOutAction,
+                  style: const TextStyle(fontFamily: 'Scheherazade')),
             ),
           ],
         ),
@@ -357,32 +362,35 @@ class ProfileScreen extends StatelessWidget {
   }
 
   void _confirmDelete(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     showDialog(
       context: context,
       builder: (_) => Directionality(
         textDirection: TextDirection.rtl,
         child: AlertDialog(
-          title: const Text('حذف الحساب؟',
-              style: TextStyle(
+          title: Text(l10n.deleteAccountConfirm,
+              style: const TextStyle(
                   fontFamily: 'Scheherazade', color: ZakatTheme.error)),
-          content: const Text(
-              'سيتم حذف حسابك وجميع بياناتك السحابية نهائياً. البيانات المحلية ستبقى على جهازك.',
-              style: TextStyle(fontFamily: 'Scheherazade', height: 1.7)),
+          content: Text(
+              '${l10n.deleteAccountMessage}.',
+              style: const TextStyle(fontFamily: 'Scheherazade', height: 1.7)),
           actions: [
             TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: const Text('إلغاء',
-                    style: TextStyle(fontFamily: 'Scheherazade'))),
+                child: Text(l10n.cancel,
+                    style: const TextStyle(fontFamily: 'Scheherazade'))),
             ElevatedButton(
               onPressed: () async {
                 final result = await AuthService.deleteAccount();
-                Navigator.pop(context);
-                if (result.isSuccess) Navigator.pop(context);
+                if (context.mounted) {
+                  Navigator.pop(context);
+                  if (result.isSuccess) Navigator.pop(context);
+                }
               },
               style:
                   ElevatedButton.styleFrom(backgroundColor: ZakatTheme.error),
-              child: const Text('حذف نهائي',
-                  style: TextStyle(fontFamily: 'Scheherazade')),
+              child: Text(l10n.permanentDelete,
+                  style: const TextStyle(fontFamily: 'Scheherazade')),
             ),
           ],
         ),

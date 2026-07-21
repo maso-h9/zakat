@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/zakat_provider.dart';
 import '../utils/theme.dart';
+import 'package:zakat_app/l10n/app_localizations.dart';
 
 class CalculatorScreen extends StatefulWidget {
   const CalculatorScreen({super.key});
@@ -48,7 +49,9 @@ class _CalculatorScreenState extends State<CalculatorScreen>
       _cowsCtrl,
       _sheepCtrl,
       _cropsCtrl
-    ]) c.dispose();
+    ]) {
+      c.dispose();
+    }
     super.dispose();
   }
 
@@ -66,7 +69,7 @@ class _CalculatorScreenState extends State<CalculatorScreen>
         child: Scaffold(
           backgroundColor: ZakatTheme.scaffoldBgAdaptive(isDark),
           appBar: AppBar(
-            title: Text(p.isArabic ? 'حاسبة الزكاة' : 'Zakat Calculator',
+            title: Text(AppLocalizations.of(context).calculatorTitle,
                 style: const TextStyle(fontFamily: 'Scheherazade')),
             backgroundColor: appBarBg,
             bottom: TabBar(
@@ -110,20 +113,20 @@ class _CalculatorScreenState extends State<CalculatorScreen>
         _goldPriceCard(p, isDark),
         const SizedBox(height: 16),
         _sectionCard(
-          title: p.isArabic ? 'النقود والمدخرات' : 'Cash & Savings',
+          title: AppLocalizations.of(context).cashAndSavings,
           icon: Icons.account_balance_wallet_outlined,
           isDark: isDark,
           children: [
             _inputField(
                 _moneyCtrl,
-                '${p.isArabic ? "المبلغ المدخر" : "Saved amount"} (${p.currencySymbol})',
+                '${AppLocalizations.of(context).savedAmount} (${p.currencySymbol})',
                 '',
                 (v) => p.updateWealth(money: double.tryParse(v) ?? 0),
                 isDark: isDark),
             const SizedBox(height: 10),
             _inputField(
                 _debtsReceiveCtrl,
-                '${p.isArabic ? "ديون لصالحك" : "Receivable debts"} (${p.currencySymbol})',
+                '${AppLocalizations.of(context).receivables} (${p.currencySymbol})',
                 '',
                 (v) => p.updateWealth(debtsReceive: double.tryParse(v) ?? 0),
                 isDark: isDark),
@@ -138,40 +141,40 @@ class _CalculatorScreenState extends State<CalculatorScreen>
         ),
         const SizedBox(height: 16),
         _sectionCard(
-          title: p.isArabic ? 'الذهب' : 'Gold',
+          title: AppLocalizations.of(context).goldSection,
           icon: Icons.circle,
           iconColor: ZakatTheme.gold,
           isDark: isDark,
           children: [
             _inputField(
                 _goldCtrl,
-                p.isArabic ? 'وزن الذهب (غرام)' : 'Gold weight (grams)',
+                AppLocalizations.of(context).goldWeightGrams,
                 '',
                 (v) => p.updateWealth(gold: double.tryParse(v) ?? 0),
                 isDark: isDark),
             const SizedBox(height: 8),
             _nisabInfo(
-                '${p.isArabic ? "النصاب: 85 غرام" : "Nisab: 85g"} = ${p.goldNisabValue.toStringAsFixed(0)} ${p.currencySymbol}',
+                '${AppLocalizations.of(context).goldNisabHint} = ${p.goldNisabValue.toStringAsFixed(0)} ${p.currencySymbol}',
                 ZakatTheme.gold,
                 isDark),
           ],
         ),
         const SizedBox(height: 16),
         _sectionCard(
-          title: p.isArabic ? 'الفضة' : 'Silver',
+          title: AppLocalizations.of(context).silverSection,
           icon: Icons.circle,
           iconColor: Colors.grey,
           isDark: isDark,
           children: [
             _inputField(
                 _silverCtrl,
-                p.isArabic ? 'وزن الفضة (غرام)' : 'Silver weight (grams)',
+                AppLocalizations.of(context).silverWeightGrams,
                 '',
                 (v) => p.updateWealth(silver: double.tryParse(v) ?? 0),
                 isDark: isDark),
             const SizedBox(height: 8),
             _nisabInfo(
-                '${p.isArabic ? "النصاب: 595 غرام" : "Nisab: 595g"} = ${p.silverNisabValue.toStringAsFixed(0)} ${p.currencySymbol}',
+                '${AppLocalizations.of(context).silverNisabHint} = ${p.silverNisabValue.toStringAsFixed(0)} ${p.currencySymbol}',
                 Colors.blueGrey,
                 isDark),
           ],
@@ -193,7 +196,7 @@ class _CalculatorScreenState extends State<CalculatorScreen>
         Expanded(
           child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text(p.isArabic ? 'سعر الذهب (غرام)' : 'Gold price (gram)',
+            Text(AppLocalizations.of(context).goldPricePerGram,
                 style: const TextStyle(
                     color: Colors.white70,
                     fontSize: 13,
@@ -207,8 +210,8 @@ class _CalculatorScreenState extends State<CalculatorScreen>
                     fontFamily: 'Scheherazade')),
             Text(
               p.goldPriceIsLive
-                  ? '${p.isArabic ? "مباشر" : "Live"} ${p.goldPriceLastUpdated ?? ""}'
-                  : (p.isArabic ? 'تقديري' : 'Estimated'),
+                  ? '${AppLocalizations.of(context).live} ${p.goldPriceLastUpdated ?? ""}'
+                  : AppLocalizations.of(context).estimated,
               style: const TextStyle(
                   color: Colors.white54,
                   fontSize: 11,
@@ -225,7 +228,7 @@ class _CalculatorScreenState extends State<CalculatorScreen>
                       strokeWidth: 2, color: Colors.white))
               : const Icon(Icons.refresh, color: ZakatTheme.gold),
           onPressed: () => p.fetchGoldPrice(),
-          tooltip: p.isArabic ? 'تحديث السعر' : 'Refresh price',
+          tooltip: AppLocalizations.of(context).updatePrice,
         ),
       ]),
     );
@@ -237,14 +240,12 @@ class _CalculatorScreenState extends State<CalculatorScreen>
       padding: const EdgeInsets.all(16),
       child: Column(children: [
         _sectionCard(
-          title: p.isArabic ? 'زكاة عروض التجارة' : 'Trade Goods Zakat',
+          title: AppLocalizations.of(context).tradeGoodsZakat,
           icon: Icons.store_outlined,
           isDark: isDark,
           children: [
             Text(
-              p.isArabic
-                  ? 'كل ما أُعدَّ للبيع والربح من بضاعة ومواد وعقارات تجارية'
-                  : 'All goods prepared for sale and profit',
+              AppLocalizations.of(context).tradeGoodsDescription,
               style: TextStyle(
                   fontFamily: 'Scheherazade',
                   fontSize: 14,
@@ -256,7 +257,7 @@ class _CalculatorScreenState extends State<CalculatorScreen>
             const SizedBox(height: 14),
             _inputField(
                 _tradeCtrl,
-                '${p.isArabic ? "قيمة البضاعة" : "Goods value"} (${p.currencySymbol})',
+                '${AppLocalizations.of(context).goodsValue} (${p.currencySymbol})',
                 '',
                 (v) => p.updateWealth(trade: double.tryParse(v) ?? 0),
                 isDark: isDark),
@@ -265,11 +266,9 @@ class _CalculatorScreenState extends State<CalculatorScreen>
         if (p.tradeGoods > 0) ...[
           const SizedBox(height: 16),
           _resultCard(
-            p.isArabic ? 'زكاة التجارة' : 'Trade Zakat',
+            AppLocalizations.of(context).tradeZakatTitle,
             '${(p.tradeGoods * 0.025).toStringAsFixed(2)} ${p.currencySymbol}',
-            p.isArabic
-                ? 'ربع العشر (2.5%) من قيمة البضاعة'
-                : '2.5% of goods value',
+            AppLocalizations.of(context).tradeZakatFormula,
           ),
         ],
         const SizedBox(height: 80),
@@ -283,13 +282,13 @@ class _CalculatorScreenState extends State<CalculatorScreen>
       padding: const EdgeInsets.all(16),
       child: Column(children: [
         _sectionCard(
-          title: p.isArabic ? 'الإبل' : 'Camels',
+          title: AppLocalizations.of(context).livestockTitle,
           icon: Icons.pets,
           isDark: isDark,
           children: [
             _inputField(
                 _camelsCtrl,
-                p.isArabic ? 'عدد الإبل' : 'Number of camels',
+                AppLocalizations.of(context).camelCount,
                 '',
                 (_) => setState(() {}),
                 isDark: isDark),
@@ -299,13 +298,13 @@ class _CalculatorScreenState extends State<CalculatorScreen>
         ),
         const SizedBox(height: 16),
         _sectionCard(
-          title: p.isArabic ? 'البقر' : 'Cattle',
+          title: AppLocalizations.of(context).cattle,
           icon: Icons.emoji_nature,
           isDark: isDark,
           children: [
             _inputField(
                 _cowsCtrl,
-                p.isArabic ? 'عدد البقر' : 'Number of cattle',
+                AppLocalizations.of(context).cattleCount,
                 '',
                 (_) => setState(() {}),
                 isDark: isDark),
@@ -315,13 +314,13 @@ class _CalculatorScreenState extends State<CalculatorScreen>
         ),
         const SizedBox(height: 16),
         _sectionCard(
-          title: p.isArabic ? 'الغنم' : 'Sheep & Goats',
+          title: AppLocalizations.of(context).sheep,
           icon: Icons.grass,
           isDark: isDark,
           children: [
             _inputField(
                 _sheepCtrl,
-                p.isArabic ? 'عدد الغنم' : 'Number of sheep/goats',
+                AppLocalizations.of(context).sheepCount,
                 '',
                 (_) => setState(() {}),
                 isDark: isDark),
@@ -344,27 +343,27 @@ class _CalculatorScreenState extends State<CalculatorScreen>
     if (kind == 'camel') {
       if (count < 5) {
         belowNisab = true;
-      } else if (count <= 9)
+      } else if (count <= 9) {
         result = 'شاة';
-      else if (count <= 14)
+      } else if (count <= 14) {
         result = 'شاتان';
-      else if (count <= 19)
+      } else if (count <= 19) {
         result = 'ثلاث شياه';
-      else if (count <= 24)
+      } else if (count <= 24) {
         result = 'أربع شياه';
-      else if (count <= 35)
+      } else if (count <= 35) {
         result = 'بنت مخاض';
-      else if (count <= 45)
+      } else if (count <= 45) {
         result = 'بنت لبون';
-      else if (count <= 60)
+      } else if (count <= 60) {
         result = 'حقة';
-      else if (count <= 75)
+      } else if (count <= 75) {
         result = 'جذعة';
-      else if (count <= 90)
+      } else if (count <= 90) {
         result = 'بنتا لبون';
-      else if (count <= 120)
+      } else if (count <= 120) {
         result = 'حقتان';
-      else {
+      } else {
         // فوق 120: لكل 40 بنت لبون، لكل 50 حقة
         final sets50 = count ~/ 50;
         final sets40 = (count % 50) ~/ 40;
@@ -376,23 +375,23 @@ class _CalculatorScreenState extends State<CalculatorScreen>
     } else if (kind == 'cow') {
       if (count < 30) {
         belowNisab = true;
-      } else if (count <= 39)
+      } else if (count <= 39) {
         result = 'تبيع أو تبيعة';
-      else if (count <= 59)
+      } else if (count <= 59) {
         result = 'مسنّة';
-      else if (count <= 69)
+      } else if (count <= 69) {
         result = 'تبيعان';
-      else if (count <= 79)
+      } else if (count <= 79) {
         result = 'مسنّة وتبيع';
-      else if (count <= 89)
+      } else if (count <= 89) {
         result = 'مسنّتان';
-      else if (count <= 99)
+      } else if (count <= 99) {
         result = 'ثلاثة أتبعة';
-      else if (count <= 109)
+      } else if (count <= 109) {
         result = 'مسنّتان وتبيع';
-      else if (count <= 119)
+      } else if (count <= 119) {
         result = 'ثلاث مسنّات أو أربعة أتبعة';
-      else {
+      } else {
         // فوق 120: لكل 30 تبيع، لكل 40 مسنّة
         final sets40 = count ~/ 40;
         final sets30 = (count % 40) ~/ 30;
@@ -405,19 +404,19 @@ class _CalculatorScreenState extends State<CalculatorScreen>
       // sheep
       if (count < 40) {
         belowNisab = true;
-      } else if (count <= 120)
+      } else if (count <= 120) {
         result = 'شاة';
-      else if (count <= 200)
+      } else if (count <= 200) {
         result = 'شاتان';
-      else if (count <= 300)
+      } else if (count <= 300) {
         result = 'ثلاث شياه';
-      else if (count <= 399)
+      } else if (count <= 399) {
         result = 'ثلاث شياه';
-      else if (count <= 499)
+      } else if (count <= 499) {
         result = 'أربع شياه';
-      else if (count <= 599)
+      } else if (count <= 599) {
         result = 'خمس شياه';
-      else {
+      } else {
         // فوق 600: لكل 100 شاة واحدة
         result = '${count ~/ 100} شاة';
       }
@@ -428,15 +427,15 @@ class _CalculatorScreenState extends State<CalculatorScreen>
         margin: const EdgeInsets.only(top: 10),
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: ZakatTheme.error.withOpacity(0.1),
+          color: ZakatTheme.error.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: ZakatTheme.error.withOpacity(0.3)),
+          border: Border.all(color: ZakatTheme.error.withValues(alpha: 0.3)),
         ),
         child: Row(children: [
           const Icon(Icons.info_outline, color: ZakatTheme.error, size: 18),
           const SizedBox(width: 8),
           Text(
-            p.isArabic ? 'لم يبلغ النصاب' : 'Below Nisab',
+            AppLocalizations.of(context).belowNisab,
             style: const TextStyle(
                 fontFamily: 'Scheherazade',
                 color: ZakatTheme.error,
@@ -471,9 +470,7 @@ class _CalculatorScreenState extends State<CalculatorScreen>
                 count > 120 && kind == 'cow' ||
                 count > 600 && kind == 'sheep')
               Text(
-                p.isArabic
-                    ? 'يُنصح بمراجعة عالم للتأكد من الحساب'
-                    : 'Consult a scholar to verify',
+                AppLocalizations.of(context).reviewScholarWarning,
                 style: const TextStyle(
                     fontFamily: 'Scheherazade',
                     fontSize: 12,
@@ -491,14 +488,12 @@ class _CalculatorScreenState extends State<CalculatorScreen>
       padding: const EdgeInsets.all(16),
       child: Column(children: [
         _sectionCard(
-          title: p.isArabic ? 'زكاة الزروع والثمار' : 'Crops & Fruits Zakat',
+          title: AppLocalizations.of(context).cropsTitle,
           icon: Icons.eco_outlined,
           isDark: isDark,
           children: [
             Text(
-              p.isArabic
-                  ? 'تجب عند الحصاد إذا بلغت 5 أوسق (≈ 653 كيلوغرام)'
-                  : 'Due at harvest if ≥ 653 kg (5 Awsuq)',
+              AppLocalizations.of(context).cropsObligation,
               style: TextStyle(
                   fontFamily: 'Scheherazade',
                   fontSize: 14,
@@ -510,7 +505,7 @@ class _CalculatorScreenState extends State<CalculatorScreen>
             const SizedBox(height: 14),
             _inputField(
                 _cropsCtrl,
-                p.isArabic ? 'كمية المحصول (كيلوغرام)' : 'Harvest (kg)',
+                AppLocalizations.of(context).cropQuantityKg,
                 '',
                 (_) => setState(() {}),
                 isDark: isDark),
@@ -526,7 +521,7 @@ class _CalculatorScreenState extends State<CalculatorScreen>
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    p.isArabic ? 'طريقة الري:' : 'Irrigation method:',
+                    AppLocalizations.of(context).irrigationMethod,
                     style: TextStyle(
                         fontFamily: 'Scheherazade',
                         fontSize: 14,
@@ -536,37 +531,35 @@ class _CalculatorScreenState extends State<CalculatorScreen>
                             : ZakatTheme.darkText),
                   ),
                   const SizedBox(height: 8),
-                  Row(children: [
-                    Expanded(
-                      child: RadioListTile<bool>(
-                        value: true,
-                        groupValue: _isIrrigated,
-                        onChanged: (v) => setState(() => _isIrrigated = v!),
-                        title: Text(
-                            p.isArabic
-                                ? 'مطر أو نهر (10%)'
-                                : 'Rain/River (10%)',
-                            style: const TextStyle(
-                                fontFamily: 'Scheherazade', fontSize: 13)),
-                        activeColor: ZakatTheme.deepGreen,
-                        dense: true,
-                        contentPadding: EdgeInsets.zero,
+                  RadioGroup<bool>(
+                    groupValue: _isIrrigated,
+                    onChanged: (v) => setState(() => _isIrrigated = v!),
+                    child: Row(children: [
+                      Expanded(
+                        child: RadioListTile<bool>(
+                          value: true,
+                          title: Text(
+                              AppLocalizations.of(context).rainIrrigation,
+                              style: const TextStyle(
+                                  fontFamily: 'Scheherazade', fontSize: 13)),
+                          activeColor: ZakatTheme.deepGreen,
+                          dense: true,
+                          contentPadding: EdgeInsets.zero,
+                        ),
                       ),
-                    ),
-                    Expanded(
-                      child: RadioListTile<bool>(
-                        value: false,
-                        groupValue: _isIrrigated,
-                        onChanged: (v) => setState(() => _isIrrigated = !v!),
-                        title: Text(p.isArabic ? 'آلة (5%)' : 'Machinery (5%)',
-                            style: const TextStyle(
-                                fontFamily: 'Scheherazade', fontSize: 13)),
-                        activeColor: ZakatTheme.deepGreen,
-                        dense: true,
-                        contentPadding: EdgeInsets.zero,
+                      Expanded(
+                        child: RadioListTile<bool>(
+                          value: false,
+                          title: Text(AppLocalizations.of(context).machineIrrigation,
+                              style: const TextStyle(
+                                  fontFamily: 'Scheherazade', fontSize: 13)),
+                          activeColor: ZakatTheme.deepGreen,
+                          dense: true,
+                          contentPadding: EdgeInsets.zero,
+                        ),
                       ),
-                    ),
-                  ]),
+                    ]),
+                  ),
                 ],
               ),
             ),
@@ -578,13 +571,11 @@ class _CalculatorScreenState extends State<CalculatorScreen>
                   return Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: ZakatTheme.error.withOpacity(0.1),
+                      color: ZakatTheme.error.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Text(
-                      p.isArabic
-                          ? 'لم يبلغ النصاب (أقل من 653 كيلو)'
-                          : 'Below Nisab (less than 653 kg)',
+                      AppLocalizations.of(context).cropsBelowNisab,
                       style: const TextStyle(
                           fontFamily: 'Scheherazade', color: ZakatTheme.error),
                     ),
@@ -592,15 +583,11 @@ class _CalculatorScreenState extends State<CalculatorScreen>
                 }
                 final rate = _isIrrigated ? 0.1 : 0.05;
                 return _resultCard(
-                  p.isArabic ? 'زكاة المحصول' : 'Crops Zakat',
+                  AppLocalizations.of(context).cropZakatResult,
                   '${(kg * rate).toStringAsFixed(1)} ${p.isArabic ? "كيلوغرام" : "kg"}',
                   _isIrrigated
-                      ? (p.isArabic
-                          ? 'العشر (10%) — ري بمطر أو نهر'
-                          : '10% — Rain/River irrigation')
-                      : (p.isArabic
-                          ? 'نصف العشر (5%) — ري بآلة'
-                          : '5% — Machine irrigation'),
+                      ? AppLocalizations.of(context).rainRate
+                      : AppLocalizations.of(context).machineRate,
                 );
               }),
             ],
@@ -619,7 +606,7 @@ class _CalculatorScreenState extends State<CalculatorScreen>
         color: isDark ? ZakatTheme.darkSurface : Colors.white,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(isDark ? 0.3 : 0.1),
+            color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.1),
             blurRadius: 20,
             offset: const Offset(0, -5),
           )
@@ -632,7 +619,7 @@ class _CalculatorScreenState extends State<CalculatorScreen>
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                p.isArabic ? 'الزكاة الواجبة' : 'Zakat Due',
+                AppLocalizations.of(context).zakatObligatory,
                 style: TextStyle(
                     fontFamily: 'Scheherazade',
                     color: isDark
@@ -662,16 +649,14 @@ class _CalculatorScreenState extends State<CalculatorScreen>
               ));
               ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                 content: Text(
-                    p.isArabic
-                        ? 'تم تسجيل الزكاة المدفوعة ✓'
-                        : 'Zakat payment recorded ✓',
+                    AppLocalizations.of(context).zakatPaymentRecorded,
                     style: const TextStyle(fontFamily: 'Scheherazade')),
                 backgroundColor: ZakatTheme.success,
               ));
             }
           },
           icon: const Icon(Icons.check, size: 18),
-          label: Text(p.isArabic ? 'سجّل الدفع' : 'Record',
+          label: Text(AppLocalizations.of(context).recordPaymentLabel,
               style: const TextStyle(fontFamily: 'Scheherazade')),
         ),
       ]),
@@ -742,9 +727,9 @@ class _CalculatorScreenState extends State<CalculatorScreen>
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.08),
+        color: color.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Row(children: [
         Icon(Icons.info_outline, size: 14, color: color),

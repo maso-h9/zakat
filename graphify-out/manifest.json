@@ -1,0 +1,1132 @@
+{
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\.agents\\skills\\xcode-project-setup\\scripts\\xcode_spm_setup\\Package.swift": {
+    "mtime": 1781750144.264484,
+    "ast_hash": "37ff2f9cdc7da654e9d533e0e2932d23",
+    "semantic_hash": "37ff2f9cdc7da654e9d533e0e2932d23"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\.agents\\skills\\xcode-project-setup\\scripts\\xcode_spm_setup\\Sources\\main.swift": {
+    "mtime": 1781750144.2658136,
+    "ast_hash": "3c909cc042e887a1dfeb09b4546365b1",
+    "semantic_hash": "3c909cc042e887a1dfeb09b4546365b1"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\.vscode\\settings.json": {
+    "mtime": 1784028424.3340528,
+    "ast_hash": "2d06b60b7caf61c40b4ebbd7f8a1afa2",
+    "semantic_hash": "2d06b60b7caf61c40b4ebbd7f8a1afa2"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\android\\app\\build.gradle.kts": {
+    "mtime": 1784028413.4814134,
+    "ast_hash": "6c85134f19d61bd1bf184d0008bcf171",
+    "semantic_hash": "6c85134f19d61bd1bf184d0008bcf171"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\android\\app\\google-services.json": {
+    "mtime": 1781356991.3392243,
+    "ast_hash": "74e44b04d8d63d06e661d3a98e222e3c",
+    "semantic_hash": "74e44b04d8d63d06e661d3a98e222e3c"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\android\\app\\src\\main\\java\\io\\flutter\\plugins\\GeneratedPluginRegistrant.java": {
+    "mtime": 1784532408.7865126,
+    "ast_hash": "8ebf4aa313a184bbf295322fd83cbc19",
+    "semantic_hash": "8ebf4aa313a184bbf295322fd83cbc19"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\android\\app\\src\\main\\kotlin\\com\\example\\flutter_application_1\\MainActivity.kt": {
+    "mtime": 1780966643.7203205,
+    "ast_hash": "375004a3cacd59e9913a96ac68756804",
+    "semantic_hash": "375004a3cacd59e9913a96ac68756804"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\android\\app\\src\\main\\kotlin\\com\\example\\flutter_application_1\\ZakatWidgetProvider.kt": {
+    "mtime": 1781329497.5628228,
+    "ast_hash": "011f7e9ec191b3f879b03789c2b111a2",
+    "semantic_hash": "011f7e9ec191b3f879b03789c2b111a2"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\android\\build.gradle.kts": {
+    "mtime": 1784032603.1107826,
+    "ast_hash": "1efd8ff53e7584c3e82ff2382eec691b",
+    "semantic_hash": "1efd8ff53e7584c3e82ff2382eec691b"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\android\\gradlew": {
+    "mtime": 1780966646.2315142,
+    "ast_hash": "7f1cd7eb3f75a1dc85cd37753972a6e2",
+    "semantic_hash": "7f1cd7eb3f75a1dc85cd37753972a6e2"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\android\\settings.gradle.kts": {
+    "mtime": 1781356988.82219,
+    "ast_hash": "79071eda3c8a88c1f084a41050934ee3",
+    "semantic_hash": "79071eda3c8a88c1f084a41050934ee3"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\firebase.json": {
+    "mtime": 1781789162.7003753,
+    "ast_hash": "f0496f1b8e0e90930d5978367a4a14fe",
+    "semantic_hash": "f0496f1b8e0e90930d5978367a4a14fe"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\ios\\Flutter\\ephemeral\\flutter_lldb_helper.py": {
+    "mtime": 1784265194.4127467,
+    "ast_hash": "98fc75412162af387e2e3461e4e58094",
+    "semantic_hash": "98fc75412162af387e2e3461e4e58094"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\ios\\Flutter\\flutter_export_environment.sh": {
+    "mtime": 1784265194.4297128,
+    "ast_hash": "a1e4a2d0b2450bbbdfe4e08e954600bf",
+    "semantic_hash": "a1e4a2d0b2450bbbdfe4e08e954600bf"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\ios\\RunnerTests\\RunnerTests.swift": {
+    "mtime": 1780966644.397538,
+    "ast_hash": "24e5d095048eb86c30423f4e04b6e57b",
+    "semantic_hash": "24e5d095048eb86c30423f4e04b6e57b"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\ios\\Runner\\AppDelegate.swift": {
+    "mtime": 1764868041.917568,
+    "ast_hash": "e277c49e98c9f80e9e71c0524a5cb60f",
+    "semantic_hash": "e277c49e98c9f80e9e71c0524a5cb60f"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\ios\\Runner\\Assets.xcassets\\AppIcon.appiconset\\Contents.json": {
+    "mtime": 1781589337.6236517,
+    "ast_hash": "c870f277d0c83d1af12f8dc2d368879a",
+    "semantic_hash": "c870f277d0c83d1af12f8dc2d368879a"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\ios\\Runner\\Assets.xcassets\\LaunchImage.imageset\\Contents.json": {
+    "mtime": 1764868041.9184587,
+    "ast_hash": "b9e927ac17345f2d5f052fe68a3487f9",
+    "semantic_hash": "b9e927ac17345f2d5f052fe68a3487f9"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\ios\\Runner\\GeneratedPluginRegistrant.h": {
+    "mtime": 1780966650.476328,
+    "ast_hash": "decb9041b5e91a07e66f4664e5dac408",
+    "semantic_hash": "decb9041b5e91a07e66f4664e5dac408"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\ios\\Runner\\GeneratedPluginRegistrant.m": {
+    "mtime": 1784532408.8640316,
+    "ast_hash": "5f6c8a534953805d6d44952b44673141",
+    "semantic_hash": "5f6c8a534953805d6d44952b44673141"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\ios\\Runner\\Runner-Bridging-Header.h": {
+    "mtime": 1764868041.9184587,
+    "ast_hash": "7ad7b5cea096132de13ba526b2b9efbe",
+    "semantic_hash": "7ad7b5cea096132de13ba526b2b9efbe"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\lib\\core\\cache\\cache_manager.dart": {
+    "mtime": 1784032629.3292031,
+    "ast_hash": "643841db3630b2362bde293319c34e8b",
+    "semantic_hash": "643841db3630b2362bde293319c34e8b"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\lib\\core\\errors\\app_exception.dart": {
+    "mtime": 1783906779.9799848,
+    "ast_hash": "1d6d0fc254356885f91a4ad643c7e9ec",
+    "semantic_hash": "1d6d0fc254356885f91a4ad643c7e9ec"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\lib\\core\\network\\api_client.dart": {
+    "mtime": 1784032624.0730333,
+    "ast_hash": "081a2b71a3af94a7c40641bc1215e99d",
+    "semantic_hash": "081a2b71a3af94a7c40641bc1215e99d"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\lib\\core\\utils\\app_logger.dart": {
+    "mtime": 1784032982.063315,
+    "ast_hash": "bbe4ae3618eb75ff34c3d8faa9a6c82c",
+    "semantic_hash": "bbe4ae3618eb75ff34c3d8faa9a6c82c"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\lib\\core\\utils\\data_state.dart": {
+    "mtime": 1784533157.9655168,
+    "ast_hash": "494394c254a56512594d431fbdbfb688",
+    "semantic_hash": "494394c254a56512594d431fbdbfb688"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\lib\\core\\utils\\performance_helpers.dart": {
+    "mtime": 1784028004.4351776,
+    "ast_hash": "45115323fdd2ff9d87ededcb9223a5a7",
+    "semantic_hash": "45115323fdd2ff9d87ededcb9223a5a7"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\lib\\core\\utils\\responsive_helper.dart": {
+    "mtime": 1784027990.56987,
+    "ast_hash": "5e5d7f9bf9396930f11418531efd7aee",
+    "semantic_hash": "5e5d7f9bf9396930f11418531efd7aee"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\lib\\data\\zakat_data.dart": {
+    "mtime": 1780988223.0034065,
+    "ast_hash": "39361abfa93d951306102e490da3cc0c",
+    "semantic_hash": "39361abfa93d951306102e490da3cc0c"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\lib\\firebase_options.dart": {
+    "mtime": 1781357002.7162454,
+    "ast_hash": "3f172e7e5c496fda0c322a77b04010e4",
+    "semantic_hash": "3f172e7e5c496fda0c322a77b04010e4"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\lib\\l10n\\app_localizations.dart": {
+    "mtime": 1781356523.7285497,
+    "ast_hash": "68afaaccb2c9a5b3a30d2f2ad499d27a",
+    "semantic_hash": "68afaaccb2c9a5b3a30d2f2ad499d27a"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\lib\\main.dart": {
+    "mtime": 1784533174.7314954,
+    "ast_hash": "5b4b01f17c30e0a1347c0612fc70e6c8",
+    "semantic_hash": "5b4b01f17c30e0a1347c0612fc70e6c8"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\lib\\models\\zakat_model.dart": {
+    "mtime": 1780982334.4009216,
+    "ast_hash": "1589be3b9177d67fef1e6a93935874bb",
+    "semantic_hash": "1589be3b9177d67fef1e6a93935874bb"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\lib\\models\\zakat_provider.dart": {
+    "mtime": 1784088172.6633325,
+    "ast_hash": "8cf4d4c265bd8c28aae4133c5377ba7c",
+    "semantic_hash": "8cf4d4c265bd8c28aae4133c5377ba7c"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\lib\\screens\\ai_screen.dart": {
+    "mtime": 1784532397.4307282,
+    "ast_hash": "a13c0a457503ae6718bf4874bf9104b9",
+    "semantic_hash": "a13c0a457503ae6718bf4874bf9104b9"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\lib\\screens\\calculator_screen.dart": {
+    "mtime": 1784266218.0375867,
+    "ast_hash": "b70f2f76234ed6fa671e573d62f139e0",
+    "semantic_hash": "b70f2f76234ed6fa671e573d62f139e0"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\lib\\screens\\content_screens.dart": {
+    "mtime": 1784533151.1541295,
+    "ast_hash": "9de565111b3e1d7802aa3dfbf6837064",
+    "semantic_hash": "9de565111b3e1d7802aa3dfbf6837064"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\lib\\screens\\home_screen.dart": {
+    "mtime": 1784266274.789531,
+    "ast_hash": "9891cbffb8ff9861d58d030c2b7d6019",
+    "semantic_hash": "9891cbffb8ff9861d58d030c2b7d6019"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\lib\\screens\\login_screen.dart": {
+    "mtime": 1783907463.228974,
+    "ast_hash": "672b21b3ee02cc79bae922b4024fd949",
+    "semantic_hash": "672b21b3ee02cc79bae922b4024fd949"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\lib\\screens\\madhabs_screen.dart": {
+    "mtime": 1781077453.9284842,
+    "ast_hash": "4f4c1985f36ef0cf40828bc02c041eea",
+    "semantic_hash": "4f4c1985f36ef0cf40828bc02c041eea"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\lib\\screens\\profile_screen.dart": {
+    "mtime": 1781511896.5507264,
+    "ast_hash": "999a73bd52499dce31b5769655738c43",
+    "semantic_hash": "999a73bd52499dce31b5769655738c43"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\lib\\screens\\ramadan_screen.dart": {
+    "mtime": 1781508934.8585956,
+    "ast_hash": "5e5a13d37384aa0301063137865f0b22",
+    "semantic_hash": "5e5a13d37384aa0301063137865f0b22"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\lib\\screens\\secondary_screens.dart": {
+    "mtime": 1781509026.3640044,
+    "ast_hash": "4532740a3314fe7d49e0206d03ef3295",
+    "semantic_hash": "4532740a3314fe7d49e0206d03ef3295"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\lib\\screens\\settings_screen.dart": {
+    "mtime": 1783707445.9478664,
+    "ast_hash": "d17885da9e75990128393f307228abc6",
+    "semantic_hash": "d17885da9e75990128393f307228abc6"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\lib\\screens\\stats_chart_screen.dart": {
+    "mtime": 1781447153.1463122,
+    "ast_hash": "1de8cae5ad3e387cb9e0d294a3bfbd49",
+    "semantic_hash": "1de8cae5ad3e387cb9e0d294a3bfbd49"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\lib\\screens\\whatif_screen.dart": {
+    "mtime": 1781077429.7080996,
+    "ast_hash": "e2f1f82de7d091ffbf860f0fdfac3435",
+    "semantic_hash": "e2f1f82de7d091ffbf860f0fdfac3435"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\lib\\services\\ai_repository.dart": {
+    "mtime": 1784533169.021174,
+    "ast_hash": "d4efc283b5728c94ec18ab6ba52893ca",
+    "semantic_hash": "d4efc283b5728c94ec18ab6ba52893ca"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\lib\\services\\auth_service.dart": {
+    "mtime": 1781449174.582984,
+    "ast_hash": "9bb4d2eb034314efcadd2952c15b6fe2",
+    "semantic_hash": "9bb4d2eb034314efcadd2952c15b6fe2"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\lib\\services\\connectivity_service.dart": {
+    "mtime": 1784088032.8802536,
+    "ast_hash": "d851bfd56af8e8e56963206e0b2181ae",
+    "semantic_hash": "d851bfd56af8e8e56963206e0b2181ae"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\lib\\services\\crashlytics_service.dart": {
+    "mtime": 1784032657.108194,
+    "ast_hash": "66962e70594cfcde4eddfbe679d69d17",
+    "semantic_hash": "66962e70594cfcde4eddfbe679d69d17"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\lib\\services\\fcm_service.dart": {
+    "mtime": 1784089138.377935,
+    "ast_hash": "38d78b6f4505a9ac221ba0d09ca7af17",
+    "semantic_hash": "38d78b6f4505a9ac221ba0d09ca7af17"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\lib\\services\\firebase_service.dart": {
+    "mtime": 1783841966.2950027,
+    "ast_hash": "2df3ff78b82db3d719f6637c79a6867e",
+    "semantic_hash": "2df3ff78b82db3d719f6637c79a6867e"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\lib\\services\\gold_price_service.dart": {
+    "mtime": 1783905553.587042,
+    "ast_hash": "70c2c1488f30a66d889e523746876769",
+    "semantic_hash": "70c2c1488f30a66d889e523746876769"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\lib\\services\\nisab_service.dart": {
+    "mtime": 1783905615.9617035,
+    "ast_hash": "5605d9e186add93b036ce0c53d461061",
+    "semantic_hash": "5605d9e186add93b036ce0c53d461061"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\lib\\services\\notification_service.dart": {
+    "mtime": 1781089353.950585,
+    "ast_hash": "44436b29046cf1fb266da1c95bfea45f",
+    "semantic_hash": "44436b29046cf1fb266da1c95bfea45f"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\lib\\services\\remote_config_service.dart": {
+    "mtime": 1784532380.3239503,
+    "ast_hash": "1a1642790f6900fef9dc579de17b837e",
+    "semantic_hash": "1a1642790f6900fef9dc579de17b837e"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\lib\\services\\storage_service.dart": {
+    "mtime": 1783683887.5527232,
+    "ast_hash": "3adc50d5a124f79d61705f241b39844f",
+    "semantic_hash": "3adc50d5a124f79d61705f241b39844f"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\lib\\utils\\theme.dart": {
+    "mtime": 1781089645.4697564,
+    "ast_hash": "8558eec9c3ae518aab42986b07817389",
+    "semantic_hash": "8558eec9c3ae518aab42986b07817389"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\lib\\widgets\\dashboard_card.dart": {
+    "mtime": 1781447277.1523528,
+    "ast_hash": "f25a30fc8c3df704c339efad3b6c5e5e",
+    "semantic_hash": "f25a30fc8c3df704c339efad3b6c5e5e"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\lib\\widgets\\hadith_card.dart": {
+    "mtime": 1781449152.4708176,
+    "ast_hash": "77e4840e554567052df8b295f9b482b6",
+    "semantic_hash": "77e4840e554567052df8b295f9b482b6"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\lib\\widgets\\offline_banner.dart": {
+    "mtime": 1784088081.121291,
+    "ast_hash": "03a4c7625779cc040c35dc187647ccda",
+    "semantic_hash": "03a4c7625779cc040c35dc187647ccda"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\lib\\widgets\\zakat_shimmer.dart": {
+    "mtime": 1784027966.752676,
+    "ast_hash": "c8136c1e5c699249acd06cf3761ad37f",
+    "semantic_hash": "c8136c1e5c699249acd06cf3761ad37f"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\lib\\widgets\\zakat_widget.dart": {
+    "mtime": 1781346683.8969762,
+    "ast_hash": "03d5ec2e5b4129dd173f1b33ac52e85c",
+    "semantic_hash": "03d5ec2e5b4129dd173f1b33ac52e85c"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\linux\\flutter\\generated_plugin_registrant.cc": {
+    "mtime": 1783627161.056595,
+    "ast_hash": "bd6e64368e100cca8e55173215ae1bdd",
+    "semantic_hash": "bd6e64368e100cca8e55173215ae1bdd"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\linux\\flutter\\generated_plugin_registrant.h": {
+    "mtime": 1780966650.4437113,
+    "ast_hash": "d295462c9da9f7fef22dc86c34492318",
+    "semantic_hash": "d295462c9da9f7fef22dc86c34492318"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\linux\\runner\\main.cc": {
+    "mtime": 1764868041.9184587,
+    "ast_hash": "539395bcd63dba20afed0838d136189f",
+    "semantic_hash": "539395bcd63dba20afed0838d136189f"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\linux\\runner\\my_application.cc": {
+    "mtime": 1780966644.5201275,
+    "ast_hash": "44b931eaadd550ec64e81567c887a951",
+    "semantic_hash": "44b931eaadd550ec64e81567c887a951"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\linux\\runner\\my_application.h": {
+    "mtime": 1764868041.9184587,
+    "ast_hash": "ffa1a7c0a2ad45a2c14a921596516ff8",
+    "semantic_hash": "ffa1a7c0a2ad45a2c14a921596516ff8"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\macos\\Flutter\\GeneratedPluginRegistrant.swift": {
+    "mtime": 1784532408.8766181,
+    "ast_hash": "1dd04dd9b15e20ed7ceecc89791ade8e",
+    "semantic_hash": "1dd04dd9b15e20ed7ceecc89791ade8e"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\macos\\Flutter\\ephemeral\\flutter_export_environment.sh": {
+    "mtime": 1784265194.445994,
+    "ast_hash": "acca8e5c14d65fc9ac3da1bf5d939a57",
+    "semantic_hash": "acca8e5c14d65fc9ac3da1bf5d939a57"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\macos\\RunnerTests\\RunnerTests.swift": {
+    "mtime": 1780966645.4142818,
+    "ast_hash": "8059f5d27a19c556eeafb49b3f9b7bdd",
+    "semantic_hash": "8059f5d27a19c556eeafb49b3f9b7bdd"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\macos\\Runner\\AppDelegate.swift": {
+    "mtime": 1764868041.9345758,
+    "ast_hash": "4b52e0b89ebfef9baf45b04548c463d6",
+    "semantic_hash": "4b52e0b89ebfef9baf45b04548c463d6"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\macos\\Runner\\Assets.xcassets\\AppIcon.appiconset\\Contents.json": {
+    "mtime": 1764868041.9345758,
+    "ast_hash": "1d48e925145d4b573a3b5d7960a1c585",
+    "semantic_hash": "1d48e925145d4b573a3b5d7960a1c585"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\macos\\Runner\\MainFlutterWindow.swift": {
+    "mtime": 1764868041.9345758,
+    "ast_hash": "93c22dae2d93f3dc1402e121901f582b",
+    "semantic_hash": "93c22dae2d93f3dc1402e121901f582b"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\scripts\\package.json": {
+    "mtime": 1783226614.5025816,
+    "ast_hash": "206383b438b70075c05b725b6769cc2b",
+    "semantic_hash": "206383b438b70075c05b725b6769cc2b"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\scripts\\update_prices.js": {
+    "mtime": 1783433691.7451189,
+    "ast_hash": "532a375a4556838fd63f5adde0fb84e6",
+    "semantic_hash": "532a375a4556838fd63f5adde0fb84e6"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\skills-lock.json": {
+    "mtime": 1781750149.018392,
+    "ast_hash": "b7cb629268227192dddd2f5250bf19c9",
+    "semantic_hash": "b7cb629268227192dddd2f5250bf19c9"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\test\\widget_test.dart": {
+    "mtime": 1781511896.5507264,
+    "ast_hash": "6b4f5ba4042c83a4e8a9f4bdcfce5aa6",
+    "semantic_hash": "6b4f5ba4042c83a4e8a9f4bdcfce5aa6"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\test\\zakat_calculation_test.dart": {
+    "mtime": 1783905664.482753,
+    "ast_hash": "8d75e0a532f0dbc86f15e9c2d826e76c",
+    "semantic_hash": "8d75e0a532f0dbc86f15e9c2d826e76c"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\web\\manifest.json": {
+    "mtime": 1780966645.5865912,
+    "ast_hash": "bf24c84c3bf99672a631c4f84464e793",
+    "semantic_hash": "bf24c84c3bf99672a631c4f84464e793"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\windows\\flutter\\generated_plugin_registrant.cc": {
+    "mtime": 1783627161.1001642,
+    "ast_hash": "187903d6c5220a1b6ab14ff165d3e96b",
+    "semantic_hash": "187903d6c5220a1b6ab14ff165d3e96b"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\windows\\flutter\\generated_plugin_registrant.h": {
+    "mtime": 1780966650.4585674,
+    "ast_hash": "0ea33875f9f8e118f9c2ded03e2e2835",
+    "semantic_hash": "0ea33875f9f8e118f9c2ded03e2e2835"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\windows\\runner\\flutter_window.cpp": {
+    "mtime": 1764868041.9345758,
+    "ast_hash": "2f463f9b7da67a2d692a012f9ea85e0c",
+    "semantic_hash": "2f463f9b7da67a2d692a012f9ea85e0c"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\windows\\runner\\flutter_window.h": {
+    "mtime": 1764868041.9345758,
+    "ast_hash": "7defcc89d4a26d56e801241d624d48fb",
+    "semantic_hash": "7defcc89d4a26d56e801241d624d48fb"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\windows\\runner\\main.cpp": {
+    "mtime": 1780966645.7235053,
+    "ast_hash": "51566e13e10b420a8a1884e7037833d7",
+    "semantic_hash": "51566e13e10b420a8a1884e7037833d7"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\windows\\runner\\resource.h": {
+    "mtime": 1764868041.9345758,
+    "ast_hash": "1ade5dd15e613479a15e8832ed276f2b",
+    "semantic_hash": "1ade5dd15e613479a15e8832ed276f2b"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\windows\\runner\\utils.cpp": {
+    "mtime": 1764868041.9345758,
+    "ast_hash": "432461b09d862a2f8dadf380ff0e34e5",
+    "semantic_hash": "432461b09d862a2f8dadf380ff0e34e5"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\windows\\runner\\utils.h": {
+    "mtime": 1764868041.9345758,
+    "ast_hash": "fd81e143f5614eb6fd75efe539002853",
+    "semantic_hash": "fd81e143f5614eb6fd75efe539002853"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\windows\\runner\\win32_window.cpp": {
+    "mtime": 1764868041.9345758,
+    "ast_hash": "571eb8234dbc2661be03aa5f2a4d2fca",
+    "semantic_hash": "571eb8234dbc2661be03aa5f2a4d2fca"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\windows\\runner\\win32_window.h": {
+    "mtime": 1764868041.9345758,
+    "ast_hash": "7569387d58711ab975940f4df3b4bcda",
+    "semantic_hash": "7569387d58711ab975940f4df3b4bcda"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\.agents\\skills\\firebase-ai-logic-basics\\SKILL.md": {
+    "mtime": 1781750144.1948044,
+    "ast_hash": "32a7da3495dbe4ea221abab4f56d28b4",
+    "semantic_hash": "32a7da3495dbe4ea221abab4f56d28b4"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\.agents\\skills\\firebase-ai-logic-basics\\references\\flutter_setup.md": {
+    "mtime": 1781750144.197268,
+    "ast_hash": "0d709591fdcf708f9c7a26e965664552",
+    "semantic_hash": "0d709591fdcf708f9c7a26e965664552"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\.agents\\skills\\firebase-ai-logic-basics\\references\\ios_setup.md": {
+    "mtime": 1781750144.197268,
+    "ast_hash": "9ba31cd14d48b0bebf6fbe3dfb6ca6de",
+    "semantic_hash": "9ba31cd14d48b0bebf6fbe3dfb6ca6de"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\.agents\\skills\\firebase-ai-logic-basics\\references\\usage_patterns_android.md": {
+    "mtime": 1781750144.198268,
+    "ast_hash": "bdc2efc079a95116d34312f1a183d8fa",
+    "semantic_hash": "bdc2efc079a95116d34312f1a183d8fa"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\.agents\\skills\\firebase-ai-logic-basics\\references\\usage_patterns_web.md": {
+    "mtime": 1781750144.199268,
+    "ast_hash": "046afa0f7e01745f0a7e702c46682c03",
+    "semantic_hash": "046afa0f7e01745f0a7e702c46682c03"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\.agents\\skills\\firebase-app-hosting-basics\\SKILL.md": {
+    "mtime": 1781750144.2003381,
+    "ast_hash": "7975881e102faae6386ad2d2dbef1503",
+    "semantic_hash": "7975881e102faae6386ad2d2dbef1503"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\.agents\\skills\\firebase-app-hosting-basics\\references\\cli_commands.md": {
+    "mtime": 1781750144.2016828,
+    "ast_hash": "998dec54d38a80818c133eefc1f8f2d9",
+    "semantic_hash": "998dec54d38a80818c133eefc1f8f2d9"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\.agents\\skills\\firebase-app-hosting-basics\\references\\configuration.md": {
+    "mtime": 1781750144.202917,
+    "ast_hash": "00cf1e745669d39d4d1ca696b50022d6",
+    "semantic_hash": "00cf1e745669d39d4d1ca696b50022d6"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\.agents\\skills\\firebase-app-hosting-basics\\references\\emulation.md": {
+    "mtime": 1781750144.2052488,
+    "ast_hash": "12a5c68223ea9ba69b55253e8cc24e2e",
+    "semantic_hash": "12a5c68223ea9ba69b55253e8cc24e2e"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\.agents\\skills\\firebase-auth-basics\\SKILL.md": {
+    "mtime": 1781750144.206249,
+    "ast_hash": "32e5f13840870caf1eccfcc84b5cbf9c",
+    "semantic_hash": "32e5f13840870caf1eccfcc84b5cbf9c"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\.agents\\skills\\firebase-auth-basics\\references\\client_sdk_android.md": {
+    "mtime": 1781750144.207249,
+    "ast_hash": "297f81b9b9118e87098f644a925eb697",
+    "semantic_hash": "297f81b9b9118e87098f644a925eb697"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\.agents\\skills\\firebase-auth-basics\\references\\client_sdk_web.md": {
+    "mtime": 1781750144.2082808,
+    "ast_hash": "785f4fef2a2564ea770c3b51344532d9",
+    "semantic_hash": "785f4fef2a2564ea770c3b51344532d9"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\.agents\\skills\\firebase-auth-basics\\references\\flutter_setup.md": {
+    "mtime": 1781750144.209275,
+    "ast_hash": "08cc40eb183809cbcf3815f1dc8abb63",
+    "semantic_hash": "08cc40eb183809cbcf3815f1dc8abb63"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\.agents\\skills\\firebase-auth-basics\\references\\ios_setup.md": {
+    "mtime": 1781750144.2102752,
+    "ast_hash": "6f657ea0d3689fc6337df4ec7744ad9d",
+    "semantic_hash": "6f657ea0d3689fc6337df4ec7744ad9d"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\.agents\\skills\\firebase-auth-basics\\references\\security_rules.md": {
+    "mtime": 1781750144.2115414,
+    "ast_hash": "2ee538e428e32f8358021da35380d96f",
+    "semantic_hash": "2ee538e428e32f8358021da35380d96f"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\.agents\\skills\\firebase-basics\\SKILL.md": {
+    "mtime": 1781750144.2125156,
+    "ast_hash": "eeb4719613222565993d13d14c7c2237",
+    "semantic_hash": "eeb4719613222565993d13d14c7c2237"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\.agents\\skills\\firebase-basics\\references\\android_setup.md": {
+    "mtime": 1781750144.2135153,
+    "ast_hash": "fbcd7f9425abc12d39cfc59cf31baeb9",
+    "semantic_hash": "fbcd7f9425abc12d39cfc59cf31baeb9"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\.agents\\skills\\firebase-basics\\references\\firebase-cli-guide.md": {
+    "mtime": 1781750144.2135153,
+    "ast_hash": "d7bd3816957a034dbc5d308da566b35b",
+    "semantic_hash": "d7bd3816957a034dbc5d308da566b35b"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\.agents\\skills\\firebase-basics\\references\\firebase-service-init.md": {
+    "mtime": 1781750144.2146597,
+    "ast_hash": "c8b5173b2279c82f61a6cef303a247aa",
+    "semantic_hash": "c8b5173b2279c82f61a6cef303a247aa"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\.agents\\skills\\firebase-basics\\references\\flutter_setup.md": {
+    "mtime": 1781750144.215669,
+    "ast_hash": "2b270e5488c80890cb9d71ccd3d21ac3",
+    "semantic_hash": "2b270e5488c80890cb9d71ccd3d21ac3"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\.agents\\skills\\firebase-basics\\references\\ios_setup.md": {
+    "mtime": 1781750144.215669,
+    "ast_hash": "2d30c0e4228aad5398bdb563c6ad9390",
+    "semantic_hash": "2d30c0e4228aad5398bdb563c6ad9390"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\.agents\\skills\\firebase-basics\\references\\local-env-setup.md": {
+    "mtime": 1781750144.2170858,
+    "ast_hash": "a8a1395aac6f768a2f496310b735b38e",
+    "semantic_hash": "a8a1395aac6f768a2f496310b735b38e"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\.agents\\skills\\firebase-basics\\references\\refresh\\android_studio.md": {
+    "mtime": 1781750144.218091,
+    "ast_hash": "759ea54a111769cc6f3f9348f6d237af",
+    "semantic_hash": "759ea54a111769cc6f3f9348f6d237af"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\.agents\\skills\\firebase-basics\\references\\refresh\\antigravity.md": {
+    "mtime": 1781750144.219422,
+    "ast_hash": "5a4ca135ecd2e655413f3e5901cb4150",
+    "semantic_hash": "5a4ca135ecd2e655413f3e5901cb4150"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\.agents\\skills\\firebase-basics\\references\\refresh\\claude.md": {
+    "mtime": 1781750144.2204223,
+    "ast_hash": "866f25b94770c835337607734ce90bed",
+    "semantic_hash": "866f25b94770c835337607734ce90bed"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\.agents\\skills\\firebase-basics\\references\\refresh\\gemini-cli.md": {
+    "mtime": 1781750144.2204223,
+    "ast_hash": "8b1856d4a0a32ed0b9824c701a4f3c67",
+    "semantic_hash": "8b1856d4a0a32ed0b9824c701a4f3c67"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\.agents\\skills\\firebase-basics\\references\\refresh\\other-agents.md": {
+    "mtime": 1781750144.221644,
+    "ast_hash": "c0f4a4d3c90f99d1b7a28d9e7f4bb213",
+    "semantic_hash": "c0f4a4d3c90f99d1b7a28d9e7f4bb213"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\.agents\\skills\\firebase-basics\\references\\setup\\android_studio.md": {
+    "mtime": 1781750144.2229238,
+    "ast_hash": "6f640948ba98879c1749df30ccd46ce4",
+    "semantic_hash": "6f640948ba98879c1749df30ccd46ce4"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\.agents\\skills\\firebase-basics\\references\\setup\\antigravity.md": {
+    "mtime": 1781750144.2229238,
+    "ast_hash": "6b3a4db6c343a00232fe8c235db55b91",
+    "semantic_hash": "6b3a4db6c343a00232fe8c235db55b91"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\.agents\\skills\\firebase-basics\\references\\setup\\claude_code.md": {
+    "mtime": 1781750144.223925,
+    "ast_hash": "bb96487d16806430d716d97d06c7bdc6",
+    "semantic_hash": "bb96487d16806430d716d97d06c7bdc6"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\.agents\\skills\\firebase-basics\\references\\setup\\cursor.md": {
+    "mtime": 1781750144.2253652,
+    "ast_hash": "2407337866201ecdfe05a6e6372fb8b4",
+    "semantic_hash": "2407337866201ecdfe05a6e6372fb8b4"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\.agents\\skills\\firebase-basics\\references\\setup\\gemini_cli.md": {
+    "mtime": 1781750144.2253652,
+    "ast_hash": "0a3cbd90a9f4ffeadfc8004ba96baf4f",
+    "semantic_hash": "0a3cbd90a9f4ffeadfc8004ba96baf4f"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\.agents\\skills\\firebase-basics\\references\\setup\\github_copilot.md": {
+    "mtime": 1781750144.2263656,
+    "ast_hash": "c56ce56e2dc7eaa55456cbaef91f139b",
+    "semantic_hash": "c56ce56e2dc7eaa55456cbaef91f139b"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\.agents\\skills\\firebase-basics\\references\\setup\\other_agents.md": {
+    "mtime": 1781750144.2263656,
+    "ast_hash": "e904ca9a862886b42b23f63b2c032c35",
+    "semantic_hash": "e904ca9a862886b42b23f63b2c032c35"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\.agents\\skills\\firebase-basics\\references\\web_setup.md": {
+    "mtime": 1781750144.2278643,
+    "ast_hash": "d8bdc21c61004e575b7ec8d16dd55c3e",
+    "semantic_hash": "d8bdc21c61004e575b7ec8d16dd55c3e"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\.agents\\skills\\firebase-crashlytics\\SKILL.md": {
+    "mtime": 1781750144.2288687,
+    "ast_hash": "8ad049bb162bbc73d0cace325bdf9372",
+    "semantic_hash": "8ad049bb162bbc73d0cace325bdf9372"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\.agents\\skills\\firebase-crashlytics\\references\\android_setup.md": {
+    "mtime": 1781750144.230319,
+    "ast_hash": "d1b4012bc62962d6c4dcac58aa93274d",
+    "semantic_hash": "d1b4012bc62962d6c4dcac58aa93274d"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\.agents\\skills\\firebase-crashlytics\\references\\ios_setup.md": {
+    "mtime": 1781750144.230319,
+    "ast_hash": "646c02909d3487eef44110e81805c340",
+    "semantic_hash": "646c02909d3487eef44110e81805c340"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\.agents\\skills\\firebase-data-connect\\SKILL.md": {
+    "mtime": 1781750144.231647,
+    "ast_hash": "9a755ecb6114594f3c0087c97907b3ff",
+    "semantic_hash": "9a755ecb6114594f3c0087c97907b3ff"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\.agents\\skills\\firebase-data-connect\\examples.md": {
+    "mtime": 1781750144.2326508,
+    "ast_hash": "125cdcf556fded9577b8b5b6bb8f6342",
+    "semantic_hash": "125cdcf556fded9577b8b5b6bb8f6342"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\.agents\\skills\\firebase-data-connect\\reference\\cloud_functions.md": {
+    "mtime": 1781750144.2340767,
+    "ast_hash": "8e12d21f07abf67edeb23891fab0596b",
+    "semantic_hash": "8e12d21f07abf67edeb23891fab0596b"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\.agents\\skills\\firebase-data-connect\\reference\\config.md": {
+    "mtime": 1781750144.2340767,
+    "ast_hash": "b184ba2228c49826d329f20514e1a70f",
+    "semantic_hash": "b184ba2228c49826d329f20514e1a70f"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\.agents\\skills\\firebase-data-connect\\reference\\data_seeding.md": {
+    "mtime": 1781750144.2350767,
+    "ast_hash": "c469b8522a97c776e257317260618d48",
+    "semantic_hash": "c469b8522a97c776e257317260618d48"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\.agents\\skills\\firebase-data-connect\\reference\\native_sql.md": {
+    "mtime": 1781750144.2360904,
+    "ast_hash": "3fb3d31dbf4912b44238c02ffd17b43c",
+    "semantic_hash": "3fb3d31dbf4912b44238c02ffd17b43c"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\.agents\\skills\\firebase-data-connect\\reference\\operations.md": {
+    "mtime": 1781750144.2371237,
+    "ast_hash": "12804e4f0613abb6079a79aed69290c5",
+    "semantic_hash": "12804e4f0613abb6079a79aed69290c5"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\.agents\\skills\\firebase-data-connect\\reference\\realtime.md": {
+    "mtime": 1781750144.2371237,
+    "ast_hash": "bccce2cc7e51342b6d952e4268706ecb",
+    "semantic_hash": "bccce2cc7e51342b6d952e4268706ecb"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\.agents\\skills\\firebase-data-connect\\reference\\schema.md": {
+    "mtime": 1781750144.2385607,
+    "ast_hash": "11ec09713c2667f0c4f1565ffb215e1f",
+    "semantic_hash": "11ec09713c2667f0c4f1565ffb215e1f"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\.agents\\skills\\firebase-data-connect\\reference\\sdk_admin_node.md": {
+    "mtime": 1781750144.239517,
+    "ast_hash": "9fa872f5f3b60ae5208fe5b8b8c321a7",
+    "semantic_hash": "9fa872f5f3b60ae5208fe5b8b8c321a7"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\.agents\\skills\\firebase-data-connect\\reference\\sdk_android.md": {
+    "mtime": 1781750144.239517,
+    "ast_hash": "cc865f961cc80b163c06e1a93f261a27",
+    "semantic_hash": "cc865f961cc80b163c06e1a93f261a27"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\.agents\\skills\\firebase-data-connect\\reference\\sdk_flutter.md": {
+    "mtime": 1781750144.2405894,
+    "ast_hash": "cf7c82b511dcf236568ef0cf3c3d19ee",
+    "semantic_hash": "cf7c82b511dcf236568ef0cf3c3d19ee"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\.agents\\skills\\firebase-data-connect\\reference\\sdk_ios.md": {
+    "mtime": 1781750144.2405894,
+    "ast_hash": "22f1f9b3cec6cb617a11877f7a9c8e09",
+    "semantic_hash": "22f1f9b3cec6cb617a11877f7a9c8e09"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\.agents\\skills\\firebase-data-connect\\reference\\sdk_web.md": {
+    "mtime": 1781750144.241593,
+    "ast_hash": "e80997ac4a1075039c6695601e2d84f1",
+    "semantic_hash": "e80997ac4a1075039c6695601e2d84f1"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\.agents\\skills\\firebase-data-connect\\reference\\search.md": {
+    "mtime": 1781750144.241593,
+    "ast_hash": "3ebc1ae700a8577e0d093257675ba777",
+    "semantic_hash": "3ebc1ae700a8577e0d093257675ba777"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\.agents\\skills\\firebase-data-connect\\reference\\security.md": {
+    "mtime": 1781750144.2429924,
+    "ast_hash": "ea079768a8bbd240fc825fd34e609bd8",
+    "semantic_hash": "ea079768a8bbd240fc825fd34e609bd8"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\.agents\\skills\\firebase-data-connect\\templates.md": {
+    "mtime": 1781750144.2429924,
+    "ast_hash": "9931860379041fca475503d9999f40e4",
+    "semantic_hash": "9931860379041fca475503d9999f40e4"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\.agents\\skills\\firebase-firestore\\SKILL.md": {
+    "mtime": 1781750144.2444358,
+    "ast_hash": "232136f1c350d1468d61e0d5ad2cbec6",
+    "semantic_hash": "232136f1c350d1468d61e0d5ad2cbec6"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\.agents\\skills\\firebase-firestore\\references\\enterprise\\android_sdk_usage.md": {
+    "mtime": 1781750144.245866,
+    "ast_hash": "ab2f3f53009e4b36662ca9ec7fde7d3f",
+    "semantic_hash": "ab2f3f53009e4b36662ca9ec7fde7d3f"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\.agents\\skills\\firebase-firestore\\references\\enterprise\\data_model.md": {
+    "mtime": 1781750144.2468736,
+    "ast_hash": "5eb4009670aeb6619cecb2ac9d25ee1f",
+    "semantic_hash": "5eb4009670aeb6619cecb2ac9d25ee1f"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\.agents\\skills\\firebase-firestore\\references\\enterprise\\flutter_setup.md": {
+    "mtime": 1781750144.2479458,
+    "ast_hash": "7fa41a8c2c4283ee1305937b04aa1a34",
+    "semantic_hash": "7fa41a8c2c4283ee1305937b04aa1a34"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\.agents\\skills\\firebase-firestore\\references\\enterprise\\indexes.md": {
+    "mtime": 1781750144.2489223,
+    "ast_hash": "809a5b5e8313f2f0ae20815d6e1797e5",
+    "semantic_hash": "809a5b5e8313f2f0ae20815d6e1797e5"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\.agents\\skills\\firebase-firestore\\references\\enterprise\\ios_setup.md": {
+    "mtime": 1781750144.2489223,
+    "ast_hash": "c833ece1bee59fb58182c556f77c2097",
+    "semantic_hash": "c833ece1bee59fb58182c556f77c2097"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\.agents\\skills\\firebase-firestore\\references\\enterprise\\provisioning.md": {
+    "mtime": 1781750144.2499228,
+    "ast_hash": "c396777736b6e115f951754a63134e0a",
+    "semantic_hash": "c396777736b6e115f951754a63134e0a"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\.agents\\skills\\firebase-firestore\\references\\enterprise\\python_sdk_usage.md": {
+    "mtime": 1781750144.2499228,
+    "ast_hash": "6099001ee66f2db8ee8457cb277b6089",
+    "semantic_hash": "6099001ee66f2db8ee8457cb277b6089"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\.agents\\skills\\firebase-firestore\\references\\enterprise\\security_rules.md": {
+    "mtime": 1781750144.2513058,
+    "ast_hash": "f648044de64d507293a47364841eca65",
+    "semantic_hash": "f648044de64d507293a47364841eca65"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\.agents\\skills\\firebase-firestore\\references\\enterprise\\web_sdk_usage.md": {
+    "mtime": 1781750144.2513058,
+    "ast_hash": "94f81ba67fd529ca4a01280de0b9ff28",
+    "semantic_hash": "94f81ba67fd529ca4a01280de0b9ff28"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\.agents\\skills\\firebase-firestore\\references\\standard\\android_sdk_usage.md": {
+    "mtime": 1781750144.252306,
+    "ast_hash": "603dc9013d7aa3748d2dffb46b29cdc1",
+    "semantic_hash": "603dc9013d7aa3748d2dffb46b29cdc1"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\.agents\\skills\\firebase-firestore\\references\\standard\\flutter_setup.md": {
+    "mtime": 1781750144.2535205,
+    "ast_hash": "ce114c379fa78718868e292638bf700b",
+    "semantic_hash": "ce114c379fa78718868e292638bf700b"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\.agents\\skills\\firebase-firestore\\references\\standard\\indexes.md": {
+    "mtime": 1781750144.2535205,
+    "ast_hash": "d8b975b50e84a07b41f9326349d0d4f3",
+    "semantic_hash": "d8b975b50e84a07b41f9326349d0d4f3"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\.agents\\skills\\firebase-firestore\\references\\standard\\ios_setup.md": {
+    "mtime": 1781750144.254528,
+    "ast_hash": "c1525146f5b733669ed4e865ee66982f",
+    "semantic_hash": "c1525146f5b733669ed4e865ee66982f"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\.agents\\skills\\firebase-firestore\\references\\standard\\provisioning.md": {
+    "mtime": 1781750144.2557065,
+    "ast_hash": "fa5c900ea7d8b8892740f6b63effc16c",
+    "semantic_hash": "fa5c900ea7d8b8892740f6b63effc16c"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\.agents\\skills\\firebase-firestore\\references\\standard\\security_rules.md": {
+    "mtime": 1781750144.2557065,
+    "ast_hash": "f648044de64d507293a47364841eca65",
+    "semantic_hash": "f648044de64d507293a47364841eca65"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\.agents\\skills\\firebase-firestore\\references\\standard\\web_sdk_usage.md": {
+    "mtime": 1781750144.2567062,
+    "ast_hash": "dd6c410d2c9d5d60d9748dfde51d34b7",
+    "semantic_hash": "dd6c410d2c9d5d60d9748dfde51d34b7"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\.agents\\skills\\firebase-hosting-basics\\SKILL.md": {
+    "mtime": 1781750144.2578642,
+    "ast_hash": "2cb9f3c72294fc8345e943efac6f98f7",
+    "semantic_hash": "2cb9f3c72294fc8345e943efac6f98f7"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\.agents\\skills\\firebase-hosting-basics\\references\\configuration.md": {
+    "mtime": 1781750144.2578642,
+    "ast_hash": "26e100e43c62c772e4ccde95c2387584",
+    "semantic_hash": "26e100e43c62c772e4ccde95c2387584"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\.agents\\skills\\firebase-hosting-basics\\references\\deploying.md": {
+    "mtime": 1781750144.2588682,
+    "ast_hash": "a0b99a6aecabd7e47d74ac55a64bfd38",
+    "semantic_hash": "a0b99a6aecabd7e47d74ac55a64bfd38"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\.agents\\skills\\firebase-remote-config-basics\\SKILL.md": {
+    "mtime": 1781750144.2600174,
+    "ast_hash": "36f3757b2d257da95671103c374aa7ff",
+    "semantic_hash": "36f3757b2d257da95671103c374aa7ff"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\.agents\\skills\\firebase-remote-config-basics\\references\\android_setup.md": {
+    "mtime": 1781750144.2600174,
+    "ast_hash": "ccd93531373d2ee044cbb6150f9bc6d6",
+    "semantic_hash": "ccd93531373d2ee044cbb6150f9bc6d6"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\.agents\\skills\\firebase-remote-config-basics\\references\\ios_setup.md": {
+    "mtime": 1781750144.2611847,
+    "ast_hash": "598b45f24428f92156933054977dfaca",
+    "semantic_hash": "598b45f24428f92156933054977dfaca"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\.agents\\skills\\firebase-security-rules-auditor\\SKILL.md": {
+    "mtime": 1781750144.2621899,
+    "ast_hash": "5b6ba5067a6ffef09f8f17878c4ca01a",
+    "semantic_hash": "5b6ba5067a6ffef09f8f17878c4ca01a"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\.agents\\skills\\xcode-project-setup\\SKILL.md": {
+    "mtime": 1781750144.2633963,
+    "ast_hash": "4e04903a8c377d5f16ac0f171394c360",
+    "semantic_hash": "4e04903a8c377d5f16ac0f171394c360"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\.github\\workflows\\update_prices.yml": {
+    "mtime": 1783352390.7389917,
+    "ast_hash": "ebaa3a14f65fa42859c616e3d7f7b7d2",
+    "semantic_hash": "ebaa3a14f65fa42859c616e3d7f7b7d2"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\README APP.md": {
+    "mtime": 1783905762.4136736,
+    "ast_hash": "3db6aef1389d73e0e20262882b3b6b1b",
+    "semantic_hash": "3db6aef1389d73e0e20262882b3b6b1b"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\README.md": {
+    "mtime": 1783353725.6494813,
+    "ast_hash": "01ac495740052197847d00ac4f73a9ce",
+    "semantic_hash": "01ac495740052197847d00ac4f73a9ce"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\analysis_options.yaml": {
+    "mtime": 1784265936.9536638,
+    "ast_hash": "d2d05628e56221d9fb070072cd3ef509",
+    "semantic_hash": "d2d05628e56221d9fb070072cd3ef509"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\devtools_options.yaml": {
+    "mtime": 1783435270.3229797,
+    "ast_hash": "d1ff5187b1b67653e7357395895e8449",
+    "semantic_hash": "d1ff5187b1b67653e7357395895e8449"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\ios\\Runner\\Assets.xcassets\\LaunchImage.imageset\\README.md": {
+    "mtime": 1764868041.9184587,
+    "ast_hash": "f7ee1b402881509d197f34963e569927",
+    "semantic_hash": "f7ee1b402881509d197f34963e569927"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\linux\\CMakeLists.txt": {
+    "mtime": 1780966644.4473486,
+    "ast_hash": "c4e2744d90f509ca382faefcd2e40ac3",
+    "semantic_hash": "c4e2744d90f509ca382faefcd2e40ac3"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\linux\\flutter\\CMakeLists.txt": {
+    "mtime": 1764868041.9184587,
+    "ast_hash": "2195470ce31675d31db5a37590d011f6",
+    "semantic_hash": "2195470ce31675d31db5a37590d011f6"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\linux\\runner\\CMakeLists.txt": {
+    "mtime": 1764868041.9184587,
+    "ast_hash": "30cc1614b16214b66c014af09ba699eb",
+    "semantic_hash": "30cc1614b16214b66c014af09ba699eb"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\pubspec.yaml": {
+    "mtime": 1784532323.3749938,
+    "ast_hash": "a288a814cd33910e1c5378efe1f4c574",
+    "semantic_hash": "a288a814cd33910e1c5378efe1f4c574"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\web\\index.html": {
+    "mtime": 1780966645.5673482,
+    "ast_hash": "d77228a29561820573ea11ee69c9d226",
+    "semantic_hash": "d77228a29561820573ea11ee69c9d226"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\windows\\CMakeLists.txt": {
+    "mtime": 1780966645.616421,
+    "ast_hash": "7c2ef2faec4db8c45edb40f097ac88cc",
+    "semantic_hash": "7c2ef2faec4db8c45edb40f097ac88cc"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\windows\\flutter\\CMakeLists.txt": {
+    "mtime": 1764868041.9345758,
+    "ast_hash": "bbf66fed5180bd9ae8198b8d7c4a0001",
+    "semantic_hash": "bbf66fed5180bd9ae8198b8d7c4a0001"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\windows\\runner\\CMakeLists.txt": {
+    "mtime": 1764868041.9345758,
+    "ast_hash": "028602ab9754bffe716659ada7590d29",
+    "semantic_hash": "028602ab9754bffe716659ada7590d29"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\android\\app\\src\\main\\res\\mipmap-hdpi\\ic_launcher.png": {
+    "mtime": 1781589336.9837356,
+    "ast_hash": "0dd7c2da0aac61a98f309232e61c4b2a",
+    "semantic_hash": "0dd7c2da0aac61a98f309232e61c4b2a"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\android\\app\\src\\main\\res\\mipmap-mdpi\\ic_launcher.png": {
+    "mtime": 1781589336.9827318,
+    "ast_hash": "f41241b4a4c6b04acda8603b39e9100b",
+    "semantic_hash": "f41241b4a4c6b04acda8603b39e9100b"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\android\\app\\src\\main\\res\\mipmap-xhdpi\\ic_launcher.png": {
+    "mtime": 1781589336.9827318,
+    "ast_hash": "ee089a9d0e6042464e6d76e55566cea4",
+    "semantic_hash": "ee089a9d0e6042464e6d76e55566cea4"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\android\\app\\src\\main\\res\\mipmap-xxhdpi\\ic_launcher.png": {
+    "mtime": 1781589336.9837356,
+    "ast_hash": "a4e797e0ac74040b51e94088cf494b0e",
+    "semantic_hash": "a4e797e0ac74040b51e94088cf494b0e"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\android\\app\\src\\main\\res\\mipmap-xxxhdpi\\ic_launcher.png": {
+    "mtime": 1781589336.9837356,
+    "ast_hash": "7f5703abae5bc72fab86ea1bc9c0f48e",
+    "semantic_hash": "7f5703abae5bc72fab86ea1bc9c0f48e"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\assets\\icon\\app_icon.png": {
+    "mtime": 1783426903.0745146,
+    "ast_hash": "258104d1458c7c2a2ff554231fbf1bba",
+    "semantic_hash": "258104d1458c7c2a2ff554231fbf1bba"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\ios\\Runner\\Assets.xcassets\\AppIcon.appiconset\\Icon-App-1024x1024@1x.png": {
+    "mtime": 1781589337.5977325,
+    "ast_hash": "53e7709ede147715b649086c691cd8d9",
+    "semantic_hash": "53e7709ede147715b649086c691cd8d9"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\ios\\Runner\\Assets.xcassets\\AppIcon.appiconset\\Icon-App-20x20@1x.png": {
+    "mtime": 1781589337.5952625,
+    "ast_hash": "73cb30bd57711526d09841832a9ad250",
+    "semantic_hash": "73cb30bd57711526d09841832a9ad250"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\ios\\Runner\\Assets.xcassets\\AppIcon.appiconset\\Icon-App-20x20@2x.png": {
+    "mtime": 1781589337.5952625,
+    "ast_hash": "b5730ab0a86f7083decd28fb98335423",
+    "semantic_hash": "b5730ab0a86f7083decd28fb98335423"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\ios\\Runner\\Assets.xcassets\\AppIcon.appiconset\\Icon-App-20x20@3x.png": {
+    "mtime": 1781589337.5952625,
+    "ast_hash": "fe92c14ce1a7a97b1b0c54b68d11963c",
+    "semantic_hash": "fe92c14ce1a7a97b1b0c54b68d11963c"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\ios\\Runner\\Assets.xcassets\\AppIcon.appiconset\\Icon-App-29x29@1x.png": {
+    "mtime": 1781589337.5952625,
+    "ast_hash": "552d7c64977f66cada141253e51607c0",
+    "semantic_hash": "552d7c64977f66cada141253e51607c0"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\ios\\Runner\\Assets.xcassets\\AppIcon.appiconset\\Icon-App-29x29@2x.png": {
+    "mtime": 1781589337.5952625,
+    "ast_hash": "48daeada75894ece180faae15c0600c4",
+    "semantic_hash": "48daeada75894ece180faae15c0600c4"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\ios\\Runner\\Assets.xcassets\\AppIcon.appiconset\\Icon-App-29x29@3x.png": {
+    "mtime": 1781589337.5952625,
+    "ast_hash": "6efe6c1aac649762fcadf94ae62186df",
+    "semantic_hash": "6efe6c1aac649762fcadf94ae62186df"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\ios\\Runner\\Assets.xcassets\\AppIcon.appiconset\\Icon-App-40x40@1x.png": {
+    "mtime": 1781589337.5952625,
+    "ast_hash": "b5730ab0a86f7083decd28fb98335423",
+    "semantic_hash": "b5730ab0a86f7083decd28fb98335423"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\ios\\Runner\\Assets.xcassets\\AppIcon.appiconset\\Icon-App-40x40@2x.png": {
+    "mtime": 1781589337.5952625,
+    "ast_hash": "66576e7a989291851e544e773562130d",
+    "semantic_hash": "66576e7a989291851e544e773562130d"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\ios\\Runner\\Assets.xcassets\\AppIcon.appiconset\\Icon-App-40x40@3x.png": {
+    "mtime": 1781589337.5952625,
+    "ast_hash": "64d7748ee188a8c8da25302fde327742",
+    "semantic_hash": "64d7748ee188a8c8da25302fde327742"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\ios\\Runner\\Assets.xcassets\\AppIcon.appiconset\\Icon-App-50x50@1x.png": {
+    "mtime": 1781589337.5952625,
+    "ast_hash": "91faadd49067f60ce7894b137f90690c",
+    "semantic_hash": "91faadd49067f60ce7894b137f90690c"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\ios\\Runner\\Assets.xcassets\\AppIcon.appiconset\\Icon-App-50x50@2x.png": {
+    "mtime": 1781589337.5952625,
+    "ast_hash": "9e8a2125b5850d51db2aeee0ed795cdf",
+    "semantic_hash": "9e8a2125b5850d51db2aeee0ed795cdf"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\ios\\Runner\\Assets.xcassets\\AppIcon.appiconset\\Icon-App-57x57@1x.png": {
+    "mtime": 1781589337.5952625,
+    "ast_hash": "25e7d6423f14a5f6992002207d9cfac7",
+    "semantic_hash": "25e7d6423f14a5f6992002207d9cfac7"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\ios\\Runner\\Assets.xcassets\\AppIcon.appiconset\\Icon-App-57x57@2x.png": {
+    "mtime": 1781589337.5952625,
+    "ast_hash": "62fa809717a84cc91d20786b92326af6",
+    "semantic_hash": "62fa809717a84cc91d20786b92326af6"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\ios\\Runner\\Assets.xcassets\\AppIcon.appiconset\\Icon-App-60x60@2x.png": {
+    "mtime": 1781589337.5952625,
+    "ast_hash": "64d7748ee188a8c8da25302fde327742",
+    "semantic_hash": "64d7748ee188a8c8da25302fde327742"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\ios\\Runner\\Assets.xcassets\\AppIcon.appiconset\\Icon-App-60x60@3x.png": {
+    "mtime": 1781589337.5952625,
+    "ast_hash": "5b7d2158fe3a3f4d914e9ce59a651402",
+    "semantic_hash": "5b7d2158fe3a3f4d914e9ce59a651402"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\ios\\Runner\\Assets.xcassets\\AppIcon.appiconset\\Icon-App-72x72@1x.png": {
+    "mtime": 1781589337.5952625,
+    "ast_hash": "0dd7c2da0aac61a98f309232e61c4b2a",
+    "semantic_hash": "0dd7c2da0aac61a98f309232e61c4b2a"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\ios\\Runner\\Assets.xcassets\\AppIcon.appiconset\\Icon-App-72x72@2x.png": {
+    "mtime": 1781589337.5967302,
+    "ast_hash": "a4e797e0ac74040b51e94088cf494b0e",
+    "semantic_hash": "a4e797e0ac74040b51e94088cf494b0e"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\ios\\Runner\\Assets.xcassets\\AppIcon.appiconset\\Icon-App-76x76@1x.png": {
+    "mtime": 1781589337.5967302,
+    "ast_hash": "94e8ea8c9ad3d3b8f1154de522242391",
+    "semantic_hash": "94e8ea8c9ad3d3b8f1154de522242391"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\ios\\Runner\\Assets.xcassets\\AppIcon.appiconset\\Icon-App-76x76@2x.png": {
+    "mtime": 1781589337.5967302,
+    "ast_hash": "0b2155cd4de93e4f1e125f33ac1096ce",
+    "semantic_hash": "0b2155cd4de93e4f1e125f33ac1096ce"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\ios\\Runner\\Assets.xcassets\\AppIcon.appiconset\\Icon-App-83.5x83.5@2x.png": {
+    "mtime": 1781589337.5967302,
+    "ast_hash": "415a12e323f960edbad4271faa3f2f9b",
+    "semantic_hash": "415a12e323f960edbad4271faa3f2f9b"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\ios\\Runner\\Assets.xcassets\\LaunchImage.imageset\\LaunchImage.png": {
+    "mtime": 1765251278.2593718,
+    "ast_hash": "978c1bee49d7ad5fc1a4d81099b13e18",
+    "semantic_hash": "978c1bee49d7ad5fc1a4d81099b13e18"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\ios\\Runner\\Assets.xcassets\\LaunchImage.imageset\\LaunchImage@2x.png": {
+    "mtime": 1765251278.2573783,
+    "ast_hash": "978c1bee49d7ad5fc1a4d81099b13e18",
+    "semantic_hash": "978c1bee49d7ad5fc1a4d81099b13e18"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\ios\\Runner\\Assets.xcassets\\LaunchImage.imageset\\LaunchImage@3x.png": {
+    "mtime": 1765251278.2553842,
+    "ast_hash": "978c1bee49d7ad5fc1a4d81099b13e18",
+    "semantic_hash": "978c1bee49d7ad5fc1a4d81099b13e18"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\macos\\Runner\\Assets.xcassets\\AppIcon.appiconset\\app_icon_1024.png": {
+    "mtime": 1765251278.2504015,
+    "ast_hash": "c9becc9105f8cabce934d20c7bfb6aac",
+    "semantic_hash": "c9becc9105f8cabce934d20c7bfb6aac"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\macos\\Runner\\Assets.xcassets\\AppIcon.appiconset\\app_icon_128.png": {
+    "mtime": 1765251278.2424264,
+    "ast_hash": "3ded30823804caaa5ccc944067c54a36",
+    "semantic_hash": "3ded30823804caaa5ccc944067c54a36"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\macos\\Runner\\Assets.xcassets\\AppIcon.appiconset\\app_icon_16.png": {
+    "mtime": 1765251278.2454176,
+    "ast_hash": "8bf511604bc6ed0a6aeb380c5113fdcf",
+    "semantic_hash": "8bf511604bc6ed0a6aeb380c5113fdcf"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\macos\\Runner\\Assets.xcassets\\AppIcon.appiconset\\app_icon_256.png": {
+    "mtime": 1765251278.2523937,
+    "ast_hash": "dfe2c93d1536ae02f085cc63faa3430e",
+    "semantic_hash": "dfe2c93d1536ae02f085cc63faa3430e"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\macos\\Runner\\Assets.xcassets\\AppIcon.appiconset\\app_icon_32.png": {
+    "mtime": 1765251278.246414,
+    "ast_hash": "8e0ae58e362a6636bdfccbc04da2c58c",
+    "semantic_hash": "8e0ae58e362a6636bdfccbc04da2c58c"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\macos\\Runner\\Assets.xcassets\\AppIcon.appiconset\\app_icon_512.png": {
+    "mtime": 1765251278.244421,
+    "ast_hash": "0ad44039155424738917502c69667699",
+    "semantic_hash": "0ad44039155424738917502c69667699"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\macos\\Runner\\Assets.xcassets\\AppIcon.appiconset\\app_icon_64.png": {
+    "mtime": 1765251278.2404346,
+    "ast_hash": "04e7b6ef05346c70b663ca1d97de3ad5",
+    "semantic_hash": "04e7b6ef05346c70b663ca1d97de3ad5"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\web\\favicon.png": {
+    "mtime": 1764868041.9345758,
+    "ast_hash": "5dcef449791fa27946b3d35ad8803796",
+    "semantic_hash": "5dcef449791fa27946b3d35ad8803796"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\web\\icons\\Icon-192.png": {
+    "mtime": 1764868041.9345758,
+    "ast_hash": "ac9a721a12bbc803b44f645561ecb1e1",
+    "semantic_hash": "ac9a721a12bbc803b44f645561ecb1e1"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\web\\icons\\Icon-512.png": {
+    "mtime": 1764868041.9345758,
+    "ast_hash": "96e752610906ba2a93c65f8abe1645f1",
+    "semantic_hash": "96e752610906ba2a93c65f8abe1645f1"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\web\\icons\\Icon-maskable-192.png": {
+    "mtime": 1765251278.393921,
+    "ast_hash": "c457ef57daa1d16f64b27b786ec2ea3c",
+    "semantic_hash": "c457ef57daa1d16f64b27b786ec2ea3c"
+  },
+  "C:\\Users\\Administrator\\Desktop\\project2\\flutter_application_1\\web\\icons\\Icon-maskable-512.png": {
+    "mtime": 1765251278.392923,
+    "ast_hash": "301a7604d45b3e739efc881eb04896ea",
+    "semantic_hash": "301a7604d45b3e739efc881eb04896ea"
+  }
+}

@@ -63,7 +63,7 @@ class ApiClient {
       }
     }
 
-    throw toAppException(lastError ?? UnknownException());
+    throw toAppException(lastError ?? const UnknownException());
   }
 
   /// GET يعيد List بدل Map

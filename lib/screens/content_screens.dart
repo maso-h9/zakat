@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:zakat_app/l10n/app_localizations.dart';
 import '../data/zakat_data.dart';
 import '../utils/theme.dart';
 import '../widgets/hadith_card.dart';
@@ -23,7 +24,7 @@ class AhadithScreen extends StatelessWidget {
         child: Scaffold(
           backgroundColor: ZakatTheme.scaffoldBgAdaptive(isDark),
           appBar: AppBar(
-            title: Text(p.isArabic ? 'أحاديث الزكاة' : 'Zakat Hadiths',
+            title: Text(AppLocalizations.of(context).zakatHadiths,
                 style: const TextStyle(fontFamily: 'Scheherazade')),
             backgroundColor: appBarBg,
           ),
@@ -40,9 +41,7 @@ class AhadithScreen extends StatelessWidget {
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    p.isArabic
-                        ? 'جميع الأحاديث مستخرجة من موقع الدرر السنية، وهي أحاديث صحيحة أو حسنة'
-                        : 'All hadiths are verified Sahih or Hasan from Dorar.net',
+                    AppLocalizations.of(context).hadithsSourceNote,
                     style: const TextStyle(
                         color: Colors.white,
                         fontSize: 13,
@@ -88,8 +87,7 @@ class MasarifScreen extends StatelessWidget {
         child: Scaffold(
           backgroundColor: ZakatTheme.scaffoldBgAdaptive(isDark),
           appBar: AppBar(
-            title: Text(
-                p.isArabic ? 'مصارف الزكاة الثمانية' : '8 Zakat Recipients',
+            title: Text(AppLocalizations.of(context).zakatRecipients,
                 style: const TextStyle(fontFamily: 'Scheherazade')),
             backgroundColor: appBarBg,
           ),
@@ -150,7 +148,7 @@ class _MasrafCardState extends State<_MasrafCard> {
         color: cardColor,
         borderRadius: BorderRadius.circular(16),
         boxShadow: ZakatTheme.cardShadowAdaptive(isDark),
-        border: Border.all(color: color.withOpacity(isDark ? 0.35 : 0.2)),
+        border: Border.all(color: color.withValues(alpha: isDark ? 0.35 : 0.2)),
       ),
       child: Column(children: [
         ListTile(
@@ -158,7 +156,7 @@ class _MasrafCardState extends State<_MasrafCard> {
             width: 50,
             height: 50,
             decoration: BoxDecoration(
-              color: color.withOpacity(isDark ? 0.18 : 0.1),
+              color: color.withValues(alpha: isDark ? 0.18 : 0.1),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Center(
@@ -195,8 +193,8 @@ class _MasrafCardState extends State<_MasrafCard> {
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
                   color: isDark
-                      ? ZakatTheme.gold.withOpacity(0.1)
-                      : ZakatTheme.paleGold.withOpacity(0.5),
+                      ? ZakatTheme.gold.withValues(alpha: 0.1)
+                      : ZakatTheme.paleGold.withValues(alpha: 0.5),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Text(widget.masraf.evidence,
@@ -207,7 +205,7 @@ class _MasrafCardState extends State<_MasrafCard> {
                         fontFamily: 'Scheherazade')),
               ),
               const SizedBox(height: 12),
-              Text('أمثلة واقعية:',
+              Text(AppLocalizations.of(context).realExamples,
                   style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontFamily: 'Scheherazade',
@@ -268,7 +266,7 @@ class _FatawaScreenState extends State<FatawaScreen> {
         child: Scaffold(
           backgroundColor: ZakatTheme.scaffoldBgAdaptive(isDark),
           appBar: AppBar(
-            title: Text(p.isArabic ? 'فتاوى الزكاة' : 'Zakat Fatwas',
+            title: Text(AppLocalizations.of(context).zakatRulings,
                 style: const TextStyle(fontFamily: 'Scheherazade')),
             backgroundColor: appBarBg,
           ),
@@ -280,8 +278,7 @@ class _FatawaScreenState extends State<FatawaScreen> {
                 onChanged: (v) => setState(() => _searchQuery = v),
                 style: TextStyle(fontFamily: 'Scheherazade', color: textColor),
                 decoration: InputDecoration(
-                  hintText:
-                      p.isArabic ? 'ابحث في الفتاوى...' : 'Search fatwas...',
+                  hintText: AppLocalizations.of(context).searchRulings,
                   prefixIcon: const Icon(Icons.search),
                   filled: true,
                   fillColor: ZakatTheme.cardBgAdaptive(isDark),
@@ -337,7 +334,7 @@ class _FatawaCardState extends State<_FatawaCard> {
           leading: Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: accent.withOpacity(isDark ? 0.2 : 0.1),
+              color: accent.withValues(alpha: isDark ? 0.2 : 0.1),
               shape: BoxShape.circle,
             ),
             child: Icon(Icons.question_mark, color: accent, size: 18),
@@ -366,7 +363,7 @@ class _FatawaCardState extends State<_FatawaCard> {
                       color: textColor,
                       fontFamily: 'Scheherazade')),
               const SizedBox(height: 8),
-              Text('📚 المصدر: ${widget.ruling.source}',
+              Text('${AppLocalizations.of(context).sourceLabel}: ${widget.ruling.source}',
                   style: TextStyle(
                       fontSize: 12,
                       color: subColor,
@@ -405,9 +402,9 @@ class _WizardScreenState extends State<WizardScreen> {
       setState(() => _step++);
     } else {
       setState(() {
-        _finalResult = '✅ تجب عليك الزكاة';
+        _finalResult = AppLocalizations.of(context).zakatObligatoryYes;
         _finalReason =
-            'استوفيت جميع شروط وجوب الزكاة. احسب مقدارها من الحاسبة.';
+            '${AppLocalizations.of(context).zakatObligatoryYesDesc}. ${AppLocalizations.of(context).calculateZakatAmount}';
       });
     }
   }
@@ -432,7 +429,7 @@ class _WizardScreenState extends State<WizardScreen> {
           backgroundColor: ZakatTheme.scaffoldBgAdaptive(isDark),
           appBar: AppBar(
             title: Text(
-                p.isArabic ? 'هل تجب عليك الزكاة؟' : 'Is Zakat due on you?',
+                AppLocalizations.of(context).isZakatObligatory,
                 style: const TextStyle(fontFamily: 'Scheherazade')),
             backgroundColor: appBarBg,
           ),
@@ -462,7 +459,7 @@ class _WizardScreenState extends State<WizardScreen> {
               decoration: BoxDecoration(
                 color: i <= _step
                     ? ZakatTheme.deepGreen
-                    : ZakatTheme.deepGreen.withOpacity(0.2),
+                    : ZakatTheme.deepGreen.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(3),
               ),
             ),
@@ -470,7 +467,7 @@ class _WizardScreenState extends State<WizardScreen> {
         }),
       ),
       const SizedBox(height: 8),
-      Text('السؤال ${_step + 1} من ${zakatWizardQuestions.length}',
+      Text(AppLocalizations.of(context).questionOf(_step + 1, zakatWizardQuestions.length),
           style: TextStyle(
               color: subColor, fontSize: 13, fontFamily: 'Scheherazade')),
       const Spacer(),
@@ -483,7 +480,7 @@ class _WizardScreenState extends State<WizardScreen> {
               : ZakatTheme.cardGradient,
           borderRadius: BorderRadius.circular(24),
           boxShadow: ZakatTheme.cardShadowAdaptive(isDark),
-          border: Border.all(color: ZakatTheme.gold.withOpacity(0.3)),
+          border: Border.all(color: ZakatTheme.gold.withValues(alpha: 0.3)),
         ),
         child: Column(children: [
           const Icon(Icons.quiz_outlined, color: ZakatTheme.gold, size: 48),
@@ -581,16 +578,16 @@ class _WizardScreenState extends State<WizardScreen> {
       ElevatedButton.icon(
         onPressed: _reset,
         icon: const Icon(Icons.refresh),
-        label: const Text('إعادة الاختبار',
-            style: TextStyle(fontFamily: 'Scheherazade')),
+        label: Text(AppLocalizations.of(context).retakeTest,
+            style: const TextStyle(fontFamily: 'Scheherazade')),
       ),
       if (isObligation) ...[
         const SizedBox(height: 16),
         OutlinedButton.icon(
           onPressed: () => Navigator.pop(context),
           icon: const Icon(Icons.calculate_outlined),
-          label: const Text('احسب مقدار الزكاة',
-              style: TextStyle(fontFamily: 'Scheherazade')),
+          label: Text(AppLocalizations.of(context).calculateZakatAmount,
+              style: const TextStyle(fontFamily: 'Scheherazade')),
           style: OutlinedButton.styleFrom(
               side: const BorderSide(color: ZakatTheme.deepGreen)),
         ),

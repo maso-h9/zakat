@@ -4,6 +4,7 @@
 // AiPromptBuilder · AiResponseParser · AiRepository
 // ================================================================
 import 'dart:convert';
+import 'dart:math';
 import 'package:http/http.dart' as http;
 import '../core/errors/app_exception.dart';
 import '../core/utils/app_logger.dart';
@@ -99,7 +100,17 @@ class AiResponseParser {
     try {
       final candidates = json['candidates'] as List?;
       if (candidates == null || candidates.isEmpty) return null;
-      final parts = candidates[0]['content']?['parts'] as List?;
+
+      final candidate = candidates[0] as Map<String, dynamic>;
+
+      // تحقق من blocked due to safety
+      final finishReason = candidate['finishReason'] as String?;
+      if (finishReason == 'SAFETY' || finishReason == 'RECITATION') {
+        AppLogger.warning('AiResponseParser: blocked ($finishReason)');
+        return null;
+      }
+
+      final parts = candidate['content']?['parts'] as List?;
       if (parts == null || parts.isEmpty) return null;
       final text = parts[0]['text'] as String?;
       return text?.trim().isEmpty == true ? null : text;
@@ -112,16 +123,24 @@ class AiResponseParser {
   /// هل الاستجابة خطأ rate limit؟
   static bool isRateLimit(int statusCode, Map<String, dynamic>? body) =>
       statusCode == 429 || (body?['error']?['status'] == 'RESOURCE_EXHAUSTED');
+
+  /// استخرج رسالة الخطأ من استجابة Gemini
+  static String? parseError(Map<String, dynamic>? body) {
+    if (body == null) return null;
+    return body['error']?['message'] as String?;
+  }
 }
 
 // ══════════════════════════════════════════════════════════════
 // AiRepository — طبقة الوصول لـ Gemini API (بند 23)
 // ══════════════════════════════════════════════════════════════
 class AiRepository {
-  static const String _model = 'gemini-3.5-flash';
+  static const String _model = 'gemini-2.5-flash';
   static const String _baseUrl =
       'https://generativelanguage.googleapis.com/v1beta/models/$_model:generateContent';
   static const int _maxHistory = 20;
+  static const int _maxRetries = 2;
+  static const Duration _baseTimeout = Duration(seconds: 60);
 
   final String apiKey;
   final List<Map<String, dynamic>> _history = [];
@@ -144,66 +163,112 @@ class AiRepository {
       ],
     });
 
-    AppLogger.request('$_baseUrl (Gemini)');
+    // أرسل مع retry logic
+    return _sendWithRetry(systemPrompt);
+  }
 
-    try {
-      final response = await http
-          .post(
-            Uri.parse('$_baseUrl?key=$apiKey'),
-            headers: {'Content-Type': 'application/json'},
-            body: jsonEncode({
-              'contents': _history,
-              'systemInstruction': {
-                'parts': [
-                  {'text': systemPrompt}
-                ],
-              },
-              'generationConfig': {
-                'maxOutputTokens': 800,
-                'temperature': 0.7,
-              },
-            }),
-          )
-          .timeout(const Duration(seconds: 30));
+  /// إرسال مع محاولة إعادة تلقائية
+  Future<String> _sendWithRetry(String systemPrompt) async {
+    int attempt = 0;
+    while (attempt <= _maxRetries) {
+      try {
+        AppLogger.request('$_baseUrl (Gemini attempt ${attempt + 1})');
 
-      AppLogger.response('Gemini', response.statusCode);
-      AppLogger.info(response.body);
+        final response = await http
+            .post(
+              Uri.parse('$_baseUrl?key=$apiKey'),
+              headers: {'Content-Type': 'application/json'},
+              body: jsonEncode({
+                'contents': _history,
+                'systemInstruction': {
+                  'parts': [
+                    {'text': systemPrompt}
+                  ],
+                },
+                'generationConfig': {
+                  'maxOutputTokens': 1500,
+                  'temperature': 0.7,
+                },
+              }),
+            )
+            .timeout(_baseTimeout);
 
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body) as Map<String, dynamic>;
-        final reply = AiResponseParser.parseText(data);
-        if (reply == null) throw AiException('empty_response');
+        AppLogger.response('Gemini', response.statusCode);
 
-        _history.add({
-          'role': 'model',
-          'parts': [
-            {'text': reply}
-          ],
-        });
+        if (response.statusCode == 200) {
+          final data = jsonDecode(response.body) as Map<String, dynamic>;
+          final reply = AiResponseParser.parseText(data);
+          if (reply == null) {
+            final msg = AiResponseParser.parseError(data);
+            throw AiException('empty_response',
+                cause: msg ?? 'SAFETY block or empty');
+          }
 
-        // حافظ على آخر 20 رسالة فقط لتوفير الـ tokens
-        if (_history.length > _maxHistory) {
-          _history.removeRange(0, 2);
+          _history.add({
+            'role': 'model',
+            'parts': [
+              {'text': reply}
+            ],
+          });
+
+          // حافظ على آخر 20 رسالة فقط لتوفير الـ tokens
+          if (_history.length > _maxHistory) {
+            _history.removeRange(0, _history.length - _maxHistory);
+          }
+
+          return reply;
         }
 
-        return reply;
-      }
+        // ── أخطاء يمكن إعادة المحاولة لها ──
+        if (response.statusCode == 429 || response.statusCode == 503) {
+          if (attempt < _maxRetries) {
+            final delay = Duration(
+                milliseconds: 1000 * pow(2, attempt).toInt()); // exponential
+            AppLogger.warning(
+                'Gemini: ${response.statusCode} — retrying in ${delay.inMilliseconds}ms');
+            await Future.delayed(delay);
+            attempt++;
+            continue;
+          }
+        }
 
-      final body = jsonDecode(response.body) as Map<String, dynamic>?;
-      if (AiResponseParser.isRateLimit(response.statusCode, body)) {
-        throw AiException('rate_limit');
-      }
-      if (response.statusCode == 400) throw AiException('invalid_key');
+        // ── أخطاء لا يمكن إعادة المحاولة لها ──
+        final body = jsonDecode(response.body) as Map<String, dynamic>?;
+        if (AiResponseParser.isRateLimit(response.statusCode, body)) {
+          throw AiException('rate_limit');
+        }
+        if (response.statusCode == 400) throw AiException('invalid_key');
+        if (response.statusCode == 403) throw AiException('forbidden');
+        if (response.statusCode == 503) throw AiException('service_unavailable');
 
-      throw AiException('http_${response.statusCode}');
-    } on AiException {
-      _history.removeLast(); // أزل الرسالة الأخيرة عند الخطأ
-      rethrow;
-    } catch (e) {
-      _history.removeLast();
-      AppLogger.error('AiRepository: خطأ', exception: e);
-      throw AiException('network_error', cause: e.toString());
+        throw AiException('http_${response.statusCode}');
+      } on AiException {
+        // أزل الرسالة الأخيرة من التاريخ عند الخطأ
+        if (_history.isNotEmpty && _history.last['role'] == 'user') {
+          _history.removeLast();
+        }
+        rethrow;
+      } catch (e) {
+        if (attempt < _maxRetries &&
+            (e.toString().contains('SocketException') ||
+                e.toString().contains('TimeoutException') ||
+                e.toString().contains('Connection'))) {
+          final delay = Duration(
+              milliseconds: 1000 * pow(2, attempt).toInt());
+          AppLogger.warning('Gemini: network error — retrying in ${delay.inMilliseconds}ms');
+          await Future.delayed(delay);
+          attempt++;
+          continue;
+        }
+        if (_history.isNotEmpty && _history.last['role'] == 'user') {
+          _history.removeLast();
+        }
+        AppLogger.error('AiRepository: خطأ', exception: e);
+        throw AiException('network_error', cause: e.toString());
+      }
     }
+
+    throw AiException('max_retries');
   }
 
   /// مسح تاريخ المحادثة
@@ -227,10 +292,16 @@ class AiException extends AppException {
         return 'تجاوزت الحد المسموح. حاول بعد دقيقة.';
       case 'invalid_key':
         return 'مفتاح API غير صحيح أو منتهي الصلاحية.';
+      case 'forbidden':
+        return 'المفتاح غير مصرح له باستخدام هذا النموذج.';
       case 'empty_response':
         return 'لم يصلني رد من المساعد. حاول مجدداً.';
+      case 'service_unavailable':
+        return 'خدمة Gemini غير متاحة حالياً. حاول لاحقاً.';
       case 'network_error':
         return 'تعذّر الاتصال بالمساعد. تحقق من الإنترنت.';
+      case 'max_retries':
+        return 'تعذّر الاتصال بالمساعد بعد عدة محاولات. حاول لاحقاً.';
       default:
         return 'حدث خطأ في المساعد الذكي. حاول مجدداً.';
     }

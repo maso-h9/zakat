@@ -207,7 +207,9 @@ class CountrySourcesRepository {
     final ts = _box?.get('ts_$code') as String?;
     if (ts == null) return null;
     try {
-      if (DateTime.now().difference(DateTime.parse(ts)) >= _ttl) return null;
+      if (DateTime.now().difference(DateTime.parse(ts)) >= _ttl) {
+        return null;
+      }
       final raw = _box?.get('data_$code') as Map?;
       if (raw == null) return null;
       return CountrySource.fromFirestore(code, Map<String, dynamic>.from(raw));
@@ -275,7 +277,9 @@ class NisabService {
     if (rawList.isNotEmpty &&
         rawList.last.value == value &&
         rawList.last.method == method &&
-        rawList.last.currency == currency) return;
+        rawList.last.currency == currency) {
+      return;
+    }
 
     rawList.add(NisabHistoryEntry(
       date: DateTime.now(),

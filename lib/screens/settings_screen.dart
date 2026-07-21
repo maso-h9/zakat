@@ -13,9 +13,9 @@ import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../models/zakat_provider.dart';
 import '../services/storage_service.dart';
-import '../services/nisab_service.dart';
 import '../utils/theme.dart';
 import 'profile_screen.dart';
+import 'package:zakat_app/l10n/app_localizations.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -37,7 +37,7 @@ class SettingsScreen extends StatelessWidget {
       child: Scaffold(
         backgroundColor: bg,
         appBar: AppBar(
-          title: Text(p.isArabic ? 'الإعدادات' : 'Settings',
+          title: Text(AppLocalizations.of(context).settings,
               style: const TextStyle(fontFamily: 'Scheherazade')),
           backgroundColor: appBarBg,
         ),
@@ -46,26 +46,24 @@ class SettingsScreen extends StatelessWidget {
           children: [
             // ── الحساب الشخصي ─────────────────────────────────
             _sectionHeader(
-                p.isArabic ? 'الحساب الشخصي' : 'Personal Account', isDark),
+                AppLocalizations.of(context).personalAccount, isDark),
             _card(cardColor: cardColor, isDark: isDark, children: [
               ListTile(
                 leading: Container(
                   width: 40,
                   height: 40,
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                       gradient: ZakatTheme.mainGradient,
                       shape: BoxShape.circle),
                   child: const Icon(Icons.person, color: Colors.white),
                 ),
-                title: Text(p.isArabic ? 'حسابي' : 'My Account',
+                title: Text(AppLocalizations.of(context).myAccount,
                     style: TextStyle(
                         fontFamily: 'Scheherazade',
                         fontWeight: FontWeight.w600,
                         color: textColor)),
                 subtitle: Text(
-                    p.isArabic
-                        ? 'عرض وتعديل معلوماتك'
-                        : 'View and edit your info',
+                    AppLocalizations.of(context).viewAndEditProfile,
                     style: TextStyle(
                         fontFamily: 'Scheherazade',
                         color: subColor,
@@ -80,12 +78,12 @@ class SettingsScreen extends StatelessWidget {
             const SizedBox(height: 16),
 
             // ── المظهر ────────────────────────────────────────
-            _sectionHeader(p.isArabic ? 'المظهر' : 'Appearance', isDark),
+            _sectionHeader(AppLocalizations.of(context).appearance, isDark),
             _card(cardColor: cardColor, isDark: isDark, children: [
               SwitchListTile(
                 value: p.isDarkMode,
                 onChanged: p.toggleDarkMode,
-                title: Text(p.isArabic ? 'الوضع الداكن' : 'Dark Mode',
+                title: Text(AppLocalizations.of(context).darkMode,
                     style: TextStyle(
                         fontFamily: 'Scheherazade', color: textColor)),
                 secondary: Icon(
@@ -96,7 +94,7 @@ class SettingsScreen extends StatelessWidget {
             const SizedBox(height: 16),
 
             // ── اللغة ─────────────────────────────────────────
-            _sectionHeader(p.isArabic ? 'اللغة' : 'Language', isDark),
+            _sectionHeader(AppLocalizations.of(context).language, isDark),
             _card(cardColor: cardColor, isDark: isDark, children: [
               _langTile(context, p, isDark, textColor, subColor, 'ar',
                   'العربية', '🇸🇦'),
@@ -107,12 +105,12 @@ class SettingsScreen extends StatelessWidget {
             const SizedBox(height: 16),
 
             // ── العملة ────────────────────────────────────────
-            _sectionHeader(p.isArabic ? 'العملة' : 'Currency', isDark),
+            _sectionHeader(AppLocalizations.of(context).currency, isDark),
             _card(cardColor: cardColor, isDark: isDark, children: [
               ListTile(
                 leading: Icon(Icons.currency_exchange,
                     color: isDark ? ZakatTheme.gold : ZakatTheme.deepGreen),
-                title: Text(p.isArabic ? 'العملة الحالية' : 'Current Currency',
+                title: Text(AppLocalizations.of(context).currentCurrency,
                     style: TextStyle(
                         fontFamily: 'Scheherazade',
                         fontSize: 15,
@@ -132,12 +130,12 @@ class SettingsScreen extends StatelessWidget {
             const SizedBox(height: 16),
 
             // ── سعر الذهب ─────────────────────────────────────
-            _sectionHeader(p.isArabic ? 'سعر الذهب' : 'Gold Price', isDark),
+            _sectionHeader(AppLocalizations.of(context).goldPriceLabel, isDark),
             _card(cardColor: cardColor, isDark: isDark, children: [
               ListTile(
                 leading: const Text('🥇', style: TextStyle(fontSize: 24)),
                 title: Text(
-                  '${p.goldPricePerGram.toStringAsFixed(2)} ${p.currencySymbol} / ${p.isArabic ? "جرام" : "gram"}',
+                  '${p.goldPricePerGram.toStringAsFixed(2)} ${p.currencySymbol} / ${AppLocalizations.of(context).gram}',
                   style: TextStyle(
                       fontFamily: 'Scheherazade',
                       fontWeight: FontWeight.bold,
@@ -169,13 +167,13 @@ class SettingsScreen extends StatelessWidget {
             const SizedBox(height: 16),
 
             // ── وضع رمضان ─────────────────────────────────────
-            _sectionHeader(p.isArabic ? 'وضع رمضان' : 'Ramadan Mode', isDark),
+            _sectionHeader(AppLocalizations.of(context).ramadanMode, isDark),
             _card(cardColor: cardColor, isDark: isDark, children: [
               SwitchListTile(
                 value: p.isRamadanMode,
                 onChanged: p.toggleRamadanMode,
                 title: Text(
-                    p.isArabic ? 'تفعيل وضع رمضان' : 'Enable Ramadan Mode',
+                    AppLocalizations.of(context).enableRamadan,
                     style: TextStyle(
                         fontFamily: 'Scheherazade', color: textColor)),
                 secondary: const Text('🌙', style: TextStyle(fontSize: 22)),
@@ -184,20 +182,20 @@ class SettingsScreen extends StatelessWidget {
             const SizedBox(height: 16),
 
             // ── البيانات ──────────────────────────────────────
-            _sectionHeader(p.isArabic ? 'البيانات' : 'Data', isDark),
+            _sectionHeader(AppLocalizations.of(context).data, isDark),
             _card(cardColor: cardColor, isDark: isDark, children: [
               SwitchListTile(
                 value: p.cloudSyncEnabled,
                 onChanged: p.toggleCloudSync,
-                title: Text(p.isArabic ? 'مزامنة سحابية' : 'Cloud Sync',
+                title: Text(AppLocalizations.of(context).cloudSyncLabel,
                     style: TextStyle(
                         fontFamily: 'Scheherazade', color: textColor)),
-                secondary: Icon(Icons.cloud_sync, color: ZakatTheme.deepGreen),
+                secondary: const Icon(Icons.cloud_sync, color: ZakatTheme.deepGreen),
               ),
               Divider(height: 1, color: divColor),
               ListTile(
                 leading: const Icon(Icons.delete_outline, color: Colors.red),
-                title: Text(p.isArabic ? 'مسح جميع البيانات' : 'Clear All Data',
+                title: Text(AppLocalizations.of(context).clearAllData,
                     style: const TextStyle(
                         fontFamily: 'Scheherazade', color: Colors.red)),
                 onTap: () => _confirmClear(context, p),
@@ -224,10 +222,9 @@ class SettingsScreen extends StatelessWidget {
                   subColor: subColor,
                   method: NisabMethod.global,
                   icon: '🌍',
-                  title: p.isArabic ? 'الحساب العالمي' : 'Global Calculation',
-                  subtitle: p.isArabic
-                      ? 'سعر الذهب العالمي × سعر الصرف (موصى به)'
-                      : 'World gold price × exchange rate (recommended)'),
+                  title: AppLocalizations.of(context).globalNisab,
+                  subtitle: AppLocalizations.of(context).globalNisabDesc,
+              ),
               Divider(height: 1, color: divColor),
               _nisabMethodTile(
                   context: context,
@@ -237,12 +234,9 @@ class SettingsScreen extends StatelessWidget {
                   subColor: subColor,
                   method: NisabMethod.official,
                   icon: '🏛️',
-                  title: p.isArabic
-                      ? 'النصاب الرسمي للدولة'
-                      : 'Official Country Nisab',
-                  subtitle: p.isArabic
-                      ? 'القيمة المُعلنة من الجهة الرسمية في بلدك'
-                      : 'Value announced by your country\'s official body'),
+                  title: AppLocalizations.of(context).officialNisab,
+                  subtitle: AppLocalizations.of(context).officialNisabDesc,
+              ),
               if (p.nisabMethod == NisabMethod.official) ...[
                 Divider(height: 1, color: divColor),
                 _officialNisabPanel(
@@ -257,10 +251,9 @@ class SettingsScreen extends StatelessWidget {
                   subColor: subColor,
                   method: NisabMethod.custom,
                   icon: '✍️',
-                  title: p.isArabic ? 'حساب مخصص' : 'Custom Calculation',
-                  subtitle: p.isArabic
-                      ? 'أدخل قيمة النصاب أو أسعار الذهب يدوياً'
-                      : 'Enter Nisab value or gold prices manually'),
+                  title: AppLocalizations.of(context).customCalculation,
+                  subtitle: AppLocalizations.of(context).customCalculationDesc,
+              ),
               if (p.nisabMethod == NisabMethod.custom) ...[
                 Divider(height: 1, color: divColor),
                 _customNisabPanel(
@@ -271,28 +264,28 @@ class SettingsScreen extends StatelessWidget {
 
             // ── بطاقة مقارنة النصاب (بند 7) ──────────────────
             if (p.nisabMethod != NisabMethod.global)
-              _nisabComparisonCard(p, isDark, textColor, subColor, cardColor),
+              _nisabComparisonCard(context, p, isDark, textColor, subColor, cardColor),
 
             const SizedBox(height: 16),
 
             // ── عن التطبيق ────────────────────────────────────
-            _sectionHeader(p.isArabic ? 'عن التطبيق' : 'About', isDark),
+            _sectionHeader(AppLocalizations.of(context).aboutApp, isDark),
             _card(cardColor: cardColor, isDark: isDark, children: [
-              _tileLabel(p.isArabic ? 'الإصدار' : 'Version', '2.0.0', isDark),
+              _tileLabel(AppLocalizations.of(context).version, '2.0.0', isDark),
               Divider(height: 1, color: divColor),
               _tileLabel(
-                  p.isArabic ? 'المحتوى الديني' : 'Islamic Content',
-                  p.isArabic ? 'الدرر السنية + الشاملة' : 'Dorar + Shamela',
+                  AppLocalizations.of(context).religiousContent,
+                  AppLocalizations.of(context).religiousContentSource,
                   isDark),
               Divider(height: 1, color: divColor),
-              _tileLabel(p.isArabic ? 'بيانات الذهب' : 'Gold Data',
+              _tileLabel(AppLocalizations.of(context).goldData,
                   'gold-api.com + open.er-api.com', isDark),
               Divider(height: 1, color: divColor),
-              _tileLabel(p.isArabic ? 'المساعد الذكي' : 'AI Assistant',
-                  'Google Gemini 2.0 Flash', isDark),
+              _tileLabel(AppLocalizations.of(context).aiAssistant,
+                  'Google Gemini 2.5 Flash', isDark),
               Divider(height: 1, color: divColor),
-              _tileLabel(p.isArabic ? 'مصادر النصاب' : 'Nisab Sources',
-                  p.isArabic ? 'Firestore — محدَّثة ديناميكياً' : 'Firestore — Dynamic', isDark),
+              _tileLabel(AppLocalizations.of(context).nisabSources,
+                  AppLocalizations.of(context).nisabSourcesDesc, isDark),
             ]),
             const SizedBox(height: 32),
           ],
@@ -327,9 +320,9 @@ class SettingsScreen extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(
-              color: ZakatTheme.deepGreen.withOpacity(isDark ? 0.12 : 0.07),
+              color: ZakatTheme.deepGreen.withValues(alpha: isDark ? 0.12 : 0.07),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: ZakatTheme.deepGreen.withOpacity(0.35)),
+              border: Border.all(color: ZakatTheme.deepGreen.withValues(alpha: 0.35)),
             ),
             child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -351,7 +344,7 @@ class SettingsScreen extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.only(top: 4),
                   child: Text(
-                    '${p.isArabic ? "آخر مراجعة" : "Last reviewed"}: ${source.lastReviewed}',
+                    '${AppLocalizations.of(context).lastReview}: ${source.lastReviewed}',
                     style: TextStyle(
                         fontFamily: 'Scheherazade',
                         fontSize: 12,
@@ -372,11 +365,11 @@ class SettingsScreen extends StatelessWidget {
                                   horizontal: 8, vertical: 3),
                               decoration: BoxDecoration(
                                 color: _trustColor(link.trustLevel)
-                                    .withOpacity(0.15),
+                                    .withValues(alpha: 0.15),
                                 borderRadius: BorderRadius.circular(20),
                                 border: Border.all(
                                     color: _trustColor(link.trustLevel)
-                                        .withOpacity(0.4)),
+                                        .withValues(alpha: 0.4)),
                               ),
                               child: Text('${link.typeIcon} ${link.trustLabel}',
                                   style: TextStyle(
@@ -391,14 +384,14 @@ class SettingsScreen extends StatelessWidget {
                                     _openUrl(context, link.url, p.isArabic),
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor:
-                                      ZakatTheme.deepGreen.withOpacity(0.85),
+                                      ZakatTheme.deepGreen.withValues(alpha: 0.85),
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 10, vertical: 6),
                                 ),
                                 icon: const Icon(Icons.open_in_new,
                                     size: 14, color: Colors.white),
                                 label: Text(
-                                    p.isArabic ? 'فتح المصدر' : 'Open Source',
+                                    AppLocalizations.of(context).openSource,
                                     style: const TextStyle(
                                         fontFamily: 'Scheherazade',
                                         fontSize: 12,
@@ -417,9 +410,9 @@ class SettingsScreen extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: ZakatTheme.gold.withOpacity(0.08),
+              color: ZakatTheme.gold.withValues(alpha: 0.08),
               borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: ZakatTheme.gold.withOpacity(0.3)),
+              border: Border.all(color: ZakatTheme.gold.withValues(alpha: 0.3)),
             ),
             child: Row(children: [
               const Icon(Icons.info_outline, color: ZakatTheme.gold, size: 18),
@@ -442,9 +435,7 @@ class SettingsScreen extends StatelessWidget {
 
         // ── حقل إدخال القيمة ─────────────────────────────────
         Text(
-            p.isArabic
-                ? 'أدخل قيمة النصاب الرسمية:'
-                : 'Enter official Nisab value:',
+            AppLocalizations.of(context).enterOfficialNisab,
             style: TextStyle(
                 fontFamily: 'Scheherazade', fontSize: 14, color: subColor)),
         const SizedBox(height: 8),
@@ -457,7 +448,7 @@ class SettingsScreen extends StatelessWidget {
               textDirection: TextDirection.rtl,
               style: TextStyle(fontFamily: 'Scheherazade', color: textColor),
               decoration: InputDecoration(
-                hintText: p.isArabic ? 'مثال: 97495' : 'Example: 97495',
+                hintText: AppLocalizations.of(context).exampleNisab,
                 suffixText: p.currencySymbol,
                 filled: true,
                 fillColor: cardColor,
@@ -488,7 +479,7 @@ class SettingsScreen extends StatelessWidget {
             style: ElevatedButton.styleFrom(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 16, vertical: 12)),
-            child: Text(p.isArabic ? 'حفظ' : 'Save',
+            child: Text(AppLocalizations.of(context).save,
                 style: const TextStyle(fontFamily: 'Scheherazade')),
           ),
         ]),
@@ -496,7 +487,7 @@ class SettingsScreen extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(top: 8),
             child: Text(
-              '${p.isArabic ? "النصاب المحفوظ" : "Saved Nisab"}: ${p.officialNisabValue.toStringAsFixed(0)} ${p.currencySymbol}',
+              '${AppLocalizations.of(context).savedNisab}: ${p.officialNisabValue.toStringAsFixed(0)} ${p.currencySymbol}',
               style: const TextStyle(
                   color: ZakatTheme.deepGreen,
                   fontFamily: 'Scheherazade',
@@ -510,13 +501,13 @@ class SettingsScreen extends StatelessWidget {
   // ════════════════════════════════════════════════════════════
   // بطاقة مقارنة النصاب (بند 7) — V12
   // ════════════════════════════════════════════════════════════
-  Widget _nisabComparisonCard(ZakatProvider p, bool isDark, Color textColor,
+  Widget _nisabComparisonCard(BuildContext context, ZakatProvider p, bool isDark, Color textColor,
       Color subColor, Color cardColor) {
     final cmp = p.nisabComparison;
     if (cmp.isSameAsGlobal) return const SizedBox.shrink();
 
     return Column(children: [
-      _sectionHeader(p.isArabic ? 'مقارنة النصاب' : 'Nisab Comparison', isDark),
+      _sectionHeader(AppLocalizations.of(context).nisabComparison, isDark),
       Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
@@ -525,15 +516,15 @@ class SettingsScreen extends StatelessWidget {
           boxShadow: ZakatTheme.cardShadowAdaptive(isDark),
           border: Border.all(
             color: cmp.isHigherThanGlobal
-                ? Colors.orange.withOpacity(0.4)
-                : Colors.green.withOpacity(0.4),
+                ? Colors.orange.withValues(alpha: 0.4)
+                : Colors.green.withValues(alpha: 0.4),
           ),
         ),
         child: Column(children: [
           Row(children: [
             Expanded(
                 child: _cmpItem(
-              p.isArabic ? 'النصاب العالمي' : 'Global Nisab',
+              AppLocalizations.of(context).globalNisabLabel,
               '${cmp.globalValue.toStringAsFixed(0)} ${p.currencySymbol}',
               ZakatTheme.deepGreen,
               textColor,
@@ -545,13 +536,9 @@ class SettingsScreen extends StatelessWidget {
                 color: isDark ? ZakatTheme.darkBorder : Colors.grey.shade200),
             Expanded(
                 child: _cmpItem(
-              p.isArabic
-                  ? (p.nisabMethod == NisabMethod.official
-                      ? 'النصاب الرسمي'
-                      : 'النصاب المخصص')
-                  : (p.nisabMethod == NisabMethod.official
-                      ? 'Official Nisab'
-                      : 'Custom Nisab'),
+              p.nisabMethod == NisabMethod.official
+                  ? AppLocalizations.of(context).officialNisabLabel
+                  : AppLocalizations.of(context).customNisabLabel,
               '${cmp.activeValue.toStringAsFixed(0)} ${p.currencySymbol}',
               ZakatTheme.gold,
               textColor,
@@ -563,7 +550,7 @@ class SettingsScreen extends StatelessWidget {
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
               color: (cmp.isHigherThanGlobal ? Colors.orange : Colors.green)
-                  .withOpacity(0.1),
+                  .withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
@@ -576,7 +563,7 @@ class SettingsScreen extends StatelessWidget {
               ),
               const SizedBox(width: 6),
               Text(
-                '${p.isArabic ? "الفرق" : "Difference"}: ${cmp.difference.abs().toStringAsFixed(0)} ${p.currencySymbol}',
+                '${AppLocalizations.of(context).difference}: ${cmp.difference.abs().toStringAsFixed(0)} ${p.currencySymbol}',
                 style: TextStyle(
                   fontFamily: 'Scheherazade',
                   fontSize: 13,
@@ -636,9 +623,7 @@ class SettingsScreen extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         _customSubHeader(
-            p.isArabic
-                ? 'الخيار 1 — إدخال القيمة مباشرة'
-                : 'Option 1 — Enter value directly',
+            AppLocalizations.of(context).option1DirectEntry,
             subColor),
         const SizedBox(height: 8),
         Row(children: [
@@ -649,7 +634,7 @@ class SettingsScreen extends StatelessWidget {
             textDirection: TextDirection.rtl,
             style: TextStyle(fontFamily: 'Scheherazade', color: textColor),
             decoration: InputDecoration(
-              hintText: p.isArabic ? 'مثال: 97495' : 'Example: 97495',
+                hintText: AppLocalizations.of(context).exampleNisab,
               suffixText: p.currencySymbol,
               filled: true,
               fillColor: cardColor,
@@ -672,15 +657,13 @@ class SettingsScreen extends StatelessWidget {
             style: ElevatedButton.styleFrom(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 16, vertical: 12)),
-            child: Text(p.isArabic ? 'حفظ' : 'Save',
+            child: Text(AppLocalizations.of(context).save,
                 style: const TextStyle(fontFamily: 'Scheherazade')),
           ),
         ]),
         const SizedBox(height: 16),
         _customSubHeader(
-            p.isArabic
-                ? 'الخيار 2 — من سعر جرام الذهب'
-                : 'Option 2 — From gold gram price',
+            AppLocalizations.of(context).option2FromGram,
             subColor),
         const SizedBox(height: 8),
         Row(children: [
@@ -723,9 +706,7 @@ class SettingsScreen extends StatelessWidget {
         ]),
         const SizedBox(height: 16),
         _customSubHeader(
-            p.isArabic
-                ? 'الخيار 3 — من سعر الأوقية وسعر الصرف'
-                : 'Option 3 — From oz price + exchange rate',
+            AppLocalizations.of(context).option3FromOz,
             subColor),
         const SizedBox(height: 8),
         Row(children: [
@@ -783,7 +764,7 @@ class SettingsScreen extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(vertical: 12)),
             icon: const Icon(Icons.calculate_outlined,
                 color: Colors.black, size: 20),
-            label: Text(p.isArabic ? 'احسب واحفظ' : 'Calculate & Save',
+            label: Text(AppLocalizations.of(context).calculateAndSave,
                 style: const TextStyle(
                     fontFamily: 'Scheherazade', color: Colors.black)),
           ),
@@ -794,17 +775,17 @@ class SettingsScreen extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: ZakatTheme.deepGreen.withOpacity(isDark ? 0.15 : 0.07),
+                color: ZakatTheme.deepGreen.withValues(alpha: isDark ? 0.15 : 0.07),
                 borderRadius: BorderRadius.circular(10),
                 border:
-                    Border.all(color: ZakatTheme.deepGreen.withOpacity(0.3)),
+                    Border.all(color: ZakatTheme.deepGreen.withValues(alpha: 0.3)),
               ),
               child: Row(children: [
                 const Icon(Icons.check_circle,
                     color: ZakatTheme.deepGreen, size: 20),
                 const SizedBox(width: 8),
                 Text(
-                  '${p.isArabic ? "النصاب المخصص" : "Custom Nisab"}: ${p.customNisabValue.toStringAsFixed(0)} ${p.currencySymbol}',
+                  '${AppLocalizations.of(context).customNisabSaved}: ${p.customNisabValue.toStringAsFixed(0)} ${p.currencySymbol}',
                   style: const TextStyle(
                       color: ZakatTheme.deepGreen,
                       fontFamily: 'Scheherazade',
@@ -831,7 +812,7 @@ class SettingsScreen extends StatelessWidget {
       await Clipboard.setData(ClipboardData(text: url));
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(isArabic ? 'تم نسخ الرابط' : 'Link copied',
+          content: Text(AppLocalizations.of(context).linkCopied,
               style: const TextStyle(fontFamily: 'Scheherazade')),
         ));
       }
@@ -921,9 +902,9 @@ class SettingsScreen extends StatelessWidget {
                               actions: [
                                 TextButton(
                                     onPressed: () => Navigator.pop(context),
-                                    child: const Text('حسناً',
-                                        style: TextStyle(
-                                            fontFamily: 'Scheherazade')))
+                                    child: Text(AppLocalizations.of(context).ok,
+                                          style: const TextStyle(
+                                              fontFamily: 'Scheherazade')))
                               ],
                             )),
                     child: Icon(Icons.info_outline,
@@ -980,7 +961,7 @@ class SettingsScreen extends StatelessWidget {
   void _showSaved(BuildContext context, ZakatProvider p, double val) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text(
-          '${p.isArabic ? "تم حفظ النصاب" : "Saved Nisab"}: ${val.toStringAsFixed(0)} ${p.currencySymbol}',
+          '${AppLocalizations.of(context).nisabCalculated}: ${val.toStringAsFixed(0)} ${p.currencySymbol}',
           style: const TextStyle(fontFamily: 'Scheherazade')),
     ));
   }
@@ -989,7 +970,7 @@ class SettingsScreen extends StatelessWidget {
       BuildContext context, ZakatProvider p, double gramPrice, double nisab) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text(
-          '${p.isArabic ? "النصاب المحسوب" : "Calculated Nisab"}: ${nisab.toStringAsFixed(0)} ${p.currencySymbol}',
+          '${AppLocalizations.of(context).calculatedNisab}: ${nisab.toStringAsFixed(0)} ${p.currencySymbol}',
           style: const TextStyle(fontFamily: 'Scheherazade')),
       duration: const Duration(seconds: 3),
     ));
@@ -999,24 +980,22 @@ class SettingsScreen extends StatelessWidget {
     showDialog(
         context: context,
         builder: (_) => AlertDialog(
-              title: Text(p.isArabic ? 'تأكيد الحذف' : 'Confirm Delete',
+              title: Text(AppLocalizations.of(context).confirmDelete,
                   style: const TextStyle(fontFamily: 'Scheherazade')),
               content: Text(
-                  p.isArabic
-                      ? 'هل تريد مسح جميع البيانات؟ لا يمكن التراجع.'
-                      : 'Clear all data? This cannot be undone.',
+                  AppLocalizations.of(context).deleteAllDataConfirm,
                   style: const TextStyle(fontFamily: 'Scheherazade')),
               actions: [
                 TextButton(
                     onPressed: () => Navigator.pop(context),
-                    child: Text(p.isArabic ? 'إلغاء' : 'Cancel',
+                    child: Text(AppLocalizations.of(context).cancel,
                         style: const TextStyle(fontFamily: 'Scheherazade'))),
                 TextButton(
                   onPressed: () async {
                     await StorageService.clearAll();
                     if (context.mounted) Navigator.pop(context);
                   },
-                  child: Text(p.isArabic ? 'مسح' : 'Clear',
+                  child: Text(AppLocalizations.of(context).clear,
                       style: const TextStyle(
                           color: Colors.red, fontFamily: 'Scheherazade')),
                 ),
@@ -1103,7 +1082,7 @@ class _CurrencyPickerSheetState extends State<_CurrencyPickerSheet> {
             color: bg,
             borderRadius: const BorderRadius.vertical(top: Radius.circular(22)),
             boxShadow: [
-              BoxShadow(color: Colors.black.withOpacity(0.15), blurRadius: 20)
+              BoxShadow(color: Colors.black.withValues(alpha: 0.15), blurRadius: 20)
             ],
           ),
           child: Column(children: [
@@ -1134,10 +1113,10 @@ class _CurrencyPickerSheetState extends State<_CurrencyPickerSheet> {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
                   decoration: BoxDecoration(
-                    color: ZakatTheme.deepGreen.withOpacity(0.12),
+                    color: ZakatTheme.deepGreen.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
-                        color: ZakatTheme.deepGreen.withOpacity(0.3)),
+                        color: ZakatTheme.deepGreen.withValues(alpha: 0.3)),
                   ),
                   child: Text('${p.selectedCurrency} ${p.currencySymbol}',
                       style: const TextStyle(
@@ -1158,7 +1137,7 @@ class _CurrencyPickerSheetState extends State<_CurrencyPickerSheet> {
                 style: TextStyle(fontFamily: 'Scheherazade', color: text),
                 decoration: InputDecoration(
                   hintText:
-                      p.isArabic ? 'ابحث عن عملة...' : 'Search currency...',
+                  AppLocalizations.of(context).searchCurrency,
                   hintStyle: TextStyle(fontFamily: 'Scheherazade', color: sub),
                   prefixIcon: Icon(Icons.search,
                       color: isDark ? ZakatTheme.gold : ZakatTheme.deepGreen),
@@ -1188,7 +1167,7 @@ class _CurrencyPickerSheetState extends State<_CurrencyPickerSheet> {
                   alignment:
                       p.isArabic ? Alignment.centerRight : Alignment.centerLeft,
                   child: Text(
-                      '${_filtered.length} ${p.isArabic ? "نتيجة" : "results"}',
+                      '${_filtered.length} ${AppLocalizations.of(context).result}',
                       style: TextStyle(
                           fontFamily: 'Scheherazade',
                           fontSize: 12,
@@ -1206,7 +1185,7 @@ class _CurrencyPickerSheetState extends State<_CurrencyPickerSheet> {
                       child: Column(mainAxisSize: MainAxisSize.min, children: [
                       const Text('🔍', style: TextStyle(fontSize: 36)),
                       const SizedBox(height: 8),
-                      Text(p.isArabic ? 'لا توجد نتائج' : 'No results found',
+                      Text(AppLocalizations.of(context).noResults,
                           style: TextStyle(
                               fontFamily: 'Scheherazade',
                               color: sub,
@@ -1231,7 +1210,7 @@ class _CurrencyPickerSheetState extends State<_CurrencyPickerSheet> {
                             height: 44,
                             decoration: BoxDecoration(
                               color: selected
-                                  ? ZakatTheme.deepGreen.withOpacity(0.12)
+                                  ? ZakatTheme.deepGreen.withValues(alpha: 0.12)
                                   : fill,
                               borderRadius: BorderRadius.circular(10),
                             ),

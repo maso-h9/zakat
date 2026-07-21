@@ -5,6 +5,7 @@
 // ================================================================
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:zakat_app/l10n/app_localizations.dart';
 import '../models/zakat_provider.dart';
 import '../services/ai_repository.dart';
 import '../services/remote_config_service.dart';
@@ -118,18 +119,16 @@ class _AIScreenState extends State<AIScreen> {
       builder: (_) => Directionality(
         textDirection: ar ? TextDirection.rtl : TextDirection.ltr,
         child: AlertDialog(
-          title: Text(ar ? 'مفتاح API مطلوب' : 'API Key Required',
+          title: Text(AppLocalizations.of(context).apiKeyRequired,
               style: const TextStyle(fontFamily: 'Scheherazade')),
           content: Text(
-            ar
-                ? 'لاستخدام المساعد الذكي، أضف مفتاح Gemini في ملف ai_screen.dart\n\nاحصل عليه مجاناً:\nhttps://aistudio.google.com/app/apikey'
-                : 'Add a Gemini API key in ai_screen.dart\n\nGet it free:\nhttps://aistudio.google.com/app/apikey',
+            AppLocalizations.of(context).apiKeyMessage,
             style: const TextStyle(fontFamily: 'Scheherazade'),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: Text(ar ? 'حسناً' : 'OK',
+              child: Text(AppLocalizations.of(context).ok,
                   style: const TextStyle(fontFamily: 'Scheherazade')),
             ),
           ],
@@ -158,7 +157,7 @@ class _AIScreenState extends State<AIScreen> {
           backgroundColor: ZakatTheme.scaffoldBgAdaptive(isDark),
           appBar: AppBar(
             backgroundColor: appBarBg,
-            title: Text(ar ? 'المساعد الذكي' : 'AI Assistant',
+            title: Text(AppLocalizations.of(context).aiAssistantTitle,
                 style: const TextStyle(
                     color: Colors.white,
                     fontFamily: 'Scheherazade',
@@ -167,7 +166,7 @@ class _AIScreenState extends State<AIScreen> {
             actions: [
               IconButton(
                 icon: const Icon(Icons.delete_outline, color: Colors.white70),
-                tooltip: ar ? 'مسح المحادثة' : 'Clear chat',
+                tooltip: AppLocalizations.of(context).clearChat,
                 onPressed: () {
                   setState(() {
                     _messages.clear();
@@ -202,9 +201,9 @@ class _AIScreenState extends State<AIScreen> {
                         padding: const EdgeInsets.symmetric(
                             horizontal: 14, vertical: 8),
                         decoration: BoxDecoration(
-                          color: accent.withOpacity(0.1),
+                          color: accent.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(20),
-                          border: Border.all(color: accent.withOpacity(0.3)),
+                          border: Border.all(color: accent.withValues(alpha: 0.3)),
                         ),
                         child: Text(s,
                             style: TextStyle(
@@ -247,7 +246,7 @@ class _AIScreenState extends State<AIScreen> {
                 color: cardColor,
                 boxShadow: [
                   BoxShadow(
-                      color: Colors.black.withOpacity(isDark ? 0.3 : 0.06),
+                      color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.06),
                       blurRadius: 10,
                       offset: const Offset(0, -2))
                 ],
@@ -265,7 +264,7 @@ class _AIScreenState extends State<AIScreen> {
                         fontSize: 15,
                         color: textColor),
                     decoration: InputDecoration(
-                      hintText: ar ? 'اسأل أي شيء...' : 'Ask anything...',
+                      hintText: AppLocalizations.of(context).aiPlaceholder,
                       hintTextDirection: TextDirection.rtl,
                       hintStyle: TextStyle(
                           color: isDark
@@ -347,7 +346,7 @@ class _MessageBubble extends StatelessWidget {
                     ? accent
                     : msg.isError
                         ? (isDark
-                            ? ZakatTheme.error.withOpacity(0.15)
+                            ? ZakatTheme.error.withValues(alpha: 0.15)
                             : Colors.red.shade50)
                         : cardColor,
                 borderRadius: BorderRadius.only(
@@ -375,7 +374,7 @@ class _MessageBubble extends StatelessWidget {
             const SizedBox(width: 8),
             CircleAvatar(
                 radius: 18,
-                backgroundColor: ZakatTheme.gold.withOpacity(0.2),
+                backgroundColor: ZakatTheme.gold.withValues(alpha: 0.2),
                 child:
                     const Icon(Icons.person, size: 20, color: ZakatTheme.gold)),
           ],
@@ -439,7 +438,7 @@ class _TypingIndicatorState extends State<_TypingIndicator>
                             height: 7,
                             decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                color: widget.accent.withOpacity(0.3 +
+                                color: widget.accent.withValues(alpha: 0.3 +
                                     0.7 * ((_ctrl.value + i * 0.3) % 1.0))),
                           ))),
             ),

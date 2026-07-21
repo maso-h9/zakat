@@ -11,6 +11,7 @@ import '../widgets/dashboard_card.dart';
 import 'calculator_screen.dart';
 import 'content_screens.dart';
 import 'package:zakat_app/screens/secondary_screens.dart';
+import '../presentation/features/ai_chat/ai_chat_screen.dart';
 import 'ramadan_screen.dart';
 import 'stats_chart_screen.dart';
 import 'settings_screen.dart';
@@ -19,7 +20,7 @@ import 'whatif_screen.dart';
 import '../widgets/zakat_widget.dart';
 import '../widgets/zakat_shimmer.dart';
 import '../widgets/offline_banner.dart';
-import '../core/utils/responsive_helper.dart';
+import 'package:zakat_app/l10n/app_localizations.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -44,9 +45,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final isDark = p.isDarkMode;
 
     final scaffold = Scaffold(
-      backgroundColor: p.isRamadanMode
-          ? const Color(0xFF0D1B3E)
-          : ZakatTheme.scaffoldBgAdaptive(isDark),
+      backgroundColor: ZakatTheme.scaffoldBgAdaptive(isDark),
       drawer: _buildDrawer(context, p, isDark),
       body: Column(children: [
         // شريط انقطاع الإنترنت (بند 15) — يظهر تلقائياً عند Offline
@@ -63,23 +62,11 @@ class _HomeScreenState extends State<HomeScreen> {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
 
-    // تطبيق الثيم الكامل (Dark أو Light أو Ramadan)
-    final themeData = p.isRamadanMode
-        ? _ramadanTheme(isDark)
-        : (isDark ? ZakatTheme.darkTheme : ZakatTheme.theme);
+    final themeData = isDark ? ZakatTheme.darkTheme : ZakatTheme.theme;
 
     return Directionality(
       textDirection: p.isArabic ? TextDirection.rtl : TextDirection.ltr,
       child: Theme(data: themeData, child: scaffold),
-    );
-  }
-
-  ThemeData _ramadanTheme(bool isDark) {
-    final base = isDark ? ZakatTheme.darkTheme : ZakatTheme.theme;
-    return base.copyWith(
-      scaffoldBackgroundColor: const Color(0xFF0D1B3E),
-      appBarTheme:
-          base.appBarTheme.copyWith(backgroundColor: const Color(0xFF0A1428)),
     );
   }
 
@@ -88,9 +75,7 @@ class _HomeScreenState extends State<HomeScreen> {
   // ==============================
   Widget _buildSliverAppBar(
       BuildContext context, ZakatProvider p, bool isDark) {
-    final bgColor = p.isRamadanMode
-        ? const Color(0xFF0A1428)
-        : (isDark ? const Color(0xFF0A2A1A) : ZakatTheme.deepGreen);
+    final bgColor = isDark ? const Color(0xFF0A2A1A) : ZakatTheme.deepGreen;
 
     return SliverAppBar(
       expandedHeight: 200,
@@ -119,14 +104,9 @@ class _HomeScreenState extends State<HomeScreen> {
       flexibleSpace: FlexibleSpaceBar(
         background: Container(
           decoration: BoxDecoration(
-            gradient: p.isRamadanMode
-                ? const LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [Color(0xFF0A1428), Color(0xFF1A2A5E)])
-                : (isDark
-                    ? ZakatTheme.darkModeGradient
-                    : ZakatTheme.mainGradient),
+            gradient: isDark
+                ? ZakatTheme.darkModeGradient
+                : ZakatTheme.mainGradient,
           ),
           child: Stack(children: [
             Positioned(
@@ -137,7 +117,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     height: 200,
                     decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: Colors.white.withOpacity(0.04)))),
+                        color: Colors.white.withValues(alpha: 0.04)))),
             Positioned(
                 left: -20,
                 bottom: -30,
@@ -146,10 +126,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     height: 150,
                     decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: (p.isRamadanMode
-                                ? const Color(0xFFFFD700)
-                                : ZakatTheme.gold)
-                            .withOpacity(0.08)))),
+                        color: ZakatTheme.gold.withValues(alpha: 0.08)))),
             Padding(
               padding: const EdgeInsets.only(top: 60, right: 20, left: 20),
               child: Column(
@@ -160,16 +137,10 @@ class _HomeScreenState extends State<HomeScreen> {
                         padding: const EdgeInsets.symmetric(
                             horizontal: 12, vertical: 6),
                         decoration: BoxDecoration(
-                          color: (p.isRamadanMode
-                                  ? const Color(0xFFFFD700)
-                                  : ZakatTheme.gold)
-                              .withOpacity(0.2),
+                          color: ZakatTheme.gold.withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(20),
                           border: Border.all(
-                              color: (p.isRamadanMode
-                                      ? const Color(0xFFFFD700)
-                                      : ZakatTheme.gold)
-                                  .withOpacity(0.5)),
+                              color: ZakatTheme.gold.withValues(alpha: 0.5)),
                         ),
                         child: Row(children: [
                           Text(p.isRamadanMode ? '🌙' : '⭐',
@@ -177,14 +148,10 @@ class _HomeScreenState extends State<HomeScreen> {
                           const SizedBox(width: 4),
                           Text(
                             p.isRamadanMode
-                                ? (p.isArabic ? 'رمضان كريم' : 'Ramadan Kareem')
-                                : (p.isArabic
-                                    ? 'ركن من أركان الإسلام'
-                                    : 'Pillar of Islam'),
-                            style: TextStyle(
-                                color: p.isRamadanMode
-                                    ? const Color(0xFFFFD700)
-                                    : ZakatTheme.gold,
+                                ? AppLocalizations.of(context).ramadanKareem
+                                : AppLocalizations.of(context).pillarOfIslam,
+                            style: const TextStyle(
+                                color: ZakatTheme.gold,
                                 fontSize: 13,
                                 fontFamily: 'Scheherazade'),
                           ),
@@ -192,16 +159,14 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ]),
                     const SizedBox(height: 4),
-                    Text(p.isArabic ? 'الزكاة' : 'Zakat',
+                    Text(AppLocalizations.of(context).appName,
                         style: const TextStyle(
                             color: Colors.white,
                             fontSize: 40,
                             fontWeight: FontWeight.bold,
                             fontFamily: 'Scheherazade')),
                     Text(
-                        p.isArabic
-                            ? 'دليلك الشامل لأداء فريضة الزكاة'
-                            : 'Your complete Zakat guide',
+                        AppLocalizations.of(context).appSubtitle,
                         style: const TextStyle(
                             color: Colors.white70,
                             fontSize: 17,
@@ -218,7 +183,6 @@ class _HomeScreenState extends State<HomeScreen> {
   // Body
   // ==============================
   Widget _buildBody(BuildContext context, ZakatProvider p, bool isDark) {
-    final r = ResponsiveHelper(context);
     ZakatWidgetService.updateWidget(p);
     return Padding(
       padding: const EdgeInsets.all(16),
@@ -243,11 +207,8 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildQuickDashboard(ZakatProvider p, bool isDark) {
-    final cardColor = p.isRamadanMode
-        ? const Color(0xFF1A2A5E)
-        : ZakatTheme.cardBgAdaptive(isDark);
-    final accentColor =
-        p.isRamadanMode ? const Color(0xFFFFD700) : ZakatTheme.gold;
+    final cardColor = ZakatTheme.cardBgAdaptive(isDark);
+    const accentColor = ZakatTheme.gold;
 
     return Container(
       padding: const EdgeInsets.all(16),
@@ -255,27 +216,27 @@ class _HomeScreenState extends State<HomeScreen> {
         color: cardColor,
         borderRadius: BorderRadius.circular(20),
         boxShadow: ZakatTheme.cardShadowAdaptive(isDark),
-        border: Border.all(color: accentColor.withOpacity(0.3)),
+        border: Border.all(color: accentColor.withValues(alpha: 0.3)),
       ),
       child: Column(children: [
         Row(children: [
           Expanded(
               child: DashboardCard(
-            title: p.isArabic ? 'إجمالي مالك' : 'Total Wealth',
+            title: AppLocalizations.of(context).totalWealth,
             value: p.totalZakatableWealth > 0
                 ? '${p.totalZakatableWealth.toStringAsFixed(0)} ${p.currencySymbol}'
-                : (p.isArabic ? 'لم تُدخل بعد' : 'Not entered'),
+                : AppLocalizations.of(context).notEntered,
             icon: Icons.account_balance_wallet_outlined,
             color: isDark ? ZakatTheme.lightGreen : ZakatTheme.deepGreen,
           )),
           const SizedBox(width: 12),
           Expanded(
               child: DashboardCard(
-            title: p.isArabic ? 'الزكاة الواجبة' : 'Zakat Due',
+            title: AppLocalizations.of(context).zakatDue,
             value: p.zakatDue > 0
                 ? '${p.zakatDue.toStringAsFixed(0)} ${p.currencySymbol}'
                 : p.totalZakatableWealth > 0
-                    ? (p.isArabic ? 'لم يبلغ النصاب' : 'Below Nisab')
+                    ? AppLocalizations.of(context).belowNisab
                     : '---',
             icon: Icons.volunteer_activism,
             color: ZakatTheme.gold,
@@ -285,22 +246,22 @@ class _HomeScreenState extends State<HomeScreen> {
         Row(children: [
           Expanded(
               child: DashboardCard(
-            title: p.isArabic ? 'موعد الزكاة' : 'Zakat Date',
+            title: AppLocalizations.of(context).zakatDate,
             value: p.daysUntilZakat > 0
-                ? '${p.daysUntilZakat} ${p.isArabic ? "يوم" : "days"}'
+                ? '${p.daysUntilZakat} ${AppLocalizations.of(context).daysLeft}'
                 : p.nisabDate != null
-                    ? (p.isArabic ? '⚠️ وجبت الزكاة' : '⚠️ Zakat Due')
-                    : (p.isArabic ? 'حدد تاريخ النصاب' : 'Set Nisab date'),
+                    ? AppLocalizations.of(context).zakatDueNow
+                    : AppLocalizations.of(context).setNisabDate,
             icon: Icons.calendar_today,
             color: const Color(0xFF1565C0),
           )),
           const SizedBox(width: 12),
           Expanded(
               child: DashboardCard(
-            title: p.isArabic ? 'زكاة مدفوعة' : 'Zakat Paid',
+            title: AppLocalizations.of(context).zakatPaid,
             value: p.totalZakatPaid > 0
                 ? '${p.totalZakatPaid.toStringAsFixed(0)} ${p.currencySymbol}'
-                : (p.isArabic ? 'لا يوجد سجل' : 'No record'),
+                : AppLocalizations.of(context).noRecord,
             icon: Icons.check_circle_outline,
             color: const Color(0xFF2E7D32),
           )),
@@ -315,9 +276,7 @@ class _HomeScreenState extends State<HomeScreen> {
       return const ShimmerGoldBanner();
     }
 
-    final bg = p.isRamadanMode
-        ? const Color(0xFF1A2A5E)
-        : (isDark ? const Color(0xFF0A2A1A) : ZakatTheme.deepGreen);
+    final bg = isDark ? const Color(0xFF0A2A1A) : ZakatTheme.deepGreen;
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
@@ -330,7 +289,7 @@ class _HomeScreenState extends State<HomeScreen> {
           child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Text(
-              '${p.isArabic ? "سعر الذهب" : "Gold price"}: ${p.goldPricePerGram.toStringAsFixed(2)} ${p.currencySymbol}/${p.isArabic ? "غرام" : "g"}',
+              '${AppLocalizations.of(context).goldPriceLabel}: ${p.goldPricePerGram.toStringAsFixed(2)} ${p.currencySymbol}/${AppLocalizations.of(context).gram}',
               style: const TextStyle(
                   color: Colors.white,
                   fontFamily: 'Scheherazade',
@@ -339,10 +298,8 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             Text(
               p.goldPriceIsLive
-                  ? '${p.isArabic ? "سعر مباشر" : "Live"} — ${p.goldPriceLastUpdated ?? ""}'
-                  : (p.isArabic
-                      ? 'سعر تقديري — اضغط للتحديث'
-                      : 'Estimated — tap to refresh'),
+                  ? '${AppLocalizations.of(context).live} — ${p.goldPriceLastUpdated ?? ""}'
+                  : AppLocalizations.of(context).estimatedPriceHint,
               style: const TextStyle(
                   color: Colors.white60,
                   fontFamily: 'Scheherazade',
@@ -377,37 +334,37 @@ class _HomeScreenState extends State<HomeScreen> {
       BuildContext context, ZakatProvider p, bool isDark) {
     final services = [
       {
-        'title': p.isArabic ? 'احسب زكاتي' : 'Calculate',
+        'title': AppLocalizations.of(context).calculateMyZakat,
         'icon': Icons.calculate,
         'color': isDark ? ZakatTheme.lightGreen : ZakatTheme.deepGreen,
         'screen': const CalculatorScreen()
       },
       {
-        'title': p.isArabic ? 'هل تجب؟' : 'Is Due?',
+        'title': AppLocalizations.of(context).zakatRequired,
         'icon': Icons.quiz_outlined,
         'color': const Color(0xFF1565C0),
         'screen': const WizardScreen()
       },
       {
-        'title': p.isArabic ? 'المصارف' : 'Recipients',
+        'title': AppLocalizations.of(context).masarif,
         'icon': Icons.people_outline,
         'color': const Color(0xFF9C27B0),
         'screen': const MasarifScreen()
       },
       {
-        'title': p.isArabic ? 'الأحاديث' : 'Hadiths',
+        'title': AppLocalizations.of(context).ahadith,
         'icon': Icons.menu_book_outlined,
         'color': const Color(0xFFD4AF37),
         'screen': const AhadithScreen()
       },
       {
-        'title': p.isArabic ? 'الفتاوى' : 'Fatwas',
+        'title': AppLocalizations.of(context).fatawa,
         'icon': Icons.question_answer_outlined,
         'color': const Color(0xFF26A69A),
         'screen': const FatawaScreen()
       },
       {
-        'title': p.isArabic ? 'التقويم' : 'Calendar',
+        'title': AppLocalizations.of(context).calendar,
         'icon': Icons.event_note,
         'color': const Color(0xFFEF5350),
         'screen': const CalendarScreen()
@@ -418,7 +375,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final textColor = isDark ? ZakatTheme.darkTextPrimary : ZakatTheme.darkText;
 
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Text(p.isArabic ? 'الخدمات' : 'Services',
+      Text(AppLocalizations.of(context).services,
           style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
@@ -453,7 +410,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                          color: color.withOpacity(isDark ? 0.18 : 0.1),
+                          color: color.withValues(alpha: isDark ? 0.18 : 0.1),
                           shape: BoxShape.circle),
                       child:
                           Icon(s['icon'] as IconData, color: color, size: 26),
@@ -481,12 +438,9 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          gradient: p.isRamadanMode
-              ? const LinearGradient(
-                  colors: [Color(0xFF1A2A5E), Color(0xFF243B74)])
-              : (isDark
-                  ? ZakatTheme.darkModeGradient
-                  : ZakatTheme.darkGradient),
+          gradient: isDark
+              ? ZakatTheme.darkModeGradient
+              : ZakatTheme.darkGradient,
           borderRadius: BorderRadius.circular(16),
           boxShadow: ZakatTheme.goldShadow,
         ),
@@ -494,7 +448,7 @@ class _HomeScreenState extends State<HomeScreen> {
           Row(children: [
             const Icon(Icons.balance, color: ZakatTheme.gold, size: 18),
             const SizedBox(width: 8),
-            Text(p.isArabic ? 'مقارنة نصاب الذهب والفضة' : 'Gold/Silver Nisab',
+            Text(AppLocalizations.of(context).goldSilverNisabComparison,
                 style: const TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
@@ -508,15 +462,15 @@ class _HomeScreenState extends State<HomeScreen> {
           Row(children: [
             Expanded(
                 child: _nisabCol(
-                    p.isArabic ? '🥇 نصاب الذهب' : '🥇 Gold Nisab',
-                    '85 ${p.isArabic ? "غرام" : "g"}',
+                    AppLocalizations.of(context).goldNisab85,
+                    '85 ${AppLocalizations.of(context).grams}',
                     '${p.goldNisabValue.toStringAsFixed(0)} ${p.currencySymbol}',
                     ZakatTheme.gold)),
             Container(width: 1, height: 50, color: Colors.white24),
             Expanded(
                 child: _nisabCol(
-                    p.isArabic ? '🥈 نصاب الفضة' : '🥈 Silver Nisab',
-                    '595 ${p.isArabic ? "غرام" : "g"}',
+                    AppLocalizations.of(context).silverNisab595,
+                    '595 ${AppLocalizations.of(context).grams}',
                     '${p.silverNisabValue.toStringAsFixed(0)} ${p.currencySymbol}',
                     Colors.white70)),
           ]),
@@ -557,7 +511,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        Text(p.isArabic ? 'مصارف الزكاة' : 'Zakat Recipients',
+        Text(AppLocalizations.of(context).zakatRecipients,
             style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
@@ -618,47 +572,47 @@ class _HomeScreenState extends State<HomeScreen> {
     final items = [
       {
         'icon': Icons.account_balance_outlined,
-        'title': p.isArabic ? 'مقارنة المذاهب الأربعة' : 'Madhabs Comparison',
+        'title': AppLocalizations.of(context).madhabsComparison,
         'screen': const MadhabsComparisonScreen()
       },
       {
         'icon': Icons.auto_graph,
-        'title': p.isArabic ? 'ماذا لو؟ - التخطيط' : 'What If? Planning',
+        'title': AppLocalizations.of(context).whatIfPlanning,
         'screen': const WhatIfScreen()
       },
       {
         'icon': Icons.psychology_outlined,
-        'title': p.isArabic ? 'مساعد الزكاة الذكي (AI)' : 'AI Assistant',
-        'screen': const AIAssistantScreen()
+        'title': AppLocalizations.of(context).aiZakatAssistant,
+        'screen': const AiChatScreen()
       },
       {
         'icon': Icons.quiz_outlined,
-        'title': p.isArabic ? 'اختبار وجوب الزكاة' : 'Zakat Wizard',
+        'title': AppLocalizations.of(context).zakatTest,
         'screen': const WizardScreen()
       },
       {
         'icon': Icons.event_note,
-        'title': p.isArabic ? 'تقويم الزكاة السنوي' : 'Annual Calendar',
+        'title': AppLocalizations.of(context).annualCalendar,
         'screen': const CalendarScreen()
       },
       {
         'icon': Icons.bar_chart,
-        'title': p.isArabic ? 'إحصائياتي الشخصية' : 'My Stats',
+        'title': AppLocalizations.of(context).personalStats,
         'screen': const StatsChartScreen()
       },
       {
         'icon': Icons.business_outlined,
-        'title': p.isArabic ? 'حاسبة زكاة الشركات' : 'Company Zakat',
+        'title': AppLocalizations.of(context).companyZakat,
         'screen': const CompanyZakatScreen()
       },
       {
         'icon': Icons.nights_stay_outlined,
-        'title': p.isArabic ? 'وضع رمضان 🌙' : 'Ramadan Mode 🌙',
+        'title': AppLocalizations.of(context).ramadanModeLabel,
         'screen': const RamadanScreen()
       },
       {
         'icon': Icons.settings_outlined,
-        'title': p.isArabic ? 'الإعدادات' : 'Settings',
+        'title': AppLocalizations.of(context).settings,
         'screen': const SettingsScreen()
       },
     ];
@@ -683,23 +637,21 @@ class _HomeScreenState extends State<HomeScreen> {
               width: 60,
               height: 60,
               decoration: BoxDecoration(
-                  color: ZakatTheme.gold.withOpacity(0.2),
+                  color: ZakatTheme.gold.withValues(alpha: 0.2),
                   shape: BoxShape.circle,
                   border: Border.all(color: ZakatTheme.gold, width: 2)),
               child: const Icon(Icons.volunteer_activism,
                   color: ZakatTheme.gold, size: 30),
             ),
             const SizedBox(height: 10),
-            Text(p.isArabic ? 'تطبيق الزكاة' : 'Zakat App',
+            Text(AppLocalizations.of(context).appTitle,
                 style: const TextStyle(
                     color: Colors.white,
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                     fontFamily: 'Scheherazade')),
             Text(
-                p.isArabic
-                    ? 'دليلك الشامل لأداء فريضة الزكاة'
-                    : 'Your complete Zakat guide',
+                AppLocalizations.of(context).aboutDescription,
                 style: const TextStyle(
                     color: Colors.white70,
                     fontSize: 13,
@@ -716,7 +668,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     color: ZakatTheme.gold,
                     borderRadius: BorderRadius.circular(2))),
             const SizedBox(width: 8),
-            Text(p.isArabic ? 'المزيد من الخدمات' : 'More Services',
+            Text(AppLocalizations.of(context).moreServices,
                 style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
@@ -736,7 +688,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 leading: Container(
                   padding: const EdgeInsets.all(7),
                   decoration: BoxDecoration(
-                      color: iconBg.withOpacity(isDark ? 0.18 : 0.1),
+                      color: iconBg.withValues(alpha: isDark ? 0.18 : 0.1),
                       borderRadius: BorderRadius.circular(9)),
                   child:
                       Icon(item['icon'] as IconData, color: iconBg, size: 20),
@@ -766,9 +718,7 @@ class _HomeScreenState extends State<HomeScreen> {
         Padding(
           padding: const EdgeInsets.all(14),
           child: Text(
-            p.isArabic
-                ? 'المحتوى من الدرر السنية والمصادر الفقهية المعتمدة'
-                : 'Content from Dorar.net and verified Islamic sources',
+            AppLocalizations.of(context).zakatDisclaimer,
             textAlign: TextAlign.center,
             style: TextStyle(
                 color: isDark
@@ -787,9 +737,7 @@ class _HomeScreenState extends State<HomeScreen> {
   // BottomNav + FAB
   // ==============================
   Widget _buildBottomNav(ZakatProvider p, bool isDark) {
-    final bg = p.isRamadanMode
-        ? const Color(0xFF0A1428)
-        : (isDark ? ZakatTheme.darkSurface : Colors.white);
+    final bg = isDark ? ZakatTheme.darkSurface : Colors.white;
 
     return BottomAppBar(
       color: bg,
@@ -801,14 +749,14 @@ class _HomeScreenState extends State<HomeScreen> {
           child:
               Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
             _navItem(0, Icons.home_outlined, Icons.home,
-                p.isArabic ? 'الرئيسية' : 'Home', p, isDark),
+                AppLocalizations.of(context).home, p, isDark),
             _navItem(1, Icons.calculate_outlined, Icons.calculate,
-                p.isArabic ? 'الحاسبة' : 'Calculator', p, isDark),
+                AppLocalizations.of(context).calculator, p, isDark),
             const SizedBox(width: 56),
             _navItem(2, Icons.menu_book_outlined, Icons.menu_book,
-                p.isArabic ? 'الأحاديث' : 'Hadiths', p, isDark),
+                AppLocalizations.of(context).ahadith, p, isDark),
             _navItem(3, Icons.bar_chart_outlined, Icons.bar_chart,
-                p.isArabic ? 'إحصائياتي' : 'Stats', p, isDark),
+                AppLocalizations.of(context).myStats, p, isDark),
           ])),
     );
   }
@@ -816,24 +764,23 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _navItem(int index, IconData icon, IconData activeIcon, String label,
       ZakatProvider p, bool isDark) {
     final isSelected = _selectedIndex == index;
-    final color = p.isRamadanMode
-        ? const Color(0xFFFFD700)
-        : (isDark ? ZakatTheme.gold : ZakatTheme.deepGreen);
+    final color = isDark ? ZakatTheme.gold : ZakatTheme.deepGreen;
     final inactiveColor =
         isDark ? ZakatTheme.darkTextSecondary : ZakatTheme.lightText;
 
     return InkWell(
       onTap: () {
         setState(() => _selectedIndex = index);
-        if (index == 1)
+        if (index == 1) {
           Navigator.push(context,
               MaterialPageRoute(builder: (_) => const CalculatorScreen()));
-        else if (index == 2)
+        } else if (index == 2) {
           Navigator.push(context,
               MaterialPageRoute(builder: (_) => const AhadithScreen()));
-        else if (index == 3)
+        } else if (index == 3) {
           Navigator.push(context,
               MaterialPageRoute(builder: (_) => const StatsChartScreen()));
+        }
       },
       child: Column(mainAxisSize: MainAxisSize.min, children: [
         Icon(isSelected ? activeIcon : icon,
@@ -851,12 +798,11 @@ class _HomeScreenState extends State<HomeScreen> {
     return FloatingActionButton.extended(
       onPressed: () => Navigator.push(
           context, MaterialPageRoute(builder: (_) => const CalculatorScreen())),
-      backgroundColor:
-          p.isRamadanMode ? const Color(0xFFFFD700) : ZakatTheme.gold,
+      backgroundColor: ZakatTheme.gold,
       foregroundColor: ZakatTheme.darkText,
       elevation: 6,
       icon: const Icon(Icons.calculate, size: 20),
-      label: Text(p.isArabic ? 'احسب زكاتي' : 'Calculate',
+      label: Text(AppLocalizations.of(context).calculateMyZakat,
           style: const TextStyle(
               fontFamily: 'Scheherazade',
               fontWeight: FontWeight.bold,

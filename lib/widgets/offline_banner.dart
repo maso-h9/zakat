@@ -45,7 +45,7 @@ class OfflineBanner extends StatelessWidget {
                 style: TextStyle(
                   fontFamily: 'Scheherazade',
                   fontSize: 11,
-                  color: Colors.orange.withOpacity(0.7),
+                  color: Colors.orange.withValues(alpha: 0.7),
                 ),
               ),
           ]),

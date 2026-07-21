@@ -29,9 +29,9 @@ class ConnectivityService extends ChangeNotifier {
   // ── تهيئة — استدعِ في main() أو ZakatProvider.init() ─────────
   Future<void> init() async {
     await _check();
-    // فحص كل 10 ثوانٍ
+    // فحص كل 15 ثوانٍ (أقل استهلاكاً)
     _pollingTimer = Timer.periodic(
-      const Duration(seconds: 10),
+      const Duration(seconds: 15),
       (_) => _check(),
     );
   }
@@ -40,7 +40,7 @@ class ConnectivityService extends ChangeNotifier {
     final prev = _status;
     try {
       final result = await InternetAddress.lookup('google.com')
-          .timeout(const Duration(seconds: 5));
+          .timeout(const Duration(seconds: 2));
       if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
         _status = ConnectivityStatus.online;
         _lastOnlineAt = DateTime.now();
@@ -91,11 +91,14 @@ class ConnectivityService extends ChangeNotifier {
   String? offlineSince(bool isArabic) {
     if (isOnline || _lastOnlineAt == null) return null;
     final diff = DateTime.now().difference(_lastOnlineAt!);
-    if (diff.inMinutes < 1) return isArabic ? 'منذ لحظات' : 'just now';
-    if (diff.inHours < 1)
+    if (diff.inMinutes < 1) {
+      return isArabic ? 'منذ لحظات' : 'just now';
+    }
+    if (diff.inHours < 1) {
       return isArabic
           ? 'منذ ${diff.inMinutes} دقيقة'
           : '${diff.inMinutes}m ago';
+    }
     return isArabic ? 'منذ ${diff.inHours} ساعة' : '${diff.inHours}h ago';
   }
 

@@ -70,18 +70,18 @@ class ShimmerGoldBanner extends StatelessWidget {
         color: isDark ? const Color(0xFF0A2A1A) : const Color(0xFF0D4A2F),
         borderRadius: BorderRadius.circular(12),
       ),
-      child: Row(children: [
-        const Text('🥇', style: TextStyle(fontSize: 18)),
-        const SizedBox(width: 8),
+      child: const Row(children: [
+        Text('🥇', style: TextStyle(fontSize: 18)),
+        SizedBox(width: 8),
         Expanded(
             child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           ShimmerBox(width: 180, height: 12, borderRadius: 5),
-          const SizedBox(height: 6),
+          SizedBox(height: 6),
           ShimmerBox(width: 120, height: 10, borderRadius: 5),
         ])),
-        const SizedBox(width: 12),
-        const ShimmerBox(width: 20, height: 20, borderRadius: 10),
+        SizedBox(width: 12),
+        ShimmerBox(width: 20, height: 20, borderRadius: 10),
       ]),
     );
   }
@@ -99,14 +99,14 @@ class ShimmerDashboardCard extends StatelessWidget {
         color: isDark ? const Color(0xFF0F2A1A) : Colors.white,
         borderRadius: BorderRadius.circular(14),
         boxShadow: [
-          BoxShadow(color: Colors.black.withOpacity(0.06), blurRadius: 8)
+          BoxShadow(color: Colors.black.withValues(alpha: 0.06), blurRadius: 8)
         ],
       ),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      child: const Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         ShimmerBox(width: 80, height: 10, borderRadius: 5),
-        const SizedBox(height: 10),
+        SizedBox(height: 10),
         ShimmerBox(width: double.infinity, height: 18, borderRadius: 6),
-        const SizedBox(height: 6),
+        SizedBox(height: 6),
         ShimmerBox(width: 60, height: 10, borderRadius: 5),
       ]),
     );
@@ -125,20 +125,20 @@ class ShimmerDashboardGrid extends StatelessWidget {
         color: isDark ? const Color(0xFF0F2A1A) : Colors.white,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
-          BoxShadow(color: Colors.black.withOpacity(0.06), blurRadius: 8)
+          BoxShadow(color: Colors.black.withValues(alpha: 0.06), blurRadius: 8)
         ],
       ),
-      child: Column(children: [
+      child: const Column(children: [
         Row(children: [
-          const Expanded(child: ShimmerDashboardCard()),
-          const SizedBox(width: 12),
-          const Expanded(child: ShimmerDashboardCard()),
+          Expanded(child: ShimmerDashboardCard()),
+          SizedBox(width: 12),
+          Expanded(child: ShimmerDashboardCard()),
         ]),
-        const SizedBox(height: 10),
+        SizedBox(height: 10),
         Row(children: [
-          const Expanded(child: ShimmerDashboardCard()),
-          const SizedBox(width: 12),
-          const Expanded(child: ShimmerDashboardCard()),
+          Expanded(child: ShimmerDashboardCard()),
+          SizedBox(width: 12),
+          Expanded(child: ShimmerDashboardCard()),
         ]),
       ]),
     );
@@ -155,14 +155,14 @@ class ShimmerListItem extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       child: Row(children: [
         if (hasLeading) ...[
-          ShimmerBox(width: 44, height: 44, borderRadius: 10),
+          const ShimmerBox(width: 44, height: 44, borderRadius: 10),
           const SizedBox(width: 12),
         ],
-        Expanded(
+        const Expanded(
             child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           ShimmerBox(width: double.infinity, height: 13, borderRadius: 5),
-          const SizedBox(height: 6),
+          SizedBox(height: 6),
           ShimmerBox(width: 140, height: 10, borderRadius: 5),
         ])),
       ]),
@@ -182,18 +182,18 @@ class ShimmerHadithCard extends StatelessWidget {
         color: isDark ? const Color(0xFF0F2A1A) : Colors.white,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
-          BoxShadow(color: Colors.black.withOpacity(0.06), blurRadius: 8)
+          BoxShadow(color: Colors.black.withValues(alpha: 0.06), blurRadius: 8)
         ],
       ),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      child: const Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         ShimmerBox(width: 100, height: 10, borderRadius: 5),
-        const SizedBox(height: 12),
+        SizedBox(height: 12),
         ShimmerBox(width: double.infinity, height: 12, borderRadius: 5),
-        const SizedBox(height: 6),
+        SizedBox(height: 6),
         ShimmerBox(width: double.infinity, height: 12, borderRadius: 5),
-        const SizedBox(height: 6),
+        SizedBox(height: 6),
         ShimmerBox(width: 200, height: 12, borderRadius: 5),
-        const SizedBox(height: 12),
+        SizedBox(height: 12),
         ShimmerBox(width: 150, height: 10, borderRadius: 5),
       ]),
     );
@@ -213,7 +213,7 @@ class ShimmerSettingsSection extends StatelessWidget {
         color: isDark ? const Color(0xFF0F2A1A) : Colors.white,
         borderRadius: BorderRadius.circular(14),
         boxShadow: [
-          BoxShadow(color: Colors.black.withOpacity(0.06), blurRadius: 8)
+          BoxShadow(color: Colors.black.withValues(alpha: 0.06), blurRadius: 8)
         ],
       ),
       child: Column(
@@ -241,21 +241,21 @@ class ShimmerNisabCard extends StatelessWidget {
         color: isDark ? const Color(0xFF0F2A1A) : Colors.white,
         borderRadius: BorderRadius.circular(14),
         boxShadow: [
-          BoxShadow(color: Colors.black.withOpacity(0.06), blurRadius: 8)
+          BoxShadow(color: Colors.black.withValues(alpha: 0.06), blurRadius: 8)
         ],
       ),
       child: Row(children: [
-        Expanded(
+        const Expanded(
             child: Column(children: [
           ShimmerBox(width: 80, height: 10, borderRadius: 5),
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           ShimmerBox(width: 100, height: 16, borderRadius: 6),
         ])),
         Container(width: 1, height: 40, color: div),
-        Expanded(
+        const Expanded(
             child: Column(children: [
           ShimmerBox(width: 80, height: 10, borderRadius: 5),
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           ShimmerBox(width: 100, height: 16, borderRadius: 6),
         ])),
       ]),

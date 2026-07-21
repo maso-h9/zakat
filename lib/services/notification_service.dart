@@ -156,14 +156,14 @@ class NotificationService {
       '🌙 تذكير رمضان',
       'لا تنسَ صدقة اليوم — الصدقة في رمضان بسبعين ضعفاً',
       _nextInstanceOfTime(9, 0),
-      NotificationDetails(
+      const NotificationDetails(
         android: AndroidNotificationDetails(
           _channelId,
           _channelName,
           channelDescription: _channelDesc,
           importance: Importance.defaultImportance,
         ),
-        iOS: const DarwinNotificationDetails(),
+        iOS: DarwinNotificationDetails(),
       ),
       androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
       uiLocalNotificationDateInterpretation:

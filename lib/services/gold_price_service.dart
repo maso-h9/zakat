@@ -194,9 +194,6 @@ class GoldPriceService {
     }
   }
 
-  static void _log(String m) =>
-      print('[GoldPriceService] $m'); // ignore: avoid_print
-
   static Future<void> clearCache() async => _box?.clear();
 
   static double convert(double amount, String from, String to) {
@@ -239,8 +236,8 @@ class GoldPriceResult {
   });
 
   String get statusText {
-    if (source == 'offline_fallback') return '⚠️ سعر تقديري';
-    return isLive ? '✅ سعر محدَّث' : '🕐 كاش محلي';
+    if (source == 'offline_fallback') return '⚠️ Estimated price';
+    return isLive ? '✅ Live price' : '🕐 Local cache';
   }
 
   String get formattedTime {
