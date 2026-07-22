@@ -17,7 +17,7 @@ class AppConstants {
   static const int maxChatHistory = 20;
 
   // Gemini model
-  static const String geminiModel = 'gemini-2.0-flash';
+  static const String geminiModel = 'gemini-3.1-flash-lite';
   static const String geminiBaseUrl =
       'https://generativelanguage.googleapis.com/v1beta/models/$geminiModel:generateContent';
 

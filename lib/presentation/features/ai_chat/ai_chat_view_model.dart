@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import '../../../domain/usecases/send_ai_message.dart';
 import '../../../domain/entities/ai_message.dart';
 import '../../../data/datasources/ai_prompt_builder.dart';
+import '../../../data/datasources/gemini_api_client.dart';
 import '../../../core/utils/app_logger.dart';
 
 class AiChatViewModel extends ChangeNotifier {
@@ -61,12 +62,16 @@ class AiChatViewModel extends ChangeNotifier {
       _messages.add(AiMessage(text: reply, isUser: false));
     } catch (e) {
       AppLogger.error('AiChatViewModel: send failed', exception: e);
-      final errorMsg = e.toString()
-          .replaceAll('AiChatException: ', '')
-          .replaceAll('Exception: ', '')
-          .trim();
+
+      String friendlyMessage;
+      if (e is AiChatException) {
+        friendlyMessage = e.messageForLanguage(isArabic);
+      } else {
+        friendlyMessage = _defaultUserMessage(isArabic);
+      }
+
       _messages.add(AiMessage(
-        text: '⚠️ $errorMsg',
+        text: friendlyMessage,
         isUser: false,
         isError: true,
       ));
@@ -85,4 +90,8 @@ class AiChatViewModel extends ChangeNotifier {
 
   static List<String> suggestions(bool isArabic) =>
       AiPromptBuilder.suggestions(isArabic);
+
+  static String _defaultUserMessage(bool isArabic) => isArabic
+      ? 'عذراً، المساعد الذكي غير متاح حالياً. حاول مرة أخرى بعد قليل.'
+      : 'Sorry, the AI assistant is temporarily unavailable. Please try again in a moment.';
 }

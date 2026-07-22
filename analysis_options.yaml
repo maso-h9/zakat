@@ -8,9 +8,7 @@ linter:
     prefer_const_literals_to_create_immutables: true
     avoid_print: true                      # استخدم AppLogger بدل print
     avoid_empty_else: true
-    avoid_returning_null_for_future: true
     avoid_unnecessary_containers: true
-    avoid_unused_imports: true
 
     # ── أداء ─────────────────────────────────────────────────────
     use_key_in_widget_constructors: true
@@ -33,7 +31,7 @@ linter:
 
     # ── Async ────────────────────────────────────────────────────
     unawaited_futures: true
-    avoid_async_void_except_in_listeners: false
+    # avoid_async_void_except_in_listeners removed (not in Dart 3.x)
 
 analyzer:
   errors:
@@ -43,7 +41,7 @@ analyzer:
     dead_code: warning
     unused_import: warning
     unused_local_variable: warning
-    deprecated_member_use: ignore warning
+    deprecated_member_use: ignore
 
   exclude:
     - '**/*.g.dart'

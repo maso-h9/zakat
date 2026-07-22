@@ -6,7 +6,7 @@ import '../../core/utils/app_logger.dart';
 class GeminiApiClient {
   final String apiKey;
 
-  static const String _model = 'gemini-2.0-flash';
+  static const String _model = 'gemini-3.1-flash-lite';
   static const String _baseUrl =
       'https://generativelanguage.googleapis.com/v1beta/models/$_model:generateContent';
   static const int _maxHistory = 20;
@@ -201,9 +201,14 @@ class AiChatException implements Exception {
 
   AiChatException(this.code, {this.cause});
 
-  String get userMessage => _messages[code] ?? 'حدث خطأ في المساعد الذكي. حاول مجدداً.';
+  String get userMessage => _messagesAr[code] ?? 'حدث خطأ في المساعد الذكي. حاول مجدداً.';
 
-  static const Map<String, String> _messages = {
+  String get userMessageEn => _messagesEn[code] ?? 'An error occurred with the AI assistant. Please try again.';
+
+  String messageForLanguage(bool isArabic) =>
+      isArabic ? userMessage : userMessageEn;
+
+  static const Map<String, String> _messagesAr = {
     'api_key_missing':
         'يجب إضافة مفتاح Gemini API للمساعد الذكي.\nاحصل عليه مجاناً من: https://aistudio.google.com/app/apikey',
     'rate_limit': 'تجاوزت الحد المسموح من الطلبات. حاول بعد دقيقة.',
@@ -217,6 +222,22 @@ class AiChatException implements Exception {
     'max_retries':
         'تعذّر الاتصال بالمساعد بعد عدة محاولات. حاول لاحقاً.',
     'http_error': 'خطأ غير متوقع في الخادم. حاول مجدداً.',
+  };
+
+  static const Map<String, String> _messagesEn = {
+    'api_key_missing':
+        'Gemini API key is not configured.\nGet one free at: https://aistudio.google.com/app/apikey',
+    'rate_limit': 'Too many requests. Please wait a moment and try again.',
+    'invalid_request': 'Invalid request. Please check the settings.',
+    'invalid_key': 'Invalid or expired API key.',
+    'model_not_found': 'The AI model is currently unavailable.',
+    'forbidden': 'API key does not have permission for this model.',
+    'empty_response': 'No response received. Please try again.',
+    'service_unavailable': 'AI service is temporarily unavailable. Please try later.',
+    'network_error': 'Unable to connect. Please check your internet connection.',
+    'max_retries':
+        'Unable to connect after multiple attempts. Please try later.',
+    'http_error': 'An unexpected error occurred. Please try again.',
   };
 
   @override

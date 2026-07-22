@@ -5,6 +5,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
+import '../core/utils/app_logger.dart';
 
 enum ConnectivityStatus { online, offline, unknown }
 
@@ -56,9 +57,7 @@ class ConnectivityService extends ChangeNotifier {
     if (_status != prev) {
       notifyListeners();
       _controller.add(_status);
-      if (kDebugMode) {
-        print('[ConnectivityService] Status: $_status');
-      }
+      AppLogger.debug('ConnectivityService: Status: $_status');
     }
   }
 

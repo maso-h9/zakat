@@ -135,7 +135,7 @@ class AiResponseParser {
 // AiRepository — طبقة الوصول لـ Gemini API (بند 23)
 // ══════════════════════════════════════════════════════════════
 class AiRepository {
-  static const String _model = 'gemini-2.5-flash';
+  static const String _model = 'gemini-3.1-flash-lite';
   static const String _baseUrl =
       'https://generativelanguage.googleapis.com/v1beta/models/$_model:generateContent';
   static const int _maxHistory = 20;

@@ -14,6 +14,7 @@ import 'l10n/app_localizations.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'presentation/dependency_provider.dart';
+import 'core/di/service_locator.dart' as di;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -27,15 +28,18 @@ void main() async {
     DeviceOrientation.portraitDown,
   ]));
 
-  // Firebase هو единственblocking init — ضروري للتطبيق
+  // Firebase — blocking init
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  // شغّل التطبيق فوراً — كل شيء ثقيل ينتظر بعد أول فريم
+  // Initialize service locator
+  await di.initServiceLocator();
+
+  // Launch app
   runApp(const ZakatApp());
 
-  // كل الخدمات الثقيلة بعد runApp — لا تبلّك البداية
+  // Heavy services after first frame
   unawaited(_initServicesInBackground());
 }
 

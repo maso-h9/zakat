@@ -21,7 +21,7 @@ void main() {
 
     test('النصاب من الأوقية وسعر الصرف', () {
       // أوقية = 2350 دولار، صرف = 4.85 دينار
-      final expected = (2350 / 31.1035) * 85 * 4.85;
+      const expected = (2350 / 31.1035) * 85 * 4.85;
       expect(NisabService.fromOzAndRate(2350, 4.85), closeTo(expected, 1));
     });
 
@@ -167,7 +167,7 @@ void main() {
     });
 
     test('EUR to SAR', () {
-      final expected = 1000 / 0.92 * 3.75;
+      const expected = 1000 / 0.92 * 3.75;
       expect(convert(1000, 'EUR', 'SAR'), closeTo(expected, 0.1));
     });
   });

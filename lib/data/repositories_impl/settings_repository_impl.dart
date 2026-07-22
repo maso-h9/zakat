@@ -1,7 +1,8 @@
 import '../../domain/repositories/settings_repository.dart';
+import '../datasources/shared_prefs_storage.dart';
 
 class SettingsRepositoryImpl implements SettingsRepository {
-  final SettingsRepository _prefs;
+  final SharedPrefsStorage _prefs;
 
   SettingsRepositoryImpl(this._prefs);
 

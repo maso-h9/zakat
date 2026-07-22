@@ -131,7 +131,30 @@ class UnknownException extends AppException {
         );
 }
 
-// ── دالة مساعدة: حوّل أي exception لـ AppException ─────────────
+class ValidationException extends AppException {
+  ValidationException(String field, {String? message, Object? cause})
+      : super(
+          'Validation error: $field — $message',
+          arabicMessage: _arabicValidationMessage(field, message),
+          cause: cause,
+        );
+
+  static String _arabicValidationMessage(String field, String? message) {
+    if (message != null) return message;
+    return 'البيانات المدخلة في "$field" غير صحيحة.';
+  }
+}
+
+class PermissionException extends AppException {
+  PermissionException(String permission, {Object? cause})
+      : super(
+          'Permission denied: $permission',
+          arabicMessage: 'ليس لديك صلاحية "$permission".',
+          cause: cause,
+        );
+}
+
+// ── Helper: convert any exception to AppException ──────────
 AppException toAppException(Object e) {
   if (e is AppException) return e;
   final msg = e.toString();
