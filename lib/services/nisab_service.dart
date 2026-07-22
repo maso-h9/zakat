@@ -5,6 +5,7 @@
 // يستخدم Country Code بدل Currency Code (بند 14)
 // ================================================================
 import 'package:cloud_firestore/cloud_firestore.dart';
+import '../core/utils/app_logger.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 // ── نموذج المصدر الرسمي (ديناميكي من Firestore) ──────────────
@@ -179,7 +180,8 @@ class CountrySourcesRepository {
       }
     } catch (e) {
       // ignore: avoid_print
-      print('[CountrySourcesRepository] فشل جلب $countryCode: $e');
+      AppLogger.error('CountrySourcesRepository: فشل جلب $countryCode',
+          exception: e);
     }
     return null;
   }
@@ -205,7 +207,9 @@ class CountrySourcesRepository {
     final ts = _box?.get('ts_$code') as String?;
     if (ts == null) return null;
     try {
-      if (DateTime.now().difference(DateTime.parse(ts)) >= _ttl) return null;
+      if (DateTime.now().difference(DateTime.parse(ts)) >= _ttl) {
+        return null;
+      }
       final raw = _box?.get('data_$code') as Map?;
       if (raw == null) return null;
       return CountrySource.fromFirestore(code, Map<String, dynamic>.from(raw));
@@ -273,7 +277,9 @@ class NisabService {
     if (rawList.isNotEmpty &&
         rawList.last.value == value &&
         rawList.last.method == method &&
-        rawList.last.currency == currency) return;
+        rawList.last.currency == currency) {
+      return;
+    }
 
     rawList.add(NisabHistoryEntry(
       date: DateTime.now(),

@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../models/zakat_provider.dart';
 import '../utils/theme.dart';
+import '../l10n/app_localizations.dart';
 
 class StatsChartScreen extends StatelessWidget {
   const StatsChartScreen({super.key});
@@ -13,6 +14,7 @@ class StatsChartScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final p = context.watch<ZakatProvider>();
+    final l10n = AppLocalizations.of(context);
     final isDark = p.isDarkMode;
     final appBarBg = isDark ? const Color(0xFF0A2A1A) : ZakatTheme.deepGreen;
 
@@ -23,24 +25,24 @@ class StatsChartScreen extends StatelessWidget {
         child: Scaffold(
           backgroundColor: ZakatTheme.scaffoldBgAdaptive(isDark),
           appBar: AppBar(
-            title: Text(p.isArabic ? 'إحصائياتي' : 'My Stats',
+            title: Text(l10n.myStatsTitle,
                 style: const TextStyle(fontFamily: 'Scheherazade')),
             backgroundColor: appBarBg,
           ),
           body: SingleChildScrollView(
             padding: const EdgeInsets.all(16),
             child: Column(children: [
-              _buildSummaryCards(p, isDark),
+              _buildSummaryCards(context, p, isDark),
               const SizedBox(height: 20),
               if (p.zakatHistory.length >= 2) ...[
-                _buildYearlyChart(p, isDark),
+                _buildYearlyChart(context, p, isDark),
                 const SizedBox(height: 20),
               ],
               if (p.zakatHistory.isNotEmpty) ...[
-                _buildPieChart(p, isDark),
+                _buildPieChart(context, p, isDark),
                 const SizedBox(height: 20),
               ],
-              _buildDetailedHistory(p, isDark),
+              _buildDetailedHistory(context, p, isDark),
               const SizedBox(height: 32),
             ]),
           ),
@@ -49,12 +51,13 @@ class StatsChartScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSummaryCards(ZakatProvider p, bool isDark) {
+  Widget _buildSummaryCards(BuildContext context, ZakatProvider p, bool isDark) {
+    final l10n = AppLocalizations.of(context);
     return Column(children: [
       Row(children: [
         Expanded(
             child: _card(
-                p.isArabic ? 'إجمالي الزكاة' : 'Total Zakat',
+                l10n.totalZakatLabel,
                 '${p.totalZakatPaid.toStringAsFixed(0)} ${p.currencySymbol}',
                 Icons.volunteer_activism,
                 isDark ? ZakatTheme.lightGreen : ZakatTheme.deepGreen,
@@ -62,7 +65,7 @@ class StatsChartScreen extends StatelessWidget {
         const SizedBox(width: 12),
         Expanded(
             child: _card(
-                p.isArabic ? 'المتوسط السنوي' : 'Yearly Average',
+                l10n.annualAverage,
                 '${p.averageYearlyZakat.toStringAsFixed(0)} ${p.currencySymbol}',
                 Icons.bar_chart,
                 const Color(0xFF1565C0),
@@ -72,7 +75,7 @@ class StatsChartScreen extends StatelessWidget {
       Row(children: [
         Expanded(
             child: _card(
-                p.isArabic ? 'سنوات الالتزام' : 'Years',
+                l10n.yearsOfCommitment,
                 '${p.yearsCount}',
                 Icons.calendar_today,
                 const Color(0xFF6A1B9A),
@@ -80,9 +83,9 @@ class StatsChartScreen extends StatelessWidget {
         const SizedBox(width: 12),
         Expanded(
             child: _card(
-                p.isArabic ? 'آخر دفعة' : 'Last Payment',
+                l10n.lastPayment,
                 p.zakatHistory.isEmpty
-                    ? (p.isArabic ? 'لا يوجد' : 'None')
+                    ? l10n.noData
                     : '${p.zakatHistory.last.amount.toStringAsFixed(0)} ${p.currencySymbol}',
                 Icons.check_circle_outline,
                 ZakatTheme.success,
@@ -99,7 +102,7 @@ class StatsChartScreen extends StatelessWidget {
         color: ZakatTheme.cardBgAdaptive(isDark),
         borderRadius: BorderRadius.circular(14),
         boxShadow: ZakatTheme.cardShadowAdaptive(isDark),
-        border: Border.all(color: color.withOpacity(isDark ? 0.35 : 0.2)),
+        border: Border.all(color: color.withValues(alpha: isDark ? 0.35 : 0.2)),
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Icon(icon, color: color, size: 22),
@@ -122,7 +125,8 @@ class StatsChartScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildYearlyChart(ZakatProvider p, bool isDark) {
+  Widget _buildYearlyChart(BuildContext context, ZakatProvider p, bool isDark) {
+    final l10n = AppLocalizations.of(context);
     final yearly = p.yearlyZakat;
     final years = yearly.keys.toList()..sort();
     final maxVal = yearly.values.fold<double>(0, (m, v) => v > m ? v : m);
@@ -139,7 +143,7 @@ class StatsChartScreen extends StatelessWidget {
         boxShadow: ZakatTheme.cardShadowAdaptive(isDark),
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Text(p.isArabic ? 'الزكاة السنوية' : 'Yearly Zakat',
+        Text(l10n.annualZakatChart,
             style: TextStyle(
                 fontSize: 17,
                 fontWeight: FontWeight.bold,
@@ -153,7 +157,7 @@ class StatsChartScreen extends StatelessWidget {
             maxY: maxVal * 1.3,
             barTouchData: BarTouchData(
               touchTooltipData: BarTouchTooltipData(
-                tooltipBgColor: barColor.withOpacity(0.9),
+                tooltipBgColor: barColor.withValues(alpha: 0.9),
                 getTooltipItem: (group, _, rod, __) => BarTooltipItem(
                   '${rod.toY.toStringAsFixed(0)} ${p.currencySymbol}',
                   const TextStyle(
@@ -188,7 +192,7 @@ class StatsChartScreen extends StatelessWidget {
               show: true,
               drawVerticalLine: false,
               getDrawingHorizontalLine: (_) =>
-                  FlLine(color: barColor.withOpacity(0.08), strokeWidth: 1),
+                  FlLine(color: barColor.withValues(alpha: 0.08), strokeWidth: 1),
             ),
             borderData: FlBorderData(show: false),
             barGroups: List.generate(years.length, (i) {
@@ -210,7 +214,8 @@ class StatsChartScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildPieChart(ZakatProvider p, bool isDark) {
+  Widget _buildPieChart(BuildContext context, ZakatProvider p, bool isDark) {
+    final l10n = AppLocalizations.of(context);
     if (p.totalZakatableWealth <= 0) return const SizedBox();
     final zakatPct = p.zakatDue / p.totalZakatableWealth * 100;
     final remainPct = 100 - zakatPct;
@@ -225,7 +230,7 @@ class StatsChartScreen extends StatelessWidget {
         boxShadow: ZakatTheme.cardShadowAdaptive(isDark),
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Text(p.isArabic ? 'نسبة الزكاة من ثروتك' : 'Zakat Ratio',
+        Text(l10n.zakatPercentageOfWealth,
             style: TextStyle(
                 fontSize: 17,
                 fontWeight: FontWeight.bold,
@@ -253,7 +258,7 @@ class StatsChartScreen extends StatelessWidget {
                   ),
                   PieChartSectionData(
                     value: remainPct,
-                    color: accent.withOpacity(isDark ? 0.3 : 0.2),
+                    color: accent.withValues(alpha: isDark ? 0.3 : 0.2),
                     title: '',
                     radius: 44,
                   ),
@@ -265,13 +270,13 @@ class StatsChartScreen extends StatelessWidget {
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             _legendItem(
                 ZakatTheme.gold,
-                p.isArabic ? 'الزكاة الواجبة' : 'Zakat Due',
+                l10n.zakatDueLabel2,
                 '${p.zakatDue.toStringAsFixed(0)} ${p.currencySymbol}',
                 isDark),
             const SizedBox(height: 12),
             _legendItem(
-                accent.withOpacity(0.4),
-                p.isArabic ? 'الباقي' : 'Remaining',
+                accent.withValues(alpha: 0.4),
+                l10n.remainingLabel,
                 '${(p.totalZakatableWealth - p.zakatDue).toStringAsFixed(0)} ${p.currencySymbol}',
                 isDark),
           ]),
@@ -304,7 +309,8 @@ class StatsChartScreen extends StatelessWidget {
     ]);
   }
 
-  Widget _buildDetailedHistory(ZakatProvider p, bool isDark) {
+  Widget _buildDetailedHistory(BuildContext context, ZakatProvider p, bool isDark) {
+    final l10n = AppLocalizations.of(context);
     final textColor = isDark ? ZakatTheme.darkTextPrimary : ZakatTheme.darkText;
     final subColor =
         isDark ? ZakatTheme.darkTextSecondary : ZakatTheme.lightText;
@@ -318,7 +324,7 @@ class StatsChartScreen extends StatelessWidget {
         boxShadow: ZakatTheme.cardShadowAdaptive(isDark),
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Text(p.isArabic ? 'سجل الزكاة المدفوعة' : 'Payment History',
+        Text(l10n.paymentHistory,
             style: TextStyle(
                 fontSize: 17,
                 fontWeight: FontWeight.bold,
@@ -330,9 +336,7 @@ class StatsChartScreen extends StatelessWidget {
             padding: const EdgeInsets.symmetric(vertical: 24),
             child: Center(
                 child: Text(
-              p.isArabic
-                  ? 'لا يوجد سجل بعد.\nسجّل دفع الزكاة من شاشة الحاسبة.'
-                  : 'No record yet.\nRecord a payment from the calculator.',
+              l10n.noHistoryYet,
               textAlign: TextAlign.center,
               style: TextStyle(
                   color: subColor, fontFamily: 'Scheherazade', height: 1.8),
@@ -343,17 +347,17 @@ class StatsChartScreen extends StatelessWidget {
                 margin: const EdgeInsets.only(bottom: 8),
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: accent.withOpacity(isDark ? 0.1 : 0.05),
+                  color: accent.withValues(alpha: isDark ? 0.1 : 0.05),
                   borderRadius: BorderRadius.circular(10),
                   border: Border.all(
-                      color: accent.withOpacity(isDark ? 0.25 : 0.1)),
+                      color: accent.withValues(alpha: isDark ? 0.25 : 0.1)),
                 ),
                 child: Row(children: [
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
                         color:
-                            ZakatTheme.success.withOpacity(isDark ? 0.2 : 0.1),
+                            ZakatTheme.success.withValues(alpha: isDark ? 0.2 : 0.1),
                         shape: BoxShape.circle),
                     child: const Icon(Icons.check,
                         color: ZakatTheme.success, size: 16),
@@ -378,12 +382,12 @@ class StatsChartScreen extends StatelessWidget {
                         ]),
                   ),
                   Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
-                    Text(p.isArabic ? 'من ثروة' : 'of wealth',
+                    Text(l10n.fromWealth,
                         style: TextStyle(
                             fontSize: 11,
                             color: subColor,
                             fontFamily: 'Scheherazade')),
-                    Text('${r.wealth.toStringAsFixed(0)}',
+                    Text(r.wealth.toStringAsFixed(0),
                         style: TextStyle(
                             fontSize: 13,
                             color: isDark

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/zakat_provider.dart';
 import '../utils/theme.dart';
+import '../l10n/app_localizations.dart';
 
 // ==============================
 // نموذج بيانات مسألة المذاهب
@@ -27,81 +28,6 @@ class MadhabIssue {
 }
 
 const List<MadhabIssue> madhabIssues = [
-  MadhabIssue(
-    title: 'نصاب الذهب',
-    description: 'الحد الأدنى الذي تجب فيه زكاة الذهب',
-    hanafi: '20 مثقالاً = 85 غراماً تقريباً',
-    maliki: '20 مثقالاً = 85 غراماً تقريباً',
-    shafii: '20 مثقالاً = 85 غراماً تقريباً',
-    hanbali: '20 مثقالاً = 85 غراماً تقريباً',
-    preferred: 'اتفق العلماء الأربعة على هذا المقدار',
-  ),
-  MadhabIssue(
-    title: 'زكاة حلي الذهب المستعمل',
-    description: 'هل يُزكَّى الذهب المستخدم للزينة؟',
-    hanafi: 'تجب الزكاة مطلقاً في كل ذهب وفضة بلغ النصاب',
-    maliki: 'لا تجب في الحلي المباح المستعمل استعمالاً معتاداً',
-    shafii: 'لا تجب في الحلي المباح المستعمل',
-    hanbali: 'لا تجب في الحلي المباح على الراجح من المذهب',
-    preferred:
-        'الأحوط إخراج زكاته خروجاً من الخلاف، والمذهب الحنفي أكثر احتياطاً',
-  ),
-  MadhabIssue(
-    title: 'ضم الذهب إلى الفضة',
-    description: 'هل يُجمع الذهب والفضة لإكمال النصاب؟',
-    hanafi: 'يُضم الذهب إلى الفضة بالقيمة لإكمال النصاب',
-    maliki: 'يُضم الذهب إلى الفضة بالقيمة',
-    shafii: 'لا يُضم الذهب إلى الفضة، لكل نصابه المستقل',
-    hanbali: 'لا يُضم الذهب إلى الفضة في الأصح',
-    preferred: 'قول الجمهور (عدم الضم) أحوط وأيسر على المزكّي',
-  ),
-  MadhabIssue(
-    title: 'زكاة الدَّين',
-    description: 'هل تجب الزكاة على الأموال التي في ذمة الغير؟',
-    hanafi:
-        'الدَّين القوي (المُقرّ به المرجو الأداء) تجب زكاته لكن لا تُؤدَّى حتى القبض',
-    maliki: 'الدَّين المرجو تُزكَّى عند قبضه فقط عن سنة واحدة',
-    shafii: 'تجب الزكاة في الدَّين ولو لم يُقبض، ويُخرجها من ماله الآخر',
-    hanbali: 'الدَّين المرجو تجب زكاته لكل سنة مضت عند قبضه',
-    preferred:
-        'الأيسر: زكاته عند القبض لسنة واحدة (مذهب مالك)، والأحوط مذهب الشافعي',
-  ),
-  MadhabIssue(
-    title: 'نصاب الزروع والثمار',
-    description: 'الحد الأدنى الذي تجب فيه زكاة المحصول',
-    hanafi: 'لا نصاب، تجب الزكاة في القليل والكثير',
-    maliki: 'خمسة أوسق = 653 كيلوغراماً تقريباً',
-    shafii: 'خمسة أوسق = 653 كيلوغراماً تقريباً',
-    hanbali: 'خمسة أوسق = 653 كيلوغراماً تقريباً',
-    preferred: 'جمهور العلماء على اشتراط النصاب وهو الأقوى دليلاً',
-  ),
-  MadhabIssue(
-    title: 'نسبة زكاة الزروع المروية بآلة',
-    description: 'نسبة الزكاة في المحصول المسقي بمضخة أو آلة',
-    hanafi: 'نصف العشر (5%) في كل حال عند بعضهم، والعشر إن روي بلا مؤونة',
-    maliki: 'نصف العشر (5%) إذا كانت المؤونة كثيرة',
-    shafii: 'نصف العشر (5%) إذا روي بمؤونة',
-    hanbali: 'نصف العشر (5%) إذا روي بمؤونة',
-    preferred: 'اتفق الجمهور على نصف العشر عند الري بالآلة',
-  ),
-  MadhabIssue(
-    title: 'زكاة العروض التجارية',
-    description: 'هل تجب الزكاة في البضائع المعدّة للبيع؟',
-    hanafi: 'تجب بنسبة 2.5% على قيمة البضاعة عند تمام الحول',
-    maliki: 'تجب بنسبة 2.5% على قيمة البضاعة',
-    shafii: 'تجب بنسبة 2.5% على قيمة البضاعة',
-    hanbali: 'تجب بنسبة 2.5% على قيمة البضاعة',
-    preferred: 'اتفاق كامل بين المذاهب الأربعة',
-  ),
-  MadhabIssue(
-    title: 'تعجيل الزكاة قبل الحول',
-    description: 'هل يجوز إخراج الزكاة قبل تمام سنة كاملة؟',
-    hanafi: 'يجوز تعجيل الزكاة لسنة أو سنتين',
-    maliki: 'لا يجوز إلا قبل الحول بيسير (أيام قليلة)',
-    shafii: 'يجوز تعجيلها بعد ملك النصاب',
-    hanbali: 'يجوز تعجيلها لسنتين',
-    preferred: 'الجمهور يجيز التعجيل، وهو الأرفق بالمزكّين في العصر الحاضر',
-  ),
 ];
 
 // ==============================
@@ -135,17 +61,18 @@ class _MadhabsComparisonScreenState extends State<MadhabsComparisonScreen>
   @override
   Widget build(BuildContext context) {
     final p = context.watch<ZakatProvider>();
+    final l10n = AppLocalizations.of(context);
     final isDark = p.isDarkMode;
     final bg = ZakatTheme.scaffoldBgAdaptive(isDark);
     final appBarColor = isDark ? const Color(0xFF0A2A1A) : ZakatTheme.deepGreen;
 
     return Directionality(
-      textDirection: TextDirection.rtl,
+      textDirection: p.isArabic ? TextDirection.rtl : TextDirection.ltr,
       child: Scaffold(
         backgroundColor: bg,
         appBar: AppBar(
           backgroundColor: appBarColor,
-          title: const Text('مقارنة المذاهب الأربعة'),
+          title: Text(l10n.madhabsComparison),
           bottom: TabBar(
             controller: _tabController,
             indicatorColor: ZakatTheme.gold,
@@ -156,9 +83,9 @@ class _MadhabsComparisonScreenState extends State<MadhabsComparisonScreen>
                 fontFamily: 'Scheherazade',
                 fontSize: 14,
                 fontWeight: FontWeight.bold),
-            tabs: const [
-              Tab(text: 'المسائل المقارنة'),
-              Tab(text: 'جدول سريع'),
+            tabs: [
+              Tab(text: l10n.comparedIssues),
+              Tab(text: l10n.quickTable),
             ],
           ),
         ),
@@ -177,13 +104,23 @@ class _MadhabsComparisonScreenState extends State<MadhabsComparisonScreen>
   // تبويب 1: قائمة المسائل
   // ==============================
   Widget _buildIssuesList(bool isDark) {
+    final l10n = AppLocalizations.of(context);
     final cardColor = ZakatTheme.cardBgAdaptive(isDark);
     final textColor = isDark ? ZakatTheme.darkTextPrimary : ZakatTheme.darkText;
+
+    final issues = List.generate(8, (i) => MadhabIssue(
+      title: l10n.madhabIssueTitle(i),
+      description: l10n.madhabIssueDesc(i),
+      hanafi: l10n.madhabOpinion(i, 0),
+      maliki: l10n.madhabOpinion(i, 1),
+      shafii: l10n.madhabOpinion(i, 2),
+      hanbali: l10n.madhabOpinion(i, 3),
+      preferred: l10n.preferredMadhab(i),
+    ));
 
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
-        // بانر تعريفي
         Container(
           padding: const EdgeInsets.all(14),
           margin: const EdgeInsets.only(bottom: 16),
@@ -192,14 +129,14 @@ class _MadhabsComparisonScreenState extends State<MadhabsComparisonScreen>
                 isDark ? ZakatTheme.darkModeGradient : ZakatTheme.mainGradient,
             borderRadius: BorderRadius.circular(14),
           ),
-          child: const Row(
+          child: Row(
             children: [
-              Text('📚', style: TextStyle(fontSize: 22)),
-              SizedBox(width: 10),
+              const Text('📚', style: TextStyle(fontSize: 22)),
+              const SizedBox(width: 10),
               Expanded(
                 child: Text(
-                  'يُعرض رأي كل مذهب من المذاهب الأربعة في المسائل الرئيسية للزكاة مع ذكر الراجح عند المحققين',
-                  style: TextStyle(
+                  l10n.madhabNote,
+                  style: const TextStyle(
                       color: Colors.white,
                       fontFamily: 'Scheherazade',
                       fontSize: 13,
@@ -210,8 +147,8 @@ class _MadhabsComparisonScreenState extends State<MadhabsComparisonScreen>
           ),
         ),
 
-        ...List.generate(madhabIssues.length, (i) {
-          final issue = madhabIssues[i];
+        ...List.generate(issues.length, (i) {
+          final issue = issues[i];
           final isExpanded = _expandedIndex == i;
           return AnimatedContainer(
             duration: const Duration(milliseconds: 250),
@@ -222,7 +159,7 @@ class _MadhabsComparisonScreenState extends State<MadhabsComparisonScreen>
               boxShadow: ZakatTheme.cardShadowAdaptive(isDark),
               border: Border.all(
                 color: isExpanded
-                    ? ZakatTheme.gold.withOpacity(0.5)
+                    ? ZakatTheme.gold.withValues(alpha: 0.5)
                     : Colors.transparent,
               ),
             ),
@@ -241,7 +178,7 @@ class _MadhabsComparisonScreenState extends State<MadhabsComparisonScreen>
                           width: 36,
                           height: 36,
                           decoration: BoxDecoration(
-                            color: ZakatTheme.gold.withOpacity(0.15),
+                            color: ZakatTheme.gold.withValues(alpha: 0.15),
                             shape: BoxShape.circle,
                           ),
                           child: Center(
@@ -294,26 +231,26 @@ class _MadhabsComparisonScreenState extends State<MadhabsComparisonScreen>
                     padding: const EdgeInsets.all(16),
                     child: Column(
                       children: [
-                        _madhabRow('🟢 الحنفية', issue.hanafi,
+                        _madhabRow(l10n.hanafi, issue.hanafi,
                             const Color(0xFF1565C0), isDark),
                         const SizedBox(height: 10),
-                        _madhabRow('🟡 المالكية', issue.maliki,
+                        _madhabRow(l10n.maliki, issue.maliki,
                             const Color(0xFF6A1B9A), isDark),
                         const SizedBox(height: 10),
-                        _madhabRow('🔵 الشافعية', issue.shafii,
+                        _madhabRow(l10n.shafii, issue.shafii,
                             const Color(0xFF00695C), isDark),
                         const SizedBox(height: 10),
-                        _madhabRow('🔴 الحنابلة', issue.hanbali,
+                        _madhabRow(l10n.hanbali, issue.hanbali,
                             const Color(0xFFC62828), isDark),
-                        if (issue.preferred != null) ...[
+                        if (issue.preferred?.isNotEmpty == true) ...[
                           const SizedBox(height: 14),
                           Container(
                             padding: const EdgeInsets.all(12),
                             decoration: BoxDecoration(
-                              color: ZakatTheme.gold.withOpacity(0.08),
+                              color: ZakatTheme.gold.withValues(alpha: 0.08),
                               borderRadius: BorderRadius.circular(10),
                               border: Border.all(
-                                  color: ZakatTheme.gold.withOpacity(0.4)),
+                                  color: ZakatTheme.gold.withValues(alpha: 0.4)),
                             ),
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -323,7 +260,7 @@ class _MadhabsComparisonScreenState extends State<MadhabsComparisonScreen>
                                 const SizedBox(width: 8),
                                 Expanded(
                                   child: Text(
-                                    'الراجح: ${issue.preferred}',
+                                    '${l10n.preferred}: ${issue.preferred}',
                                     style: TextStyle(
                                         fontFamily: 'Scheherazade',
                                         fontSize: 13,
@@ -356,9 +293,9 @@ class _MadhabsComparisonScreenState extends State<MadhabsComparisonScreen>
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
           decoration: BoxDecoration(
-            color: color.withOpacity(0.1),
+            color: color.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: color.withOpacity(0.3)),
+            border: Border.all(color: color.withValues(alpha: 0.3)),
           ),
           child: Text(name,
               style: TextStyle(
@@ -387,6 +324,7 @@ class _MadhabsComparisonScreenState extends State<MadhabsComparisonScreen>
   // تبويب 2: جدول سريع
   // ==============================
   Widget _buildQuickTable(bool isDark) {
+    final l10n = AppLocalizations.of(context);
     final cardColor = ZakatTheme.cardBgAdaptive(isDark);
     final headerColor = isDark ? const Color(0xFF0A2A1A) : ZakatTheme.deepGreen;
     final textColor = isDark ? ZakatTheme.darkTextPrimary : ZakatTheme.darkText;
@@ -424,11 +362,11 @@ class _MadhabsComparisonScreenState extends State<MadhabsComparisonScreen>
                 children: [
                   TableRow(
                     children: [
-                      _headerCell('المسألة'),
-                      _headerCell('حنفي'),
-                      _headerCell('مالكي'),
-                      _headerCell('شافعي'),
-                      _headerCell('حنبلي'),
+                      _headerCell(l10n.issue),
+                      _headerCell(l10n.preferredMadhab(0)),
+                      _headerCell(l10n.preferredMadhab(1)),
+                      _headerCell(l10n.preferredMadhab(2)),
+                      _headerCell(l10n.preferredMadhab(3)),
                     ],
                   ),
                 ],
@@ -450,8 +388,8 @@ class _MadhabsComparisonScreenState extends State<MadhabsComparisonScreen>
                   decoration: BoxDecoration(
                     color: isEven
                         ? (isDark
-                            ? Colors.white.withOpacity(0.02)
-                            : ZakatTheme.cream.withOpacity(0.3))
+                            ? Colors.white.withValues(alpha: 0.02)
+                            : ZakatTheme.cream.withValues(alpha: 0.3))
                         : Colors.transparent,
                   ),
                   children: row
@@ -475,7 +413,7 @@ class _MadhabsComparisonScreenState extends State<MadhabsComparisonScreen>
             Padding(
               padding: const EdgeInsets.all(14),
               child: Text(
-                '* يُنصح بمراجعة عالم متخصص للمسائل التفصيلية في حالتك الخاصة',
+                l10n.recommendedConsult,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                     fontFamily: 'Scheherazade',

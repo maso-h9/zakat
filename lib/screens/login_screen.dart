@@ -8,6 +8,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import '../services/auth_service.dart';
 import '../models/zakat_provider.dart';
 import '../utils/theme.dart';
+import '../l10n/app_localizations.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -59,7 +60,7 @@ class _LoginScreenState extends State<LoginScreen>
 
   Future<void> _handleEmailAuth() async {
     if (_emailCtrl.text.trim().isEmpty || _passCtrl.text.isEmpty) {
-      _showMsg('يرجى تعبئة جميع الحقول');
+      _showMsg(AppLocalizations.of(context).fillAllFields);
       return;
     }
     setState(() => _loading = true);
@@ -100,7 +101,7 @@ class _LoginScreenState extends State<LoginScreen>
   Future<void> _sendOtp() async {
     final phone = _phoneCtrl.text.trim();
     if (phone.isEmpty) {
-      _showMsg('أدخل رقم الهاتف');
+      _showMsg(AppLocalizations.of(context).enterPhoneNumber);
       return;
     }
     setState(() => _loading = true);
@@ -127,7 +128,7 @@ class _LoginScreenState extends State<LoginScreen>
           _otpSent = true;
           _loading = false;
         });
-        _showMsg('تم إرسال رمز التحقق', isError: false);
+        _showMsg(AppLocalizations.of(context).otpSent, isError: false);
       },
     );
   }
@@ -150,6 +151,7 @@ class _LoginScreenState extends State<LoginScreen>
   @override
   Widget build(BuildContext context) {
     final p = context.watch<ZakatProvider>();
+    final l10n = AppLocalizations.of(context);
     final isDark = p.isDarkMode;
     final bg = ZakatTheme.scaffoldBgAdaptive(isDark);
     final cardColor = ZakatTheme.cardBgAdaptive(isDark);
@@ -163,7 +165,7 @@ class _LoginScreenState extends State<LoginScreen>
           backgroundColor:
               isDark ? const Color(0xFF0A2A1A) : ZakatTheme.deepGreen,
           title: Text(
-            _isRegister ? 'إنشاء حساب جديد' : 'تسجيل الدخول',
+            _isRegister ? l10n.createNewAccount : l10n.loginTitle,
             style: const TextStyle(fontFamily: 'Scheherazade'),
           ),
           bottom: TabBar(
@@ -173,10 +175,10 @@ class _LoginScreenState extends State<LoginScreen>
             unselectedLabelColor: Colors.white60,
             labelStyle: const TextStyle(
                 fontFamily: 'Scheherazade', fontWeight: FontWeight.bold),
-            tabs: const [
-              Tab(text: 'البريد الإلكتروني'),
-              Tab(text: 'Google'),
-              Tab(text: 'رقم الهاتف'),
+            tabs: [
+              Tab(text: AppLocalizations.of(context).loginWithEmail),
+              const Tab(text: 'Google'),
+              Tab(text: l10n.loginWithPhone),
             ],
           ),
         ),
@@ -193,6 +195,7 @@ class _LoginScreenState extends State<LoginScreen>
   }
 
   Widget _buildEmailTab(Color cardColor, Color textColor, bool isDark) {
+    final l10n = AppLocalizations.of(context);
     return SingleChildScrollView(
       padding: const EdgeInsets.all(24),
       child: Column(children: [
@@ -207,7 +210,7 @@ class _LoginScreenState extends State<LoginScreen>
         ),
         const SizedBox(height: 20),
         Text(
-          _isRegister ? 'إنشاء حساب جديد' : 'مرحباً بك',
+          _isRegister ? l10n.createNewAccount : l10n.welcomeBack,
           style: TextStyle(
               fontFamily: 'Scheherazade',
               fontSize: 24,
@@ -224,11 +227,11 @@ class _LoginScreenState extends State<LoginScreen>
           ),
           child: Column(children: [
             if (_isRegister) ...[
-              _field(_nameCtrl, 'الاسم الكامل', Icons.person_outline,
+              _field(_nameCtrl, l10n.userLabel, Icons.person_outline,
                   isDark: isDark),
               const SizedBox(height: 14),
             ],
-            _field(_emailCtrl, 'البريد الإلكتروني', Icons.email_outlined,
+            _field(_emailCtrl, l10n.email, Icons.email_outlined,
                 type: TextInputType.emailAddress, isDark: isDark),
             const SizedBox(height: 14),
             TextField(
@@ -237,7 +240,7 @@ class _LoginScreenState extends State<LoginScreen>
               textDirection: TextDirection.rtl,
               style: TextStyle(fontFamily: 'Scheherazade', color: textColor),
               decoration: InputDecoration(
-                labelText: 'كلمة المرور',
+                labelText: l10n.password,
                 prefixIcon: const Icon(Icons.lock_outline),
                 suffixIcon: IconButton(
                   icon:
@@ -257,7 +260,7 @@ class _LoginScreenState extends State<LoginScreen>
                         height: 20,
                         child: CircularProgressIndicator(
                             strokeWidth: 2, color: Colors.white))
-                    : Text(_isRegister ? 'إنشاء الحساب' : 'تسجيل الدخول',
+                    : Text(_isRegister ? l10n.createAccountButton : l10n.loginButton,
                         style: const TextStyle(
                             fontFamily: 'Scheherazade', fontSize: 17)),
               ),
@@ -266,15 +269,15 @@ class _LoginScreenState extends State<LoginScreen>
               TextButton(
                 onPressed: () async {
                   if (_emailCtrl.text.trim().isEmpty) {
-                    _showMsg('أدخل بريدك الإلكتروني أولاً');
+                    _showMsg(l10n.enterEmailFirst);
                     return;
                   }
                   final r =
                       await AuthService.resetPassword(_emailCtrl.text.trim());
                   _showMsg(r.message ?? r.error!, isError: !r.isSuccess);
                 },
-                child: const Text('نسيت كلمة المرور؟',
-                    style: TextStyle(
+                child: Text(l10n.forgotPassword,
+                    style: const TextStyle(
                         fontFamily: 'Scheherazade',
                         color: ZakatTheme.deepGreen)),
               ),
@@ -285,8 +288,8 @@ class _LoginScreenState extends State<LoginScreen>
           onPressed: () => setState(() => _isRegister = !_isRegister),
           child: Text(
             _isRegister
-                ? 'لدي حساب — تسجيل الدخول'
-                : 'ليس لدي حساب — إنشاء حساب',
+                ? l10n.loginTitle
+                : l10n.createNewAccount,
             style: const TextStyle(
                 fontFamily: 'Scheherazade',
                 color: ZakatTheme.deepGreen,
@@ -298,6 +301,7 @@ class _LoginScreenState extends State<LoginScreen>
   }
 
   Widget _buildGoogleTab(Color cardColor, Color textColor, bool isDark) {
+    final l10n = AppLocalizations.of(context);
     return Padding(
       padding: const EdgeInsets.all(24),
       child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
@@ -311,7 +315,7 @@ class _LoginScreenState extends State<LoginScreen>
           child: Column(children: [
             const Text('🔐', style: TextStyle(fontSize: 56)),
             const SizedBox(height: 16),
-            Text('تسجيل الدخول بـ Google',
+            Text(l10n.loginWithGoogle,
                 style: TextStyle(
                     fontFamily: 'Scheherazade',
                     fontSize: 20,
@@ -319,7 +323,7 @@ class _LoginScreenState extends State<LoginScreen>
                     color: textColor),
                 textAlign: TextAlign.center),
             const SizedBox(height: 8),
-            const Text(
+            /* const Text(
               '⚠️ يحتاج إضافة SHA-1 في Firebase Console\nراجع CHANGES_V4.md للتفاصيل',
               style: TextStyle(
                   fontFamily: 'Scheherazade',
@@ -328,14 +332,14 @@ class _LoginScreenState extends State<LoginScreen>
                   height: 1.6),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 24),*/
             SizedBox(
               width: double.infinity,
               child: OutlinedButton.icon(
                 onPressed: _loading ? null : _handleGoogle,
                 style: OutlinedButton.styleFrom(
                   side:
-                      BorderSide(color: ZakatTheme.deepGreen.withOpacity(0.5)),
+                      BorderSide(color: ZakatTheme.deepGreen.withValues(alpha: 0.5)),
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12)),
@@ -350,8 +354,8 @@ class _LoginScreenState extends State<LoginScreen>
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
                             color: Colors.red)),
-                label: const Text('المتابعة مع Google',
-                    style: TextStyle(fontFamily: 'Scheherazade', fontSize: 16)),
+                label: Text(l10n.continueWithGoogle,
+                    style: const TextStyle(fontFamily: 'Scheherazade', fontSize: 16)),
               ),
             ),
           ]),
@@ -361,6 +365,7 @@ class _LoginScreenState extends State<LoginScreen>
   }
 
   Widget _buildPhoneTab(Color cardColor, Color textColor, bool isDark) {
+    final l10n = AppLocalizations.of(context);
     return SingleChildScrollView(
       padding: const EdgeInsets.all(24),
       child: Column(children: [
@@ -375,16 +380,16 @@ class _LoginScreenState extends State<LoginScreen>
           child: Column(children: [
             const Text('📱', style: TextStyle(fontSize: 48)),
             const SizedBox(height: 12),
-            Text('تسجيل الدخول برقم الهاتف',
+            Text(l10n.loginWithPhone,
                 style: TextStyle(
                     fontFamily: 'Scheherazade',
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                     color: textColor)),
             const SizedBox(height: 6),
-            const Text(
-              '⚠️ يجب تفعيل Phone Auth في Firebase Console\nAuthentication → Sign-in method → Phone',
-              style: TextStyle(
+            Text(
+              l10n.phoneAuthWarning,
+              style: const TextStyle(
                   fontFamily: 'Scheherazade',
                   fontSize: 12,
                   color: ZakatTheme.lightText,
@@ -394,7 +399,7 @@ class _LoginScreenState extends State<LoginScreen>
             const SizedBox(height: 16),
             _field(
               _phoneCtrl,
-              'رقم الهاتف الدولي (مثال: +218912345678)',
+              l10n.phoneHint,
               Icons.phone_outlined,
               type: TextInputType.phone,
               enabled: !_otpSent,
@@ -402,7 +407,7 @@ class _LoginScreenState extends State<LoginScreen>
             ),
             if (_otpSent) ...[
               const SizedBox(height: 14),
-              _field(_otpCtrl, 'رمز التحقق (6 أرقام)', Icons.sms_outlined,
+              _field(_otpCtrl, l10n.otpHint, Icons.sms_outlined,
                   type: TextInputType.number, isDark: isDark),
             ],
             const SizedBox(height: 16),
@@ -416,7 +421,7 @@ class _LoginScreenState extends State<LoginScreen>
                         height: 20,
                         child: CircularProgressIndicator(
                             strokeWidth: 2, color: Colors.white))
-                    : Text(_otpSent ? 'تحقق من الرمز' : 'إرسال رمز التحقق',
+                    : Text(_otpSent ? l10n.verifyCode : l10n.sendCode,
                         style: const TextStyle(
                             fontFamily: 'Scheherazade', fontSize: 17)),
               ),
@@ -427,8 +432,8 @@ class _LoginScreenState extends State<LoginScreen>
                   _otpSent = false;
                   _otpCtrl.clear();
                 }),
-                child: const Text('تغيير رقم الهاتف',
-                    style: TextStyle(
+                child: Text(l10n.changePhone,
+                    style: const TextStyle(
                         fontFamily: 'Scheherazade',
                         color: ZakatTheme.deepGreen)),
               ),
