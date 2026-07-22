@@ -10,12 +10,14 @@ import '../../data/repositories_impl/gold_price_repository_impl.dart';
 import '../../data/repositories_impl/auth_repository_impl.dart';
 import '../../data/repositories_impl/ai_chat_repository_impl.dart';
 import '../../data/repositories_impl/currency_repository_impl.dart';
+import '../../data/repositories_impl/notification_repository_impl.dart';
 import '../../domain/repositories/settings_repository.dart';
 import '../../domain/repositories/zakat_repository.dart';
 import '../../domain/repositories/gold_price_repository.dart';
 import '../../domain/repositories/auth_repository.dart';
 import '../../domain/repositories/ai_chat_repository.dart';
 import '../../domain/repositories/currency_repository.dart';
+import '../../domain/repositories/notification_repository.dart';
 import '../../domain/usecases/calculate_zakat.dart';
 import '../../domain/usecases/send_ai_message.dart';
 import '../../domain/usecases/get_gold_price.dart';
@@ -25,6 +27,7 @@ import '../../presentation/features/ai_chat/ai_chat_view_model.dart';
 import '../../presentation/features/calculator/calculator_view_model.dart';
 import '../../presentation/features/settings/settings_view_model.dart';
 import '../../presentation/features/home/home_view_model.dart';
+import '../../services/notification_service.dart';
 import '../../core/utils/app_logger.dart';
 
 final sl = GetIt.instance;
@@ -75,6 +78,9 @@ Future<void> initServiceLocator() async {
   sl.registerLazySingleton<CurrencyRepository>(
     () => CurrencyRepositoryImpl(),
   );
+  sl.registerLazySingleton<NotificationRepository>(
+    () => NotificationRepositoryImpl(NotificationService()),
+  );
 
   // ── Register Use Cases ────────────────────────────────────
   sl.registerLazySingleton(() => CalculateZakatUseCase());
@@ -91,7 +97,7 @@ Future<void> initServiceLocator() async {
   sl.registerFactory(() => AiChatViewModel(sl<SendAiMessageUseCase>()));
   sl.registerFactory(() => CalculatorViewModel(sl<CalculateZakatUseCase>()));
   sl.registerFactory(() => SettingsViewModel(sl<SettingsRepository>()));
-  sl.registerFactory(() => HomeViewModel());
+  sl.registerFactory(() => HomeViewModel(sl<GetGoldPriceUseCase>()));
 
   AppLogger.info('DI: Service locator initialized');
 }

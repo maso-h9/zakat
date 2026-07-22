@@ -1,3 +1,8 @@
+import 'package:json_annotation/json_annotation.dart';
+
+part 'ai_message.g.dart';
+
+@JsonSerializable()
 class AiMessage {
   final String text;
   final bool isUser;
@@ -10,6 +15,11 @@ class AiMessage {
     this.isError = false,
     DateTime? createdAt,
   }) : createdAt = createdAt ?? DateTime.now();
+
+  factory AiMessage.fromJson(Map<String, dynamic> json) =>
+      _$AiMessageFromJson(json);
+
+  Map<String, dynamic> toJson() => _$AiMessageToJson(this);
 
   AiMessage copyWith({
     String? text,

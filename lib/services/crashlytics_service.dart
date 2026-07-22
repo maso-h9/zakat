@@ -1,7 +1,3 @@
-// ================================================================
-// services/crashlytics_service.dart — Firebase Crashlytics (بند 12)
-// يسجّل الأخطاء تلقائياً في Production
-// ================================================================
 import 'package:flutter/foundation.dart';
 // ignore: depend_on_referenced_packages
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
@@ -10,16 +6,15 @@ import '../core/errors/app_exception.dart';
 
 class CrashlyticsService {
   static bool _initialized = false;
+  static String _currentScreen = 'unknown';
 
-  // ── تهيئة — استدعِ في main() ──────────────────────────────────
   static Future<void> init() async {
     if (_initialized) return;
 
-    // في Debug Mode: لا ترسل أخطاء لـ Crashlytics
     await FirebaseCrashlytics.instance
         .setCrashlyticsCollectionEnabled(!kDebugMode);
 
-    // اعترض كل الأخطاء غير المعالجة في Flutter
+    final previousHandler = FlutterError.onError;
     FlutterError.onError = (errorDetails) {
       AppLogger.error(
         'Flutter Error',
@@ -27,29 +22,34 @@ class CrashlyticsService {
         stack: errorDetails.stack,
       );
       FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
+      previousHandler?.call(errorDetails);
     };
 
-    // اعترض أخطاء Dart الغير متزامنة
+    final previousPlatformHandler = PlatformDispatcher.instance.onError;
     PlatformDispatcher.instance.onError = (error, stack) {
       AppLogger.error('Platform Error', exception: error, stack: stack);
       FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
-      return true;
+      return previousPlatformHandler?.call(error, stack) ?? true;
     };
 
     _initialized = true;
     AppLogger.info('CrashlyticsService: initialized (enabled: ${!kDebugMode})');
   }
 
-  // ── تسجيل خطأ يدوياً ──────────────────────────────────────────
   static Future<void> recordError(
     Object error, {
     StackTrace? stack,
     bool fatal = false,
     String? reason,
+    String? screen,
   }) async {
     AppLogger.error(reason ?? 'Recorded error', exception: error, stack: stack);
-    if (kDebugMode) return; // في Debug لا نرسل
+    if (kDebugMode) return;
 
+    await FirebaseCrashlytics.instance.setCustomKey(
+      'screen',
+      screen ?? _currentScreen,
+    );
     await FirebaseCrashlytics.instance.recordError(
       error,
       stack,
@@ -58,15 +58,46 @@ class CrashlyticsService {
     );
   }
 
-  // ── تسجيل AppException ────────────────────────────────────────
   static Future<void> recordAppException(
     AppException e, {
     StackTrace? stack,
+    String? screen,
+    String? operation,
   }) async {
-    await recordError(e, stack: stack, reason: e.message);
+    final screenName = screen ?? _currentScreen;
+    final operationName = operation ?? 'unknown';
+
+    AppLogger.error(
+      'AppException: ${e.message} [screen: $screenName, op: $operationName]',
+      exception: e,
+      stack: stack,
+    );
+
+    if (kDebugMode) return;
+
+    await FirebaseCrashlytics.instance.setCustomKey('screen', screenName);
+    await FirebaseCrashlytics.instance
+        .setCustomKey('operation', operationName);
+    await FirebaseCrashlytics.instance.setCustomKey(
+      'exception_type',
+      e.runtimeType.toString(),
+    );
+    await FirebaseCrashlytics.instance.recordError(
+      e,
+      stack,
+      reason: '${e.message} [screen: $screenName, op: $operationName]',
+      fatal: false,
+    );
   }
 
-  // ── تسجيل معلومات المستخدم (بدون بيانات مالية) ───────────────
+  static void setCurrentScreen(String screen) {
+    _currentScreen = screen;
+    AppLogger.debug('Screen: $screen');
+    if (!kDebugMode) {
+      FirebaseCrashlytics.instance.setCustomKey('screen', screen);
+    }
+  }
+
   static Future<void> setUserInfo({
     required String uid,
     required String currency,
@@ -78,16 +109,19 @@ class CrashlyticsService {
     await FirebaseCrashlytics.instance.setCustomKey('language', language);
   }
 
-  // ── سجّل حدث مخصص (breadcrumb) ────────────────────────────────
+  static Future<void> setCustomKey(String key, dynamic value) async {
+    if (kDebugMode) return;
+    await FirebaseCrashlytics.instance.setCustomKey(key, value);
+  }
+
   static Future<void> log(String message) async {
-    AppLogger.debug('Crashlytics.log: $message');
+    AppLogger.crashlyticsLog(message);
     if (kDebugMode) return;
     await FirebaseCrashlytics.instance.log(message);
   }
 
-  // ── اختبار (للتجربة فقط) ──────────────────────────────────────
   static Future<void> testCrash() async {
-    if (!kDebugMode) return; // فقط في Debug
+    if (!kDebugMode) return;
     AppLogger.warning('Testing Crashlytics crash...');
     FirebaseCrashlytics.instance.crash();
   }

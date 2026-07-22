@@ -1,9 +1,19 @@
+import 'package:json_annotation/json_annotation.dart';
+
+part 'wealth_data.g.dart';
+
+@JsonSerializable()
 class WealthData {
+  @JsonKey(name: 'money')
   final double savedMoney;
+  @JsonKey(name: 'gold')
   final double goldGrams;
+  @JsonKey(name: 'silver')
   final double silverGrams;
+  @JsonKey(name: 'trade')
   final double tradeGoods;
   final double debtsOwed;
+  @JsonKey(name: 'debtsReceive')
   final double debtsToReceive;
 
   const WealthData({
@@ -14,6 +24,11 @@ class WealthData {
     this.debtsOwed = 0,
     this.debtsToReceive = 0,
   });
+
+  factory WealthData.fromJson(Map<String, dynamic> json) =>
+      _$WealthDataFromJson(json);
+
+  Map<String, dynamic> toJson() => _$WealthDataToJson(this);
 
   WealthData copyWith({
     double? savedMoney,

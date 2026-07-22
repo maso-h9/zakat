@@ -1,3 +1,8 @@
+import 'package:json_annotation/json_annotation.dart';
+
+part 'gold_price_result.g.dart';
+
+@JsonSerializable()
 class GoldPriceResult {
   final double pricePerGram;
   final double silverPricePerGram;
@@ -12,6 +17,11 @@ class GoldPriceResult {
     this.formattedTime,
     this.source = 'unknown',
   });
+
+  factory GoldPriceResult.fromJson(Map<String, dynamic> json) =>
+      _$GoldPriceResultFromJson(json);
+
+  Map<String, dynamic> toJson() => _$GoldPriceResultToJson(this);
 
   GoldPriceResult copyWith({
     double? pricePerGram,

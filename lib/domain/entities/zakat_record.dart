@@ -1,3 +1,8 @@
+import 'package:json_annotation/json_annotation.dart';
+
+part 'zakat_record.g.dart';
+
+@JsonSerializable()
 class ZakatRecord {
   final int year;
   final double amount;
@@ -12,6 +17,11 @@ class ZakatRecord {
     required this.date,
     this.note = '',
   });
+
+  factory ZakatRecord.fromJson(Map<String, dynamic> json) =>
+      _$ZakatRecordFromJson(json);
+
+  Map<String, dynamic> toJson() => _$ZakatRecordToJson(this);
 
   ZakatRecord copyWith({
     int? year,

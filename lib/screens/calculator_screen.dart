@@ -62,7 +62,7 @@ class _CalculatorScreenState extends State<CalculatorScreen>
     final appBarBg = isDark ? const Color(0xFF0A2A1A) : ZakatTheme.deepGreen;
 
     return Directionality(
-      textDirection: TextDirection.rtl,
+      textDirection: p.isArabic ? TextDirection.rtl : TextDirection.ltr,
       child: Theme(
         // تطبيق Dark Mode على كل عناصر الشاشة
         data: isDark ? ZakatTheme.darkTheme : ZakatTheme.theme,
