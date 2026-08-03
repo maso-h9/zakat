@@ -1,5 +1,5 @@
 // ================================================================
-// widgets/offline_banner.dart — شريط حالة الاتصال (بند 15)
+// widgets/offline_banner.dart — شريط حالة الاتصال )
 // يظهر تلقائياً عند انقطاع الإنترنت ويختفي عند عودته
 // ================================================================
 import 'package:flutter/material.dart';
@@ -54,10 +54,3 @@ class OfflineBanner extends StatelessWidget {
     );
   }
 }
-
-// ── استخدام في home_screen (أضفه بعد AppBar) ─────────────────────
-//
-// Column(children: [
-//   const OfflineBanner(),   // ← أضف هذا
-//   Expanded(child: _buildBody(...)),
-// ])

@@ -1,6 +1,3 @@
-// ================================================================
-// widgets/zakat_shimmer.dart — Skeleton Loading (بند 11)
-// ================================================================
 import 'package:flutter/material.dart';
 
 // ── Shimmer Base ─────────────────────────────────────────────────
@@ -102,7 +99,8 @@ class ShimmerDashboardCard extends StatelessWidget {
           BoxShadow(color: Colors.black.withValues(alpha: 0.06), blurRadius: 8)
         ],
       ),
-      child: const Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      child:
+          const Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         ShimmerBox(width: 80, height: 10, borderRadius: 5),
         SizedBox(height: 10),
         ShimmerBox(width: double.infinity, height: 18, borderRadius: 6),
@@ -145,7 +143,7 @@ class ShimmerDashboardGrid extends StatelessWidget {
   }
 }
 
-// ── List Item Skeleton ────────────────────────────────────────────
+// ── List Item Skeleton
 class ShimmerListItem extends StatelessWidget {
   final bool hasLeading;
   const ShimmerListItem({super.key, this.hasLeading = true});
@@ -170,7 +168,7 @@ class ShimmerListItem extends StatelessWidget {
   }
 }
 
-// ── Hadith Card Skeleton ──────────────────────────────────────────
+// ── Hadith Card Skeleton
 class ShimmerHadithCard extends StatelessWidget {
   const ShimmerHadithCard({super.key});
   @override
@@ -185,7 +183,8 @@ class ShimmerHadithCard extends StatelessWidget {
           BoxShadow(color: Colors.black.withValues(alpha: 0.06), blurRadius: 8)
         ],
       ),
-      child: const Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      child:
+          const Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         ShimmerBox(width: 100, height: 10, borderRadius: 5),
         SizedBox(height: 12),
         ShimmerBox(width: double.infinity, height: 12, borderRadius: 5),
