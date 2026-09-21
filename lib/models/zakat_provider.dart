@@ -1,11 +1,8 @@
-// zakat_provider.dart — V13
+// zakat_provider.dart — V12
 // يستخدم NisabService + CountrySourcesRepository
 // يسجل تغييرات النصاب تلقائياً
-// V13: تحسين الأداء — تحميل غير متزامن بعد أول فريم
 
-import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import '../services/storage_service.dart';
 import '../services/gold_price_service.dart';
 import '../services/firebase_service.dart';
@@ -38,8 +35,9 @@ class ZakatProvider extends ChangeNotifier {
   bool fitrPaid = false;
   bool isDarkMode = false;
 
-  Locale locale = const Locale('ar', 'SA');
-  bool get isArabic => locale.languageCode == 'ar';
+  Locale _locale = const Locale('ar', 'SA');
+  Locale get locale => _locale;
+  bool get isArabic => _locale.languageCode == 'ar';
 
   bool isSyncing = false;
   bool cloudSyncEnabled = false;
@@ -57,55 +55,59 @@ class ZakatProvider extends ChangeNotifier {
   bool _loaded = false;
 
   // ════════════════════════════════════════════════════════════
-  // تهية — V13: تحميل فوري من الكاش + تحميل خلفي
+  // تهيئة
   // ════════════════════════════════════════════════════════════
   Future<void> init() async {
     if (_loaded) return;
     _loaded = true;
 
-    // الخطوة 1: تحميل فوري من SharedPreferences (أقل من 50ms)
-    await StorageService.loadAllCached(this);
-    notifyListeners();
+    await GoldPriceService.initHive();
+    await ConnectivityService().init();
 
-    // الخطوة 2: كل شيء ثقيل ينتظر بعد أول فريم
-    SchedulerBinding.instance.addPostFrameCallback((_) {
-      _initDeferred();
-    });
-  }
-
-  // تهيئة ثقيلة — تبدأ بعد عرض أول فريم
-  Future<void> _initDeferred() async {
-    // Hive + Connectivity (سريع، غير متزامن)
-    try {
-      await GoldPriceService.initHive();
-    } catch (_) {}
-    try {
-      await ConnectivityService().init();
-    } catch (_) {}
-
-    // استمع لتغيرات الاتصال
+    // عند عودة الإنترنت — زامن وحدّث الأسعار تلقائياً (بند 15)
     ConnectivityService().statusStream.listen((status) {
       if (status == ConnectivityStatus.online) {
         fetchGoldPrice();
         if (cloudSyncEnabled) _pushToCloud();
       }
     });
+    await CountrySourcesRepository.init();
 
-    try {
-      await CountrySourcesRepository.init();
-    } catch (_) {}
+    await StorageService.loadWealth(this);
+    nisabDate = await StorageService.loadNisabDate();
+    zakatHistory = await StorageService.loadHistory();
+    final curr = await StorageService.loadCurrency();
+    selectedCurrency = curr['code']!;
+    currencySymbol = curr['symbol']!;
+    isRamadanMode = await StorageService.loadRamadanMode();
+    fitrPaid = await StorageService.loadFitrPaid();
+    isDarkMode = await StorageService.loadDarkMode();
+    cloudSyncEnabled = await StorageService.loadCloudSync();
 
-    // جلب السعر من الشبكة (خلفي)
-    unawaited(fetchGoldPrice());
-    unawaited(_loadCountrySource());
+    final langCode = await StorageService.loadLanguage();
+    _locale =
+        langCode == 'en' ? const Locale('en', 'US') : const Locale('ar', 'SA');
 
-    // استمع لتغيرات Auth
-    _listenToAuthChanges();
+    final nisabData = await StorageService.loadNisabMethod();
+    nisabMethod = nisabData['method'] as NisabMethod;
+    officialNisabValue = nisabData['official'] as double;
+    customNisabValue = nisabData['custom'] as double;
 
-    // المزامنة السحابية (إن وجدت)
+    final savedPrice = await StorageService.loadGoldPrice();
+    if (savedPrice != null) goldPricePerGram = savedPrice;
+
+    notifyListeners();
+    fetchGoldPrice();
+    _loadCountrySource();
+
+    // انتظار حالة Auth الحقيقية قبل المزامنة
+    // هذا يحل مشكلة تحميل بيانات مستخدم مجهول بدل المستخدم الحقيقي
     if (cloudSyncEnabled) {
-      unawaited(_initCloudSyncWhenReady());
+      await _initCloudSyncWhenReady();
     }
+
+    // استمع لتغيرات Auth (تسجيل دخول / خروج) وزامن تلقائياً
+    _listenToAuthChanges();
   }
 
   // ════════════════════════════════════════════════════════════
@@ -244,11 +246,13 @@ class ZakatProvider extends ChangeNotifier {
       await _initCloudSync();
       return;
     }
-    // انتظر قليلاً لتكتمل حالة Auth ثم زامن
-    await Future.delayed(const Duration(milliseconds: 500));
+    // انتظر ثانية ونصف لتكتمل حالة Auth ثم زامن
+    await Future.delayed(const Duration(milliseconds: 1500));
     if (FirebaseService.isSignedIn) {
       await _initCloudSync();
     }
+    // إذا لا يزال غير مسجّل → لا نستدعي signInAnonymously تلقائياً
+    // المزامنة ستحدث عند تسجيل الدخول عبر _listenToAuthChanges
   }
 
   void _listenToAuthChanges() {
@@ -378,7 +382,7 @@ class ZakatProvider extends ChangeNotifier {
   }
 
   Future<void> setLanguage(String langCode) async {
-    locale =
+    _locale =
         langCode == 'en' ? const Locale('en', 'US') : const Locale('ar', 'SA');
     notifyListeners();
     await StorageService.saveLanguage(langCode);
