@@ -7,6 +7,7 @@
 // ================================================================
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:zakat_app/l10n/app_localizations.dart';
 import '../utils/theme.dart';
 import '../models/zakat_provider.dart';
 
@@ -38,7 +39,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
           backgroundColor: ZakatTheme.scaffoldBgAdaptive(isDark),
           appBar: AppBar(
             title: Text(
-                p.isArabic ? 'تقويم الزكاة السنوي' : 'Annual Zakat Calendar',
+                AppLocalizations.of(context).annualZakatCalendar,
                 style: const TextStyle(fontFamily: 'Scheherazade')),
             backgroundColor: appBarBg,
           ),
@@ -57,7 +58,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                   boxShadow: ZakatTheme.goldShadow,
                 ),
                 child: Column(children: [
-                  Text(p.isArabic ? 'موعد الزكاة القادم' : 'Next Zakat Due',
+                  Text(AppLocalizations.of(context).nextZakatDate,
                       style: const TextStyle(
                           color: Colors.white70,
                           fontFamily: 'Scheherazade',
@@ -70,23 +71,21 @@ class _CalendarScreenState extends State<CalendarScreen> {
                             fontSize: 72,
                             fontWeight: FontWeight.bold,
                             fontFamily: 'Scheherazade')),
-                    Text(p.isArabic ? 'يوم متبقٍ' : 'days remaining',
+                    Text(AppLocalizations.of(context).daysRemaining,
                         style: const TextStyle(
                             color: Colors.white,
                             fontSize: 22,
                             fontFamily: 'Scheherazade')),
                   ] else if (p.nisabDate != null) ...[
                     const Text('⚠️', style: TextStyle(fontSize: 48)),
-                    Text(p.isArabic ? 'وجبت الزكاة!' : 'Zakat is Due!',
+                    Text(AppLocalizations.of(context).zakatObligatoryNow,
                         style: const TextStyle(
                             color: ZakatTheme.gold,
                             fontSize: 28,
                             fontWeight: FontWeight.bold,
                             fontFamily: 'Scheherazade')),
                     Text(
-                        p.isArabic
-                            ? 'بادر بإخراجها الآن'
-                            : 'Pay it as soon as possible',
+                        AppLocalizations.of(context).payNow,
                         style: const TextStyle(
                             color: Colors.white70,
                             fontSize: 16,
@@ -96,9 +95,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                         color: Colors.white70, size: 48),
                     const SizedBox(height: 12),
                     Text(
-                        p.isArabic
-                            ? 'حدد تاريخ بلوغ النصاب'
-                            : 'Set your Nisab date',
+                        AppLocalizations.of(context).setNisabDatePrompt,
                         style: const TextStyle(
                             color: Colors.white,
                             fontSize: 18,
@@ -119,9 +116,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                          p.isArabic
-                              ? 'تاريخ بلوغ النصاب'
-                              : 'Nisab Reached Date',
+                          AppLocalizations.of(context).nisabDateTitle,
                           style: TextStyle(
                               fontSize: 17,
                               fontWeight: FontWeight.bold,
@@ -129,9 +124,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                               color: textColor)),
                       const SizedBox(height: 12),
                       Text(
-                        p.isArabic
-                            ? 'سجّل اليوم الذي امتلكت فيه النصاب لأول مرة. بعد مرور حول هجري كامل (354 يوماً) تجب عليك الزكاة.'
-                            : 'Record the day you first reached Nisab. After a full Hijri year (354 days), Zakat becomes due.',
+                        AppLocalizations.of(context).nisabDateDescription,
                         style: TextStyle(
                             fontSize: 14,
                             color: subColor,
@@ -153,9 +146,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                         label: Text(
                           p.nisabDate != null
                               ? '${p.isArabic ? "التاريخ" : "Date"}: ${p.nisabDate!.day}/${p.nisabDate!.month}/${p.nisabDate!.year}'
-                              : (p.isArabic
-                                  ? 'اختر تاريخ بلوغ النصاب'
-                                  : 'Pick Nisab date'),
+                              : AppLocalizations.of(context).chooseDate,
                           style: const TextStyle(fontFamily: 'Scheherazade'),
                         ),
                       ),
@@ -167,36 +158,30 @@ class _CalendarScreenState extends State<CalendarScreen> {
                             color: (isDark
                                     ? ZakatTheme.lightGreen
                                     : ZakatTheme.deepGreen)
-                                .withOpacity(isDark ? 0.12 : 0.08),
+                                .withValues(alpha: isDark ? 0.12 : 0.08),
                             borderRadius: BorderRadius.circular(10),
                           ),
                           child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 _calRow(
-                                    p.isArabic ? 'تاريخ البلوغ' : 'Nisab date',
+                                    AppLocalizations.of(context).dateOfNisab,
                                     '${p.nisabDate!.day}/${p.nisabDate!.month}/${p.nisabDate!.year}',
                                     isDark,
                                     false),
                                 const SizedBox(height: 4),
                                 _calRow(
-                                    p.isArabic
-                                        ? 'موعد وجوب الزكاة'
-                                        : 'Zakat due date', () {
+                                    AppLocalizations.of(context).nextObligationDate, () {
                                   final d = p.nisabDate!
                                       .add(const Duration(days: 354));
                                   return '${d.day}/${d.month}/${d.year}';
                                 }(), isDark, false),
                                 const SizedBox(height: 4),
                                 _calRow(
-                                    p.isArabic
-                                        ? 'الأيام المتبقية'
-                                        : 'Days remaining',
+                                    AppLocalizations.of(context).daysUntilObligation,
                                     daysLeft > 0
-                                        ? '$daysLeft ${p.isArabic ? "يوم" : "days"}'
-                                        : (p.isArabic
-                                            ? 'وجبت الزكاة!'
-                                            : 'Due now!'),
+                                ? '$daysLeft ${AppLocalizations.of(context).daysLeft}'
+                                : AppLocalizations.of(context).zakatObligatoryNow,
                                     isDark,
                                     daysLeft <= 0),
                               ]),
@@ -211,11 +196,11 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
                   color: isDark
-                      ? ZakatTheme.gold.withOpacity(0.08)
+                      ? ZakatTheme.gold.withValues(alpha: 0.08)
                       : const Color(0xFFFFF8E7),
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
-                      color: ZakatTheme.gold.withOpacity(isDark ? 0.3 : 0.5)),
+                      color: ZakatTheme.gold.withValues(alpha: isDark ? 0.3 : 0.5)),
                 ),
                 child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -369,25 +354,23 @@ class _AIAssistantScreenState extends State<AIAssistantScreen> {
         child: Scaffold(
           backgroundColor: ZakatTheme.scaffoldBgAdaptive(isDark),
           appBar: AppBar(
-            title: Text(ar ? 'مساعد الزكاة الذكي' : 'Zakat Assistant',
+            title: Text(AppLocalizations.of(context).zakatAssistantTitle,
                 style: const TextStyle(fontFamily: 'Scheherazade')),
             backgroundColor: appBarBg,
           ),
           body: Column(children: [
             Container(
               padding: const EdgeInsets.all(12),
-              color: accent.withOpacity(isDark ? 0.12 : 0.05),
+              color: accent.withValues(alpha: isDark ? 0.12 : 0.05),
               child: Row(children: [
-                CircleAvatar(
+                const CircleAvatar(
                     backgroundColor: ZakatTheme.gold,
-                    child: const Icon(Icons.auto_awesome,
+                    child: Icon(Icons.auto_awesome,
                         color: Colors.white, size: 20)),
                 const SizedBox(width: 10),
                 Expanded(
                   child: Text(
-                    ar
-                        ? 'اكتب حالتك المالية وسأساعدك في تحديد زكاتك'
-                        : 'Describe your finances and I\'ll help calculate your Zakat',
+                    AppLocalizations.of(context).assistantPlaceholder,
                     style: TextStyle(
                         fontFamily: 'Scheherazade',
                         fontSize: 13,
@@ -403,8 +386,9 @@ class _AIAssistantScreenState extends State<AIAssistantScreen> {
                       padding: const EdgeInsets.all(16),
                       itemCount: _messages.length + (_loading ? 1 : 0),
                       itemBuilder: (ctx, i) {
-                        if (i == _messages.length)
+                        if (i == _messages.length) {
                           return _buildTypingIndicator(accent);
+                        }
                         final m = _messages[i];
                         return _buildMessage(m['role']!, m['text']!, isDark,
                             accent, cardColor, textColor);
@@ -429,8 +413,7 @@ class _AIAssistantScreenState extends State<AIAssistantScreen> {
                     style:
                         TextStyle(fontFamily: 'Scheherazade', color: textColor),
                     decoration: InputDecoration(
-                      hintText:
-                          ar ? 'اكتب سؤالك هنا...' : 'Type your question...',
+                      hintText: AppLocalizations.of(context).askQuestion,
                       filled: true,
                       fillColor: cardColor,
                       border: OutlineInputBorder(
@@ -463,7 +446,7 @@ class _AIAssistantScreenState extends State<AIAssistantScreen> {
     return Padding(
       padding: const EdgeInsets.all(16),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Text(ar ? 'أمثلة للبدء:' : 'Examples to start:',
+        Text(AppLocalizations.of(context).examplesToStart,
             style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontFamily: 'Scheherazade',
@@ -479,7 +462,7 @@ class _AIAssistantScreenState extends State<AIAssistantScreen> {
                   color: cardColor,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                      color: accent.withOpacity(isDark ? 0.35 : 0.3)),
+                      color: accent.withValues(alpha: isDark ? 0.35 : 0.3)),
                   boxShadow: ZakatTheme.cardShadowAdaptive(isDark),
                 ),
                 child: Row(children: [
@@ -579,7 +562,9 @@ class _CompanyZakatScreenState extends State<CompanyZakatScreen> {
       _profitCtrl,
       _debtCtrl,
       _receivableCtrl
-    ]) c.dispose();
+    ]) {
+      c.dispose();
+    }
     super.dispose();
   }
 
@@ -601,7 +586,7 @@ class _CompanyZakatScreenState extends State<CompanyZakatScreen> {
         child: Scaffold(
           backgroundColor: ZakatTheme.scaffoldBgAdaptive(isDark),
           appBar: AppBar(
-            title: Text(ar ? 'حاسبة زكاة الشركات' : 'Company Zakat Calculator',
+            title: Text(AppLocalizations.of(context).companyZakatTitle,
                 style: const TextStyle(fontFamily: 'Scheherazade')),
             backgroundColor: appBarBg,
           ),
@@ -618,9 +603,7 @@ class _CompanyZakatScreenState extends State<CompanyZakatScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                          ar
-                              ? 'عناصر وعاء الزكاة التجارية'
-                              : 'Trade Zakat Base Components',
+                          AppLocalizations.of(context).companyZakatElements,
                           style: TextStyle(
                               fontSize: 17,
                               fontWeight: FontWeight.bold,
@@ -628,9 +611,7 @@ class _CompanyZakatScreenState extends State<CompanyZakatScreen> {
                               color: textColor)),
                       const SizedBox(height: 4),
                       Text(
-                        ar
-                            ? 'الصيغة: (رأس المال + البضاعة + الأرباح + الديون المستحقة) - الديون على الشركة'
-                            : 'Formula: (Capital + Goods + Profits + Receivables) - Company Debts',
+                        AppLocalizations.of(context).companyFormula,
                         style: TextStyle(
                             fontSize: 12,
                             color: subColor,
@@ -642,37 +623,35 @@ class _CompanyZakatScreenState extends State<CompanyZakatScreen> {
                           color: isDark ? ZakatTheme.darkBorder : null),
                       _companyField(
                           _capitalCtrl,
-                          ar ? '+ رأس المال النقدي' : '+ Cash Capital',
+                          AppLocalizations.of(context).cashCapital,
                           Colors.blue,
                           isDark,
                           textColor),
                       const SizedBox(height: 10),
                       _companyField(
                           _goodsCtrl,
-                          ar
-                              ? '+ قيمة البضاعة الحالية'
-                              : '+ Current Goods Value',
+                          AppLocalizations.of(context).currentGoodsValue,
                           Colors.green,
                           isDark,
                           textColor),
                       const SizedBox(height: 10),
                       _companyField(
                           _profitCtrl,
-                          ar ? '+ صافي الأرباح' : '+ Net Profits',
+                          AppLocalizations.of(context).netProfits,
                           Colors.teal,
                           isDark,
                           textColor),
                       const SizedBox(height: 10),
                       _companyField(
                           _receivableCtrl,
-                          ar ? '+ الديون المستحقة للشركة' : '+ Receivables',
+                          AppLocalizations.of(context).companyDebtsDue,
                           ZakatTheme.gold,
                           isDark,
                           textColor),
                       const SizedBox(height: 10),
                       _companyField(
                           _debtCtrl,
-                          ar ? '− الديون على الشركة' : '− Company Debts',
+                          AppLocalizations.of(context).companyDebtsOwed,
                           ZakatTheme.error,
                           isDark,
                           textColor),
@@ -689,7 +668,7 @@ class _CompanyZakatScreenState extends State<CompanyZakatScreen> {
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: Column(children: [
-                  Text(ar ? 'وعاء الزكاة' : 'Zakat Base',
+                  Text(AppLocalizations.of(context).zakatPool,
                       style: const TextStyle(
                           color: Colors.white70, fontFamily: 'Scheherazade')),
                   Text('${_totalBase.toStringAsFixed(0)} ${p.currencySymbol}',
@@ -700,7 +679,7 @@ class _CompanyZakatScreenState extends State<CompanyZakatScreen> {
                           fontFamily: 'Scheherazade')),
                   const SizedBox(height: 12),
                   if (_totalBase >= p.goldNisabValue) ...[
-                    Text(ar ? 'الزكاة الواجبة (2.5%)' : 'Zakat Due (2.5%)',
+                    Text(AppLocalizations.of(context).zakatDueLabel,
                         style: const TextStyle(
                             color: Colors.white70, fontFamily: 'Scheherazade')),
                     Text(
@@ -711,7 +690,7 @@ class _CompanyZakatScreenState extends State<CompanyZakatScreen> {
                             fontWeight: FontWeight.bold,
                             fontFamily: 'Scheherazade')),
                   ] else
-                    Text(ar ? 'الوعاء لم يبلغ النصاب' : 'Base is below Nisab',
+                    Text(AppLocalizations.of(context).poolBelowNisab,
                         style: const TextStyle(
                             color: Colors.white60,
                             fontFamily: 'Scheherazade',
@@ -775,9 +754,7 @@ class NisabComparisonScreen extends StatelessWidget {
           backgroundColor: ZakatTheme.scaffoldBgAdaptive(isDark),
           appBar: AppBar(
             title: Text(
-                ar
-                    ? 'مقارنة نصاب الذهب والفضة'
-                    : 'Gold/Silver Nisab Comparison',
+                AppLocalizations.of(context).goldSilverNisabComparison,
                 style: const TextStyle(fontFamily: 'Scheherazade')),
             backgroundColor: appBarBg,
           ),
@@ -786,9 +763,9 @@ class NisabComparisonScreen extends StatelessWidget {
             child: Column(children: [
               Row(children: [
                 Expanded(
-                    child: _nisabCard(
-                        ar ? '🥇 نصاب الذهب' : '🥇 Gold Nisab',
-                        ar ? '85 غراماً' : '85 grams',
+                    child: _nisabCard(context,
+                        AppLocalizations.of(context).goldNisab85,
+                        AppLocalizations.of(context).goldNisabGrams,
                         '${p.goldNisabValue.toStringAsFixed(0)} ${p.currencySymbol}',
                         ZakatTheme.gold,
                         p.totalZakatableWealth >= p.goldNisabValue,
@@ -797,9 +774,9 @@ class NisabComparisonScreen extends StatelessWidget {
                         subColor)),
                 const SizedBox(width: 16),
                 Expanded(
-                    child: _nisabCard(
-                        ar ? '🥈 نصاب الفضة' : '🥈 Silver Nisab',
-                        ar ? '595 غراماً' : '595 grams',
+                    child: _nisabCard(context,
+                        AppLocalizations.of(context).silverNisab595,
+                        AppLocalizations.of(context).silverNisabGrams,
                         '${p.silverNisabValue.toStringAsFixed(0)} ${p.currencySymbol}',
                         Colors.blueGrey,
                         p.totalZakatableWealth >= p.silverNisabValue,
@@ -817,7 +794,7 @@ class NisabComparisonScreen extends StatelessWidget {
                 child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(ar ? 'أيهما يُعتمد؟' : 'Which to use?',
+                      Text(AppLocalizations.of(context).whichIsAdopted,
                           style: TextStyle(
                               fontSize: 17,
                               fontWeight: FontWeight.bold,
@@ -849,15 +826,15 @@ class NisabComparisonScreen extends StatelessWidget {
     );
   }
 
-  Widget _nisabCard(String title, String grams, String value, Color color,
+  Widget _nisabCard(BuildContext context, String title, String grams, String value, Color color,
       bool reached, bool isDark, bool ar, Color subColor) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: color.withOpacity(isDark ? 0.12 : 0.08),
+        color: color.withValues(alpha: isDark ? 0.12 : 0.08),
         borderRadius: BorderRadius.circular(16),
         border:
-            Border.all(color: color.withOpacity(isDark ? 0.5 : 0.4), width: 2),
+            Border.all(color: color.withValues(alpha: isDark ? 0.5 : 0.4), width: 2),
       ),
       child: Column(children: [
         Text(title,
@@ -882,14 +859,14 @@ class NisabComparisonScreen extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
           decoration: BoxDecoration(
             color: reached
-                ? Colors.green.withOpacity(0.2)
-                : Colors.grey.withOpacity(0.15),
+                ? Colors.green.withValues(alpha: 0.2)
+                : Colors.grey.withValues(alpha: 0.15),
             borderRadius: BorderRadius.circular(20),
           ),
           child: Text(
             reached
-                ? (ar ? 'وصل النصاب ✓' : 'Reached ✓')
-                : (ar ? 'لم يصل' : 'Not reached'),
+                ? AppLocalizations.of(context).reachedNisab
+                : AppLocalizations.of(context).notReached,
             style: TextStyle(
                 color: reached ? Colors.green : subColor,
                 fontSize: 12,

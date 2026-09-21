@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import '../data/zakat_data.dart';
 import '../utils/theme.dart';
 import '../models/zakat_provider.dart';
+import '../l10n/app_localizations.dart';
 
 class HadithCard extends StatelessWidget {
   final HadithModel hadith;
@@ -16,6 +17,7 @@ class HadithCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final isDark = context.watch<ZakatProvider>().isDarkMode;
     final cardColor = ZakatTheme.cardBgAdaptive(isDark);
     final textColor = isDark ? ZakatTheme.darkTextPrimary : ZakatTheme.darkText;
@@ -30,7 +32,7 @@ class HadithCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         boxShadow: ZakatTheme.cardShadowAdaptive(isDark),
         border:
-            Border.all(color: ZakatTheme.gold.withOpacity(isDark ? 0.25 : 0.3)),
+            Border.all(color: ZakatTheme.gold.withValues(alpha: isDark ? 0.25 : 0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -45,7 +47,7 @@ class HadithCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
-                  isDaily ? '✨ حديث اليوم' : '📜 حديث شريف',
+                  isDaily ? l10n.dailyHadith : l10n.islamicHadith,
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 13,
@@ -58,7 +60,7 @@ class HadithCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: ZakatTheme.success.withOpacity(isDark ? 0.2 : 0.1),
+                  color: ZakatTheme.success.withValues(alpha: isDark ? 0.2 : 0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Text(
@@ -91,7 +93,7 @@ class HadithCard extends StatelessWidget {
               Icon(Icons.person_outline, size: 14, color: lightColor),
               const SizedBox(width: 4),
               Text(
-                'رواه ${hadith.narrator}',
+                l10n.hadithNarratedBy(hadith.narrator),
                 style: TextStyle(
                     color: subColor, fontSize: 13, fontFamily: 'Scheherazade'),
               ),

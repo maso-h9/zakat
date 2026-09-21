@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class ZakatTheme {
   // ==============================
-  // الألوان الرئيسية
+  // Main Colors
   // ==============================
 
   static const Color deepGreen = Color(0xFF0D4A2F);
@@ -17,7 +17,7 @@ class ZakatTheme {
   static const Color medText = Color(0xFF4A4A6A);
   static const Color lightText = Color(0xFF8A8AAA);
   static const Color cardBg = Color(0xFFFFFFFF);
-  static const Color surface = Color(0xFFF0EBE0);
+  static const Color surfaceColor = Color(0xFFF0EBE0);
   static const Color error = Color(0xFFB83232);
   static const Color success = Color(0xFF2E8B57);
   static const Color primaryGreen = deepGreen;
@@ -31,8 +31,16 @@ class ZakatTheme {
   static const Color darkTextPrimary = Color(0xFFE8E8E8);
   static const Color darkTextSecondary = Color(0xFFAAAAAA);
 
+  // Ramadan Colors
+  static const Color ramadanNavy = Color(0xFF0D1B3E);
+  static const Color ramadanDeepNavy = Color(0xFF0A1428);
+  static const Color ramadanBlue = Color(0xFF1A2A5E);
+  static const Color ramadanMidBlue = Color(0xFF243B74);
+  static const Color ramadanGold = Color(0xFFFFD700);
+  static const Color ramadanLightBlue = Color(0xFF4FC3F7);
+
   // ==============================
-  // تدرجات
+  // Gradients
   // ==============================
   static const LinearGradient mainGradient = LinearGradient(
     begin: Alignment.topLeft,
@@ -64,18 +72,44 @@ class ZakatTheme {
     colors: [Color(0xFF0A2A1A), Color(0xFF1A4A2F)],
   );
 
+  static const LinearGradient ramadanGradient = LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: [ramadanDeepNavy, ramadanBlue],
+  );
+
   // ==============================
-  // ThemeData الرئيسي (Light)
+  // Light Theme
   // ==============================
-  static ThemeData get theme => ThemeData(
+  static ThemeData get theme => _buildLightTheme();
+
+  // ==============================
+  // Dark Theme
+  // ==============================
+  static ThemeData get darkTheme => _buildDarkTheme();
+
+  // ==============================
+  // Ramadan Light Theme
+  // ==============================
+  static ThemeData get ramadanTheme => _buildRamadanTheme();
+
+  // ==============================
+  // Ramadan Dark Theme
+  // ==============================
+  static ThemeData get darkRamadanTheme => _buildDarkRamadanTheme();
+
+  // ════════════════════════════════════════════════════════════════
+  // Theme builders
+  // ════════════════════════════════════════════════════════════════
+
+  static ThemeData _buildLightTheme() => ThemeData(
         useMaterial3: true,
         brightness: Brightness.light,
         fontFamily: 'Scheherazade',
-        colorScheme: ColorScheme.light(
+        colorScheme: const ColorScheme.light(
           primary: deepGreen,
           secondary: gold,
           surface: warmWhite,
-          background: cream,
           onPrimary: Colors.white,
           onSecondary: darkText,
           onSurface: darkText,
@@ -96,7 +130,7 @@ class ZakatTheme {
         cardTheme: CardThemeData(
           color: cardBg,
           elevation: 4,
-          shadowColor: deepGreen.withOpacity(0.15),
+          shadowColor: deepGreen.withValues(alpha: 0.15),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
@@ -106,7 +140,7 @@ class ZakatTheme {
             backgroundColor: deepGreen,
             foregroundColor: Colors.white,
             elevation: 4,
-            shadowColor: deepGreen.withOpacity(0.4),
+            shadowColor: deepGreen.withValues(alpha: 0.4),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),
@@ -190,10 +224,7 @@ class ZakatTheme {
         ),
       );
 
-  // ==============================
-  // ThemeData الداكن (Dark Mode)
-  // ==============================
-  static ThemeData get darkTheme => ThemeData(
+  static ThemeData _buildDarkTheme() => ThemeData(
         useMaterial3: true,
         brightness: Brightness.dark,
         fontFamily: 'Scheherazade',
@@ -201,7 +232,6 @@ class ZakatTheme {
           primary: lightGreen,
           secondary: gold,
           surface: darkSurface,
-          background: darkBg,
           onPrimary: Colors.white,
           onSecondary: darkText,
           onSurface: darkTextPrimary,
@@ -222,7 +252,7 @@ class ZakatTheme {
         cardTheme: CardThemeData(
           color: darkCard,
           elevation: 4,
-          shadowColor: Colors.black.withOpacity(0.4),
+          shadowColor: Colors.black.withValues(alpha: 0.4),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
@@ -232,7 +262,7 @@ class ZakatTheme {
             backgroundColor: midGreen,
             foregroundColor: Colors.white,
             elevation: 4,
-            shadowColor: midGreen.withOpacity(0.4),
+            shadowColor: midGreen.withValues(alpha: 0.4),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),
@@ -321,26 +351,304 @@ class ZakatTheme {
           unselectedItemColor: darkTextSecondary,
         ),
         switchTheme: SwitchThemeData(
-          thumbColor: MaterialStateProperty.resolveWith(
-              (s) => s.contains(MaterialState.selected) ? gold : Colors.grey),
-          trackColor: MaterialStateProperty.resolveWith((s) =>
-              s.contains(MaterialState.selected)
-                  ? gold.withOpacity(0.4)
-                  : Colors.grey.withOpacity(0.3)),
+          thumbColor: WidgetStateProperty.resolveWith(
+              (s) => s.contains(WidgetState.selected) ? gold : Colors.grey),
+          trackColor: WidgetStateProperty.resolveWith((s) =>
+              s.contains(WidgetState.selected)
+                  ? gold.withValues(alpha: 0.4)
+                  : Colors.grey.withValues(alpha: 0.3)),
         ),
       );
 
+  static ThemeData _buildRamadanTheme() {
+    final base = _buildLightTheme();
+    return base.copyWith(
+      scaffoldBackgroundColor: ramadanNavy,
+      colorScheme: const ColorScheme.light(
+        primary: ramadanGold,
+        secondary: ramadanLightBlue,
+        surface: ramadanBlue,
+        onPrimary: ramadanDeepNavy,
+        onSecondary: Colors.white,
+        onSurface: Colors.white,
+      ),
+      appBarTheme: const AppBarTheme(
+        backgroundColor: ramadanDeepNavy,
+        foregroundColor: Colors.white,
+        elevation: 0,
+        centerTitle: true,
+        titleTextStyle: TextStyle(
+          fontFamily: 'Scheherazade',
+          fontSize: 22,
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+        ),
+      ),
+      cardTheme: CardThemeData(
+        color: ramadanBlue,
+        elevation: 4,
+        shadowColor: ramadanGold.withValues(alpha: 0.2),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: BorderSide(color: ramadanGold.withValues(alpha: 0.3)),
+        ),
+      ),
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: ramadanGold,
+          foregroundColor: ramadanDeepNavy,
+          elevation: 4,
+          shadowColor: ramadanGold.withValues(alpha: 0.4),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+          textStyle: const TextStyle(
+            fontFamily: 'Scheherazade',
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
+      inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: ramadanMidBlue,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: ramadanGold.withValues(alpha: 0.3)),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: ramadanGold, width: 2),
+        ),
+        labelStyle: const TextStyle(
+          fontFamily: 'Scheherazade',
+          color: Colors.white70,
+          fontSize: 16,
+        ),
+        hintStyle: const TextStyle(
+          fontFamily: 'Scheherazade',
+          color: Colors.white54,
+        ),
+      ),
+      bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+        backgroundColor: ramadanDeepNavy,
+        selectedItemColor: ramadanGold,
+        unselectedItemColor: Colors.white54,
+      ),
+      textTheme: const TextTheme(
+        displayLarge: TextStyle(
+          fontFamily: 'Scheherazade',
+          fontSize: 32,
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+        ),
+        displayMedium: TextStyle(
+          fontFamily: 'Scheherazade',
+          fontSize: 26,
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+        ),
+        headlineMedium: TextStyle(
+          fontFamily: 'Scheherazade',
+          fontSize: 22,
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+        ),
+        titleLarge: TextStyle(
+          fontFamily: 'Scheherazade',
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+        ),
+        titleMedium: TextStyle(
+          fontFamily: 'Scheherazade',
+          fontSize: 18,
+          fontWeight: FontWeight.w600,
+          color: Colors.white,
+        ),
+        bodyLarge: TextStyle(
+          fontFamily: 'Scheherazade',
+          fontSize: 18,
+          color: Colors.white,
+          height: 1.8,
+        ),
+        bodyMedium: TextStyle(
+          fontFamily: 'Scheherazade',
+          fontSize: 16,
+          color: Colors.white70,
+          height: 1.7,
+        ),
+        bodySmall: TextStyle(
+          fontFamily: 'Scheherazade',
+          fontSize: 14,
+          color: Colors.white54,
+        ),
+      ),
+      dividerColor: ramadanGold.withValues(alpha: 0.3),
+      switchTheme: SwitchThemeData(
+        thumbColor: WidgetStateProperty.resolveWith((s) =>
+            s.contains(WidgetState.selected)
+                ? ramadanGold
+                : Colors.white54),
+        trackColor: WidgetStateProperty.resolveWith((s) =>
+            s.contains(WidgetState.selected)
+                ? ramadanGold.withValues(alpha: 0.4)
+                : Colors.white24),
+      ),
+    );
+  }
+
+  static ThemeData _buildDarkRamadanTheme() {
+    final base = _buildDarkTheme();
+    return base.copyWith(
+      scaffoldBackgroundColor: ramadanDeepNavy,
+      colorScheme: const ColorScheme.dark(
+        primary: ramadanGold,
+        secondary: ramadanLightBlue,
+        surface: ramadanBlue,
+        onPrimary: ramadanDeepNavy,
+        onSecondary: Colors.white,
+        onSurface: Colors.white,
+      ),
+      appBarTheme: const AppBarTheme(
+        backgroundColor: ramadanDeepNavy,
+        foregroundColor: Colors.white,
+        elevation: 0,
+        centerTitle: true,
+        titleTextStyle: TextStyle(
+          fontFamily: 'Scheherazade',
+          fontSize: 22,
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+        ),
+      ),
+      cardTheme: CardThemeData(
+        color: ramadanMidBlue,
+        elevation: 4,
+        shadowColor: ramadanGold.withValues(alpha: 0.2),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: BorderSide(color: ramadanGold.withValues(alpha: 0.3)),
+        ),
+      ),
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: ramadanGold,
+          foregroundColor: ramadanDeepNavy,
+          elevation: 4,
+          shadowColor: ramadanGold.withValues(alpha: 0.4),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+          textStyle: const TextStyle(
+            fontFamily: 'Scheherazade',
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
+      inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: ramadanBlue,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: ramadanGold.withValues(alpha: 0.3)),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: ramadanGold, width: 2),
+        ),
+        labelStyle: const TextStyle(
+          fontFamily: 'Scheherazade',
+          color: Colors.white70,
+          fontSize: 16,
+        ),
+        hintStyle: const TextStyle(
+          fontFamily: 'Scheherazade',
+          color: Colors.white54,
+        ),
+      ),
+      bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+        backgroundColor: ramadanDeepNavy,
+        selectedItemColor: ramadanGold,
+        unselectedItemColor: Colors.white54,
+      ),
+      textTheme: const TextTheme(
+        displayLarge: TextStyle(
+          fontFamily: 'Scheherazade',
+          fontSize: 32,
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+        ),
+        displayMedium: TextStyle(
+          fontFamily: 'Scheherazade',
+          fontSize: 26,
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+        ),
+        headlineMedium: TextStyle(
+          fontFamily: 'Scheherazade',
+          fontSize: 22,
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+        ),
+        titleLarge: TextStyle(
+          fontFamily: 'Scheherazade',
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+        ),
+        titleMedium: TextStyle(
+          fontFamily: 'Scheherazade',
+          fontSize: 18,
+          fontWeight: FontWeight.w600,
+          color: Colors.white,
+        ),
+        bodyLarge: TextStyle(
+          fontFamily: 'Scheherazade',
+          fontSize: 18,
+          color: Colors.white,
+          height: 1.8,
+        ),
+        bodyMedium: TextStyle(
+          fontFamily: 'Scheherazade',
+          fontSize: 16,
+          color: Colors.white70,
+          height: 1.7,
+        ),
+        bodySmall: TextStyle(
+          fontFamily: 'Scheherazade',
+          fontSize: 14,
+          color: Colors.white54,
+        ),
+      ),
+      dividerColor: ramadanGold.withValues(alpha: 0.3),
+      switchTheme: SwitchThemeData(
+        thumbColor: WidgetStateProperty.resolveWith((s) =>
+            s.contains(WidgetState.selected)
+                ? ramadanGold
+                : Colors.white54),
+        trackColor: WidgetStateProperty.resolveWith((s) =>
+            s.contains(WidgetState.selected)
+                ? ramadanGold.withValues(alpha: 0.4)
+                : Colors.white24),
+      ),
+    );
+  }
+
   // ==============================
-  // ظل مخصص
+  // Shadows
   // ==============================
   static List<BoxShadow> get cardShadow => [
         BoxShadow(
-          color: deepGreen.withOpacity(0.1),
+          color: deepGreen.withValues(alpha: 0.1),
           blurRadius: 20,
           offset: const Offset(0, 8),
         ),
         BoxShadow(
-          color: Colors.black.withOpacity(0.05),
+          color: Colors.black.withValues(alpha: 0.05),
           blurRadius: 8,
           offset: const Offset(0, 2),
         ),
@@ -348,7 +656,7 @@ class ZakatTheme {
 
   static List<BoxShadow> get darkCardShadow => [
         BoxShadow(
-          color: Colors.black.withOpacity(0.3),
+          color: Colors.black.withValues(alpha: 0.3),
           blurRadius: 20,
           offset: const Offset(0, 8),
         ),
@@ -356,17 +664,36 @@ class ZakatTheme {
 
   static List<BoxShadow> get goldShadow => [
         BoxShadow(
-          color: gold.withOpacity(0.3),
+          color: gold.withValues(alpha: 0.3),
           blurRadius: 20,
           offset: const Offset(0, 8),
         ),
       ];
 
-  // Helper: card bg adaptive
-  static Color cardBgAdaptive(bool isDark) => isDark ? darkCard : cardBg;
+  static List<BoxShadow> get ramadanCardShadow => [
+        BoxShadow(
+          color: ramadanGold.withValues(alpha: 0.2),
+          blurRadius: 20,
+          offset: const Offset(0, 8),
+        ),
+      ];
 
-  static Color scaffoldBgAdaptive(bool isDark) => isDark ? darkBg : cream;
+  // ==============================
+  // Adaptive helpers
+  // ==============================
+  static Color cardBgAdaptive(bool isDark, {bool isRamadan = false}) {
+    if (isRamadan) return ramadanBlue;
+    return isDark ? darkCard : cardBg;
+  }
 
-  static List<BoxShadow> cardShadowAdaptive(bool isDark) =>
-      isDark ? darkCardShadow : cardShadow;
+  static Color scaffoldBgAdaptive(bool isDark, {bool isRamadan = false}) {
+    if (isRamadan) return ramadanNavy;
+    return isDark ? darkBg : cream;
+  }
+
+  static List<BoxShadow> cardShadowAdaptive(bool isDark,
+      {bool isRamadan = false}) {
+    if (isRamadan) return ramadanCardShadow;
+    return isDark ? darkCardShadow : cardShadow;
+  }
 }

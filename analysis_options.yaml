@@ -1,28 +1,50 @@
-# This file configures the analyzer, which statically analyzes Dart code to
-# check for errors, warnings, and lints.
-#
-# The issues identified by the analyzer are surfaced in the UI of Dart-enabled
-# IDEs (https://dart.dev/tools#ides-and-editors). The analyzer can also be
-# invoked from the command line by running `flutter analyze`.
-
-# The following line activates a set of recommended lints for Flutter apps,
-# packages, and plugins designed to encourage good coding practices.
 include: package:flutter_lints/flutter.yaml
 
 linter:
-  # The lint rules applied to this project can be customized in the
-  # section below to disable rules from the `package:flutter_lints/flutter.yaml`
-  # included above or to enable additional rules. A list of all available lints
-  # and their documentation is published at https://dart.dev/lints.
-  #
-  # Instead of disabling a lint rule for the entire project in the
-  # section below, it can also be suppressed for a single line of code
-  # or a specific dart file by using the `// ignore: name_of_lint` and
-  # `// ignore_for_file: name_of_lint` syntax on the line or in the file
-  # producing the lint.
   rules:
-    # avoid_print: false  # Uncomment to disable the `avoid_print` rule
-    # prefer_single_quotes: true  # Uncomment to enable the `prefer_single_quotes` rule
+    # ── أساسيات ─────────────────────────────────────────────────
+    prefer_const_constructors: true
+    prefer_const_declarations: true
+    prefer_const_literals_to_create_immutables: true
+    avoid_print: true                      # استخدم AppLogger بدل print
+    avoid_empty_else: true
+    avoid_unnecessary_containers: true
 
-# Additional information about this file can be found at
-# https://dart.dev/guides/language/analysis-options
+    # ── أداء ─────────────────────────────────────────────────────
+    use_key_in_widget_constructors: true
+    sized_box_for_whitespace: true
+    sized_box_shrink_expand: true
+
+    # ── كود نظيف ─────────────────────────────────────────────────
+    require_trailing_commas: false         # اختياري في العربي
+    sort_child_properties_last: true
+    use_super_parameters: true
+    prefer_single_quotes: true
+    unnecessary_new: true
+    unnecessary_this: true
+    unnecessary_late: true
+    prefer_final_locals: false             # لا تجبر على final
+    prefer_final_fields: true
+
+    # ── Widgets ──────────────────────────────────────────────────
+    no_logic_in_create_state: true
+
+    # ── Async ────────────────────────────────────────────────────
+    unawaited_futures: true
+    # avoid_async_void_except_in_listeners removed (not in Dart 3.x)
+
+analyzer:
+  errors:
+    # أخطاء جدية
+    invalid_assignment: error
+    missing_return: error
+    dead_code: warning
+    unused_import: warning
+    unused_local_variable: warning
+    deprecated_member_use: ignore
+
+  exclude:
+    - '**/*.g.dart'
+    - '**/*.freezed.dart'
+    - 'lib/firebase_options.dart'
+    - 'lib/l10n/**'

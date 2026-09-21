@@ -27,16 +27,16 @@ class DashboardCard extends StatelessWidget {
     final subColor =
         isDark ? ZakatTheme.darkTextSecondary : ZakatTheme.lightText;
     // في Dark Mode نفتح الألوان أكثر لتظهر بوضوح
-    final adjustedColor = isDark ? color.withOpacity(0.95) : color;
+    final adjustedColor = isDark ? color.withValues(alpha: 0.95) : color;
 
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         color:
-            isDark ? adjustedColor.withOpacity(0.12) : color.withOpacity(0.06),
+            isDark ? adjustedColor.withValues(alpha: 0.12) : color.withValues(alpha: 0.06),
         borderRadius: BorderRadius.circular(14),
         border:
-            Border.all(color: adjustedColor.withOpacity(isDark ? 0.35 : 0.2)),
+            Border.all(color: adjustedColor.withValues(alpha: isDark ? 0.35 : 0.2)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

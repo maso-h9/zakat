@@ -3,6 +3,7 @@
 // ================================================================
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:zakat_app/l10n/app_localizations.dart';
 import '../models/zakat_provider.dart';
 import '../utils/theme.dart';
 
@@ -69,8 +70,8 @@ class _RamadanScreenState extends State<RamadanScreen>
           appBar: AppBar(
             title: Text(
               p.isRamadanMode
-                  ? (p.isArabic ? '🌙 وضع رمضان' : '🌙 Ramadan Mode')
-                  : (p.isArabic ? 'وضع رمضان' : 'Ramadan Mode'),
+                  ? AppLocalizations.of(context).ramadanModeLabel
+                  : AppLocalizations.of(context).ramadanModeToggle,
               style: TextStyle(
                 fontFamily: 'Scheherazade',
                 color: p.isRamadanMode ? const Color(0xFFFFD700) : Colors.white,
@@ -84,7 +85,7 @@ class _RamadanScreenState extends State<RamadanScreen>
                 padding: const EdgeInsets.only(left: 12),
                 child: Switch(
                   value: p.isRamadanMode,
-                  activeColor: const Color(0xFFFFD700),
+                  activeThumbColor: const Color(0xFFFFD700),
                   onChanged: p.toggleRamadanMode,
                 ),
               ),
@@ -161,7 +162,7 @@ class _RamadanScreenState extends State<RamadanScreen>
         ),
         const SizedBox(height: 12),
         Text(
-          p.isArabic ? 'رمضان كريم' : 'Ramadan Kareem',
+          AppLocalizations.of(context).ramadanKareem,
           style: const TextStyle(
               color: Color(0xFFFFD700),
               fontSize: 32,
@@ -189,13 +190,13 @@ class _RamadanScreenState extends State<RamadanScreen>
         gradient: const LinearGradient(
             colors: [Color(0xFF1A2A5E), Color(0xFF243B74)]),
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: const Color(0xFFFFD700).withOpacity(0.4)),
+        border: Border.all(color: const Color(0xFFFFD700).withValues(alpha: 0.4)),
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Row(children: [
           const Text('⭐', style: TextStyle(fontSize: 22)),
           const SizedBox(width: 8),
-          Text(p.isArabic ? 'زكاة الفطر' : 'Zakat Al-Fitr',
+          Text(          AppLocalizations.of(context).fitrZakat,
               style: const TextStyle(
                   color: Color(0xFFFFD700),
                   fontSize: 20,
@@ -204,9 +205,7 @@ class _RamadanScreenState extends State<RamadanScreen>
         ]),
         const SizedBox(height: 12),
         Text(
-          p.isArabic
-              ? 'فرضها رسول الله ﷺ طهرةً للصائم من اللغو والرفث، وطُعمةً للمساكين.'
-              : 'Prescribed by the Prophet ﷺ as purification for the fasting person and food for the poor.',
+          AppLocalizations.of(context).fitrDescription,
           style: const TextStyle(
               color: Color(0xFFB0BEC5),
               fontSize: 14,
@@ -217,24 +216,20 @@ class _RamadanScreenState extends State<RamadanScreen>
         Container(
           padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(
-            color: const Color(0xFFFFD700).withOpacity(0.08),
+            color: const Color(0xFFFFD700).withValues(alpha: 0.08),
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: const Color(0xFFFFD700).withOpacity(0.3)),
+            border: Border.all(color: const Color(0xFFFFD700).withValues(alpha: 0.3)),
           ),
           child: Column(children: [
             _fitrRow(
-                p.isArabic ? 'المقدار' : 'Amount',
-                p.isArabic
-                    ? 'صاع = 2.5 كيلوغرام من قوت البلد'
-                    : 'One Sa\' ≈ 2.5kg of staple food'),
+                AppLocalizations.of(context).fitrAmount,
+                AppLocalizations.of(context).fitrAmountDetail),
             const SizedBox(height: 8),
             _fitrRow(
-                p.isArabic ? 'وقتها' : 'Timing',
-                p.isArabic
-                    ? 'من غروب آخر يوم رمضان حتى صلاة العيد'
-                    : 'From last day of Ramadan until Eid prayer'),
+                AppLocalizations.of(context).fitrTiming,
+                AppLocalizations.of(context).fitrTimingDetail),
             const SizedBox(height: 8),
-            _fitrRow(p.isArabic ? 'قيمتها التقريبية' : 'Approx. value',
+            _fitrRow(AppLocalizations.of(context).fitrValue,
                 '${p.fitrAmount.toStringAsFixed(0)} ${p.currencySymbol} ${p.isArabic ? "للفرد" : "per person"}'),
           ]),
         ),
@@ -253,8 +248,8 @@ class _RamadanScreenState extends State<RamadanScreen>
                   p.fitrPaid ? Icons.check_circle : Icons.volunteer_activism),
               label: Text(
                 p.fitrPaid
-                    ? (p.isArabic ? 'تم إخراجها ✓' : 'Paid ✓')
-                    : (p.isArabic ? 'سجّل إخراج الفطر' : 'Record Payment'),
+                    ? AppLocalizations.of(context).fitrPaidLabel
+                    : AppLocalizations.of(context).fitrRecordPayment,
                 style:
                     const TextStyle(fontFamily: 'Scheherazade', fontSize: 15),
               ),
@@ -295,10 +290,10 @@ class _RamadanScreenState extends State<RamadanScreen>
       decoration: BoxDecoration(
         color: const Color(0xFF1A2A5E),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFFFD700).withOpacity(0.2)),
+        border: Border.all(color: const Color(0xFFFFD700).withValues(alpha: 0.2)),
       ),
       child: Column(children: [
-        Text(p.isArabic ? 'اليوم من رمضان' : 'Day of Ramadan',
+        Text(AppLocalizations.of(context).dayOfRamadan,
             style: const TextStyle(
                 color: Colors.white70,
                 fontFamily: 'Scheherazade',
@@ -333,9 +328,7 @@ class _RamadanScreenState extends State<RamadanScreen>
           ),
         ]),
         Text(
-          p.isArabic
-              ? 'متبقٍ ${30 - _hadithIdx - 1} يوم على نهاية الشهر'
-              : '${30 - _hadithIdx - 1} days left in the month',
+          AppLocalizations.of(context).daysRemainingCount(30 - _hadithIdx - 1),
           style: const TextStyle(
               color: Colors.white54, fontFamily: 'Scheherazade', fontSize: 13),
         ),
@@ -353,24 +346,24 @@ class _RamadanScreenState extends State<RamadanScreen>
         decoration: BoxDecoration(
           color: const Color(0xFF1A2A5E),
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: const Color(0xFFFFD700).withOpacity(0.3)),
+          border: Border.all(color: const Color(0xFFFFD700).withValues(alpha: 0.3)),
         ),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Row(children: [
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
               decoration: BoxDecoration(
-                  color: const Color(0xFFFFD700).withOpacity(0.15),
+                  color: const Color(0xFFFFD700).withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(12)),
-              child: const Text('✨ حديث الصدقة',
-                  style: TextStyle(
+              child: Text(AppLocalizations.of(context).charityHadith,
+                  style: const TextStyle(
                       color: Color(0xFFFFD700),
                       fontFamily: 'Scheherazade',
                       fontSize: 13)),
             ),
             const Spacer(),
-            const Text('اضغط للتالي',
-                style: TextStyle(
+            Text(AppLocalizations.of(context).tapForNext,
+                style: const TextStyle(
                     color: Colors.white38,
                     fontFamily: 'Scheherazade',
                     fontSize: 12)),
@@ -394,46 +387,15 @@ class _RamadanScreenState extends State<RamadanScreen>
   }
 
   Widget _buildDailyReminders(ZakatProvider p) {
-    final reminders = p.isArabic
-        ? [
-            {'icon': '🌅', 'title': 'السحور', 'desc': 'تسحّر ولو بجرعة ماء'},
-            {'icon': '🤲', 'title': 'الدعاء', 'desc': 'لا ترد دعوة الصائم'},
-            {
-              'icon': '📖',
-              'title': 'القرآن',
-              'desc': 'ختم القرآن في رمضان سنة'
-            },
-            {
-              'icon': '💰',
-              'title': 'الصدقة',
-              'desc': 'أفضل الصدقة صدقة في رمضان'
-            },
-          ]
-        : [
-            {
-              'icon': '🌅',
-              'title': 'Suhoor',
-              'desc': 'Eat even a sip of water'
-            },
-            {
-              'icon': '🤲',
-              'title': 'Dua',
-              'desc': 'A fasting person\'s dua is not rejected'
-            },
-            {
-              'icon': '📖',
-              'title': 'Quran',
-              'desc': 'Completing Quran is Sunnah'
-            },
-            {
-              'icon': '💰',
-              'title': 'Charity',
-              'desc': 'Best charity is in Ramadan'
-            },
-          ];
+    final reminders = [
+      {'icon': '🌅', 'title': AppLocalizations.of(context).suhoor, 'desc': p.isArabic ? 'تسحّر ولو بجرعة ماء' : 'Eat even a sip of water'},
+      {'icon': '🤲', 'title': AppLocalizations.of(context).dua, 'desc': p.isArabic ? 'لا ترد دعوة الصائم' : 'A fasting person\'s dua is not rejected'},
+      {'icon': '📖', 'title': AppLocalizations.of(context).quran, 'desc': p.isArabic ? 'ختم القرآن في رمضان سنة' : 'Completing Quran is Sunnah'},
+      {'icon': '💰', 'title': AppLocalizations.of(context).charity, 'desc': p.isArabic ? 'أفضل الصدقة صدقة في رمضان' : 'Best charity is in Ramadan'},
+    ];
 
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Text(p.isArabic ? 'تذكيرات يومية' : 'Daily Reminders',
+      Text(AppLocalizations.of(context).dailyReminders,
           style: const TextStyle(
               color: Color(0xFFFFD700),
               fontSize: 17,
@@ -457,7 +419,7 @@ class _RamadanScreenState extends State<RamadanScreen>
                 color: const Color(0xFF1A2A5E),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                    color: const Color(0xFFFFD700).withOpacity(0.15))),
+                    color: const Color(0xFFFFD700).withValues(alpha: 0.15))),
             child: Row(children: [
               Text(r['icon']!, style: const TextStyle(fontSize: 22)),
               const SizedBox(width: 8),
@@ -508,12 +470,10 @@ class _RamadanScreenState extends State<RamadanScreen>
       decoration: BoxDecoration(
           color: const Color(0xFF1A2A5E),
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: const Color(0xFFFFD700).withOpacity(0.2))),
+          border: Border.all(color: const Color(0xFFFFD700).withValues(alpha: 0.2))),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Text(
-            p.isArabic
-                ? 'فضائل الصدقة في رمضان'
-                : 'Virtues of Charity in Ramadan',
+            AppLocalizations.of(context).charityVirtues,
             style: const TextStyle(
                 color: Color(0xFFFFD700),
                 fontSize: 17,
@@ -559,7 +519,7 @@ class _RamadanScreenState extends State<RamadanScreen>
           child: Column(children: [
             const Text('🌙', style: TextStyle(fontSize: 56)),
             const SizedBox(height: 16),
-            Text(p.isArabic ? 'وضع رمضان' : 'Ramadan Mode',
+            Text(AppLocalizations.of(context).ramadanModeToggle,
                 style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
@@ -567,9 +527,7 @@ class _RamadanScreenState extends State<RamadanScreen>
                     color: textColor)),
             const SizedBox(height: 8),
             Text(
-              p.isArabic
-                  ? 'فعّل الوضع عند دخول شهر رمضان المبارك للحصول على تجربة مخصصة تشمل زكاة الفطر وأحاديث الصدقة والتذكيرات اليومية.'
-                  : 'Enable this mode during Ramadan for a custom experience with Zakat Al-Fitr, charity hadiths and daily reminders.',
+              AppLocalizations.of(context).ramadanModeDescription,
               textAlign: TextAlign.center,
               style: TextStyle(
                   color: subColor,
@@ -582,7 +540,7 @@ class _RamadanScreenState extends State<RamadanScreen>
               onPressed: () => p.toggleRamadanMode(true),
               icon: const Text('🌙'),
               label: Text(
-                  p.isArabic ? 'تفعيل وضع رمضان' : 'Enable Ramadan Mode',
+                  AppLocalizations.of(context).enableRamadanButton,
                   style: const TextStyle(
                       fontFamily: 'Scheherazade', fontSize: 16)),
             ),
